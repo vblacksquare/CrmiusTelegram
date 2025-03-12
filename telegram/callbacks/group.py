@@ -1,0 +1,176 @@
+
+import pytz
+from datetime import datetime
+
+from loguru import logger
+
+from aiogram.types import LinkPreviewOptions, URLInputFile, FSInputFile, InputMediaPhoto
+from ..telegram import bot, i18n
+
+from db import Db
+from dtypes.db import method as dmth
+from dtypes.user import User, CrmUser
+from dtypes.group import Group
+
+
+db = Db()
+
+
+async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, text: str, forward_to: CrmUser = None):
+    forward_tuser: User = (await db.ex(dmth.GetOne(User, id=forward_to.user_id))) if forward_to else None
+
+    if not reciever.user_id and not forward_tuser:
+        return logger.warning(f"No user authed -> {reciever.id}:{reciever.login}")
+
+    reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
+    if not reciever_tuser and not forward_tuser:
+        return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
+
+    try:
+        if forward_tuser:
+            message = await bot.send_message(
+                text=i18n.gettext("new_forward_group_message", locale=forward_tuser.language).format(
+                    group=group.title,
+                    sender=" ".join((sender.first_name, sender.last_name)),
+                    text=text
+                ),
+                parse_mode="html",
+                chat_id=forward_tuser.id,
+                link_preview_options=LinkPreviewOptions(is_disabled=False),
+                disable_notification=True
+            )
+
+        else:
+            time_now = datetime.now(pytz.timezone("Europe/Kiev"))
+            notificate = True
+            if time_now.hour >= reciever_tuser.time[-1] or time_now.hour < reciever_tuser.time[0]:
+                notificate = False
+
+            message = await bot.send_message(
+                text=i18n.gettext("new_group_message", locale=reciever_tuser.language).format(
+                    group=group.title,
+                    sender=" ".join((sender.first_name, sender.last_name)),
+                    text=text
+                ),
+                parse_mode="html",
+                chat_id=reciever_tuser.id,
+                link_preview_options=LinkPreviewOptions(is_disabled=False),
+                disable_notification=not notificate
+            )
+
+        return message
+
+    except Exception as err:
+        logger.exception(err)
+
+
+async def __new_group_audio_message(sender: CrmUser, reciever: CrmUser, group: Group, caption: str, audio: str, forward_to: CrmUser = None):
+    forward_tuser: User = (await db.ex(dmth.GetOne(User, id=forward_to.user_id))) if forward_to else None
+
+    if not reciever.user_id and not forward_tuser:
+        return logger.warning(f"No user authed -> {reciever.id}:{reciever.login}")
+
+    reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
+    if not reciever_tuser and not forward_tuser:
+        return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
+
+    try:
+        if forward_tuser:
+            message = await bot.send_voice(
+                voice=FSInputFile(path=audio, filename="audio.ogg"),
+                caption=i18n.gettext("new_forward_group_audio_message", locale=forward_tuser.language).format(
+                    group=group.title,
+                    sender=" ".join((sender.first_name, sender.last_name)),
+                    caption=caption
+                ),
+                parse_mode="html",
+                chat_id=forward_tuser.id,
+                disable_notification=True
+            )
+
+        else:
+            time_now = datetime.now(pytz.timezone("Europe/Kiev"))
+            notificate = True
+            if time_now.hour >= reciever_tuser.time[-1] or time_now.hour < reciever_tuser.time[0]:
+                notificate = False
+
+            message = await bot.send_voice(
+                voice=FSInputFile(path=audio, filename="audio.ogg"),
+                caption=i18n.gettext("new_group_audio_message", locale=reciever_tuser.language).format(
+                    group=group.title,
+                    sender=" ".join((sender.first_name, sender.last_name)),
+                    caption=caption
+                ),
+                parse_mode="html",
+                chat_id=reciever_tuser.id,
+                disable_notification=not notificate
+            )
+
+        return message
+
+    except Exception as err:
+        logger.exception(err)
+
+
+async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: Group, caption: str, photos: list[str], forward_to: CrmUser = None):
+    forward_tuser: User = (await db.ex(dmth.GetOne(User, id=forward_to.user_id))) if forward_to else None
+
+    if not reciever.user_id and not forward_tuser:
+        return logger.warning(f"No user authed -> {reciever.id}:{reciever.login}")
+
+    reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
+    if not reciever_tuser and not forward_tuser:
+        return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
+
+    try:
+        if forward_tuser:
+            album = []
+            for i, photo in enumerate(photos[:10]):
+                caption = i18n.gettext("new_forward_group_photo_message", locale=forward_tuser.language).format(
+                    group=group.title,
+                    sender=" ".join((sender.first_name, sender.last_name)),
+                    caption=caption
+                ) if i == 0 else None
+
+                album.append(InputMediaPhoto(
+                    media=URLInputFile(url=photo),
+                    caption=caption,
+                    parse_mode="html"
+                ))
+
+            message = await bot.send_media_group(
+                media=album,
+                chat_id=forward_tuser.id,
+                disable_notification=True
+            )
+
+        else:
+            time_now = datetime.now(pytz.timezone("Europe/Kiev"))
+            notificate = True
+            if time_now.hour >= reciever_tuser.time[-1] or time_now.hour < reciever_tuser.time[0]:
+                notificate = False
+
+            album = []
+            for i, photo in enumerate(photos[:10]):
+                caption = i18n.gettext("new_group_photo_message", locale=reciever_tuser.language).format(
+                    group=group.title,
+                    sender=" ".join((sender.first_name, sender.last_name)),
+                    caption=caption
+                ) if i == 0 else None
+
+                album.append(InputMediaPhoto(
+                    media=URLInputFile(url=photo),
+                    caption=caption,
+                    parse_mode="html"
+                ))
+
+            message = await bot.send_media_group(
+                media=album,
+                chat_id=reciever_tuser.id,
+                disable_notification=not notificate
+            )
+
+        return message
+
+    except Exception as err:
+        logger.exception(err)

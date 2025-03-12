@@ -1,0 +1,13 @@
+babel
+loguru
+Cython
+aiogram
+aiofiles
+aiomysql
+motor
+bs4
+pydub
+pytz
+bcrypt
+pusher
+aiocryptopay

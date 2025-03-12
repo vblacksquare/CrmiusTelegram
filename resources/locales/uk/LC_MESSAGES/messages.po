@@ -1,0 +1,302 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+#: general
+msgid "click_me_bt"
+msgstr "👉 натисни на мене 👈"
+
+msgid "transition_msg"
+msgstr "Натисни на <b>кнопку нижче</b>, щоб продовжити"
+
+msgid "back_bt"
+msgstr "назад ⬅️"
+
+msgid "back_left_bt"
+msgstr "⬅️ назад"
+
+msgid "skip_bt"
+msgstr "продовжити ➡️"
+
+msgid "suicide_bt"
+msgstr "🗑"
+
+msgid "wrong"
+msgstr "❌"
+
+msgid "right"
+msgstr "✅"
+
+msgid "pin"
+msgstr "📌"
+
+msgid "accept_bt"
+msgstr "Я згоден 👍"
+
+msgid "try_again_bt"
+msgstr "Спробувати знову 🔄"
+
+msgid "left_bt"
+msgstr "⬅️"
+
+msgid "right_bt"
+msgstr "➡️"
+
+msgid "update_bt"
+msgstr "🔄"
+
+msgid "buy_bt"
+msgstr "Купити 💳"
+
+#: main
+msgid "main_msg"
+msgstr "<b>Головне меню 🌠</b>"
+"\nТут будуть надходити сповіщення"
+"\n\nНа даний момент працюють:"
+"\n1. Повідомлення в групах"
+"\n2. Повідомлення в особистих"
+"\n3. Дії в задачах"
+"\n4. Коментарі в задачах"
+
+msgid "language_bt"
+msgstr "Мова 🌐"
+
+msgid "support_bt"
+msgstr "Підтримка 👨‍💻"
+
+msgid "info_bt"
+msgstr "Інформація 📋"
+
+msgid "admin_panel_bt"
+msgstr "Адмін панель 🔒"
+
+msgid "root_portal_bt"
+msgstr "Портал црм"
+
+msgid "dev_portal_bt"
+msgstr "Дев портал црм"
+
+#: admin
+msgid "admin_panel_msg"
+msgstr "<b>Адмін панель 🔒</b>"
+
+#: info
+msgid "info_msg"
+msgstr "<b>Інформація 📋</b>"
+
+#: language
+msgid "language_msg"
+msgstr "Оберіть вашу мову"
+
+msgid "en"
+msgstr "English 🇺🇸"
+
+msgid "uk"
+msgstr "Українська 🇺🇦"
+
+msgid "ru"
+msgstr "Русский"
+
+#: verify
+msgid "verify_msg"
+msgstr "Введіть свої дані акаунта таким чином:"
+"\n<pre>логін пароль</pre>"
+
+msgid "verify_err_msg"
+msgstr "<b>Щось пішло не так 🤨</b>"
+"\n\nСпробуйте ввести свої дані акаунта таким чином:"
+"\n<pre>логін пароль</pre>"
+
+msgid "verify_ok_msg"
+msgstr "Все вдалося, <b>{name}</b> 🎉"
+"\n\nНатисніть кнопку нижче щоб продовжити"
+
+#: callbacks
+msgid "new_chat_message"
+msgstr "🗣 Повідомлення від <b>{sender}</b>"
+"\n\n{text}"
+
+msgid "new_chat_audio_message"
+msgstr "🗣 Голосове від <b>{sender}</b>"
+"\n\n{caption}"
+
+msgid "new_chat_photo_message"
+msgstr "🗣 Фото від <b>{sender}</b>"
+"\n\n{caption}"
+
+msgid "new_forward_chat_message"
+msgstr "🫥 Повідомлення від <b>{sender}</b> для <b>{reciever}</b>"
+"\n\n{text}"
+
+msgid "new_forward_chat_audio_message"
+msgstr "🫥 Голосове від <b>{sender}</b> для <b>{reciever}</b>"
+"\n\n{caption}"
+
+msgid "new_forward_chat_photo_message"
+msgstr "🫥 Фото від <b>{sender}</b> для <b>{reciever}</b>"
+"\n\n{caption}"
+
+msgid "new_group_message"
+msgstr "👥 Повідомлення в <b>групі {group}</b> від <b>{sender}</b>"
+"\n\n{text}"
+
+msgid "new_group_audio_message"
+msgstr "👥 Голосове в <b>групі {group}</b> від <b>{sender}</b>"
+"\n\n{caption}"
+
+msgid "new_group_photo_message"
+msgstr "👥 Фото в <b>групі {group}</b> від <b>{sender}</b>"
+"\n\n{caption}"
+
+msgid "new_forward_group_message"
+msgstr "🫥 Повідомлення в <b>групі {group}</b> від <b>{sender}</b>"
+"\n\n{text}"
+
+msgid "new_forward_group_audio_message"
+msgstr "🫥 Голосове в <b>групі {group}</b> від <b>{sender}</b>"
+"\n\n{caption}"
+
+msgid "new_forward_group_photo_message"
+msgstr "🫥 Фото в <b>групі {group}</b> від <b>{sender}</b>"
+"\n\n{caption}"
+
+msgid "global_bot_message"
+msgstr "<b>⚠️ Оголошення ⚠️</b>"
+"\n{text}"
+
+msgid "no_rights_message"
+msgstr "Вам не вистачає прав для перегляду метаданих цього об'єкта ⚠️"
+
+msgid "err_reply_no_bot_message"
+msgstr "Ви не можете відповісти на це повідомлення. Можливо, воно занадто старе або не є повідомленням з црм"
+
+msgid "err_reply_no_crm_message"
+msgstr "Ви не можете відповісти на це повідомлення. Швидше за все, воно занадто старе"
+
+msgid "err_reply_no_type_message"
+msgstr "Ви не можете відповісти на це повідомлення. Такий тип \"{type}\" не підтримується"
+
+msgid "err_reply_no_user_message"
+msgstr "Ви не можете відповісти на це повідомлення. Ваш акаунт не прив'язаний до црм"
+
+msgid "ok_chat_reply_message"
+msgstr "Ваше повідомлення було відправлено в особисті <b>{name}</b>"
+
+msgid "ok_group_reply_message"
+msgstr "Ваше повідомлення було відправлено в групу <b>{name}</b>"
+
+msgid "err_reply_message"
+msgstr "Сталася помилка під час відправлення повідомлення"
+
+msgid "kick_bt"
+msgstr "Вдарити 🦵"
+
+msgid "global_bt"
+msgstr "Оголошення ⚠️"
+
+msgid "write_bt"
+msgstr "Написати 📞"
+
+msgid "write_msg"
+msgstr "<b>Написати повідомлення 📞</b>"
+"\nОберіть спосіб відправлення"
+
+msgid "global_msg"
+msgstr "<b>Оголошення ⚠️</b>"
+"\nНапишіть повідомлення, яке хочете відправити всім користувачам у црм"
+
+msgid "ok_global_msg"
+msgstr "<b>Оголошення ⚠️</b>"
+"\nПовідомлення відправлено"
+
+msgid "err_global_msg"
+msgstr "<b>Оголошення ⚠️</b>"
+"\nНе вдалося відправити повідомлення"
+
+msgid "kick_msg"
+msgstr "<b>Вдарити 🦵</b>"
+"\nОберіть, кого хочете вдарити"
+"\n\nВдарені користувачі отримають повідомлення в црм: вас вдарив <b>{name}</b>"
+
+msgid "kick_text"
+msgstr "Вас вдарив <b>{name}</b>"
+
+msgid "plan_bt"
+msgstr "План 📝"
+
+msgid "plan_msg"
+msgstr "<b>План 📝</b>"
+"\nВідправитися через <code>{hours}</code> годин"
+"\nПовідомлення: <pre>{message}</pre>"
+
+msgid "ok_plan_msg"
+msgstr "<b>План 📝</b>"
+"\nНовий план збережено"
+
+msgid "err_plan_msg"
+msgstr "<b>План 📝</b>"
+"\nВи ввели план неправильно"
+
+msgid "new_task_notification"
+msgstr "🏗 <b>{sender}</b> {notification_type} у задачі <a href='{task_link}'>{task_name}</a>"
+"\n\n{attachment}"
+
+msgid "not_task_new_comment"
+msgstr "додав коментар"
+
+msgid "not_task_new_attachment"
+msgstr "завантажив новий файл"
+
+msgid "not_task_added_you_as_follower"
+msgstr "додав вас як спостерігача"
+
+msgid "not_task_added_someone_as_follower"
+msgstr "додав спостерігача"
+
+msgid "not_task_added_himself_as_follower"
+msgstr "додав себе як спостерігача"
+
+msgid "not_task_assigned_to_you"
+msgstr "призначили вас відповідальним"
+
+msgid "not_task_assigned_someone"
+msgstr "додав відповідального"
+
+msgid "users_bt"
+msgstr "Користувачі 👥"
+
+msgid "user"
+msgstr " "
+
+msgid "admin"
+msgstr "Адмін"
+
+msgid "top_admin"
+msgstr "Адмін+"
+
+msgid "users_msg"
+msgstr "<b>Користувачі 👥</b>"
+"\nСписок црм користувачів"
+
+msgid "all_users_bt"
+msgstr "всім користувачам"
+
+msgid "only_group_bt"
+msgstr "тільки {name}"
+
+#: v1
+
+msgid "time_bt"
+msgstr "Робочий час ⌛️"
+
+msgid "time_msg"
+msgstr "<b>Робочий час ⌛️</b>"
+"\nОберіть проміжок часу, в який ви будете отримувати сповіщення про нові повідомлення за <b>Київським</b> часовим поясом"
+"\n\nЧас у Києві зараз: <i>{now}</i>"
+
+msgid "time_format_bt"
+msgstr "з {left} до {right} годин"
+
+#: v2
+
+msgid "in_app_bt"
+msgstr "Відкрити в телеграм"
