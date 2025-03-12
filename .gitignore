@@ -5,7 +5,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-resources/audios/
+resources/audios/*
+!resources/audios/blank.mp3
 
 # C extensions
 *.so
