@@ -20,12 +20,12 @@ from dtypes.db import method as dmth
 from dtypes.settings import Settings
 from dtypes.user import User, CrmUser
 from dtypes.group import Group
-from dtypes.message import ChatMessage, GroupMessage, BotMessage
+from dtypes.message import ChatMessage, GroupMessage
 from dtypes.task import Task
 
 from utils.singleton import SingletonMeta
 
-from config import AUDIOS_DIR, GRUPO_BOT, GRUPO_DEV
+from config import AUDIOS_DIR, GRUPO_BOT
 
 
 semaphore = asyncio.Semaphore(8)

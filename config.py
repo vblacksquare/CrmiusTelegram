@@ -7,52 +7,44 @@ COMMANDS = ["/start"]
 
 LANGUAGES = ["ru", "uk"]
 DEFAULT_LANGUAGE = LANGUAGES[0]
+BOT_TOKEN = os.getenv("telegram_token")
 
 
-BOT_TOKEN = "7555915267:AAEwr4VCqpWNeDIJml65xFvx63OODxnVghc"
-BOT_USERNAME = "crmius_bot"
+# main db
+MONGODB_URI = os.getenv("mongo_uri")
+MONGODB_NAME = os.getenv("mongo_name", default="CrmiusBot")
 
-
-TEST_USER = 885554630
-
-
-ROLE_INDEX = {
-    "top_admin": 2,
-    "admin": 1,
-    "user": 0
-}
-
-
-# db
-MONGODB_URI = "mongodb://root:7c8ef10155504bffb8df21044034a79a@46.175.150.63:27017"
-MONGODB_NAME = "CrmiusBot"
-
-
-link = "mongodb://dmarket:q2230f9j230f9j@46.175.150.63:27017"
 
 # crm db
-CRM_HOST = "185.253.219.177"
-CRM_PORT = 3306
-CRM_USER = "innova_crm"
-CRM_PASS = "CRM235689"
-CRM_NAME = "innova_crm"
+CRM_HOST = os.getenv("crm_db_host", default="127.0.0.1")
+CRM_PORT = os.getenv("crm_db_port", default=3306)
+CRM_USER = os.getenv("crm_db_user", default="crm")
+CRM_PASS = os.getenv("crm_db_pass")
+CRM_NAME = os.getenv("crm_db_name", default="crm")
 
-CHAT_CRM_HOST = "213.136.88.71"
-CHAT_CRM_PORT = 3306
-CHAT_CRM_USER = "innova_chat"
-CHAT_CRM_PASS = "chat235689"
-CHAT_CRM_NAME = "innova_chat"
+
+# crm chat db
+CHAT_CRM_HOST = os.getenv("chat_db_host", default="127.0.0.1")
+CHAT_CRM_PORT = os.getenv("chat_db_port", default=3306)
+CHAT_CRM_USER = os.getenv("chat_db_user", default="chat")
+CHAT_CRM_PASS = os.getenv("chat_db_pass")
+CHAT_CRM_NAME = os.getenv("chat_db_name", default="chat")
+
+
+# hosts
+crm_host = os.getenv("crm_host")
+dev_crm_host = os.getenv("dev_crm_host")
+
 
 # grupochat api
-GRUPO_TOKEN = "JXeGxvoDc8CVq0"
-GRUPO_ENDPOINT = "https://innova.crmius.com/chat/api_request/"
-GRUPO_BOT = "robot@crmius.com"
-GRUPO_DEV = "minka@mmix.ua"
+GRUPO_TOKEN = os.getenv("grupochat_token")
+GRUPO_ENDPOINT = f"https://{crm_host}/chat/api_request/"
+GRUPO_BOT = os.getenv("grupochat_robot", default="robot@crmius.com")
 
 
 # crm links
-ROOT_PORTAL = "https://innova.crmius.com/admin/authentication?l={login}&p={password}"
-DEV_PORTAL = "https://developer.crmius.com/admin/authentication?l={login}&p={password}"
+ROOT_PORTAL = f"https://{crm_host}/admin/authentication?l={{login}}&p={{password}}"
+DEV_PORTAL = f"https://{dev_crm_host}/admin/authentication?l={{login}}&p={{password}}"
 
 
 # logs
