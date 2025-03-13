@@ -24,6 +24,6 @@ jobs:
             git pull origin main
             cd ..
             docker compose down
-            docker volume rm bots-crmiustelegram
+            docker volume rm bots_crmiustelegram
             docker compose up -d --build crmiustelegram
           EOF
