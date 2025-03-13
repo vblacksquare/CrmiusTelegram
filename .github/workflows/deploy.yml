@@ -10,23 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Info
-        run: |
-          echo "Trying to deploy to: ${{ secrets.SSH_HOST }}"
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
 
-      - name: CONFIGURATION
+      - name: Deploy with Password
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-
-      - name: DEPLOY
-        run: |
-          ssh root@${{ secrets.SSH_HOST }} <<EOF
+          sshpass -p "${{ secrets.SSH_PASS }}" ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} <<EOF
             cd ./CrmiusTelegram
             git pull origin main
             cd ..
