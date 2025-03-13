@@ -23,7 +23,6 @@ jobs:
             git reset --hard
             git pull origin main
             cd ..
-            docker compose down
-            docker volume rm bots_crmiustelegram
+            docker compose down --volumes crmiustelegram
             docker compose up -d --build crmiustelegram
           EOF
