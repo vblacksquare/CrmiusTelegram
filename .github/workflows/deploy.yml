@@ -23,6 +23,6 @@ jobs:
             git reset --hard
             git pull origin main
             cd ..
-            docker compose down
-            docker compose up -d --build crmiustelegram
+            docker compose build --no-cache crmiustelegram
+            docker compose up -d --force-recreate crmiustelegram
           EOF
