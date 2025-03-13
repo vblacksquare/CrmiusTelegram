@@ -13,10 +13,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install sshpass
+      - name: Install
         run: sudo apt-get install -y sshpass
 
-      - name: Deploy with Password
+      - name: Deploy
         run: |
           sshpass -p "${{ secrets.SSH_PASS }}" ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} <<EOF
             cd ./CrmiusTelegram
