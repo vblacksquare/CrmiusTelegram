@@ -81,15 +81,13 @@ async def main_menu(callback: CallbackQuery = None, state: FSMContext = None, us
     )
 
     if user_message:
-        await user_message.answer(
-            text=_("main_msg"),
-            reply_markup=keyboard.as_markup(),
-            parse_mode="HTML",
-        )
+        func = user_message.answer
 
     else:
-        await callback.message.edit_text(
-            text=_("main_msg"),
-            reply_markup=keyboard.as_markup(),
-            parse_mode="HTML",
-        )
+        func = callback.message.edit_text
+
+    await func(
+        text=_("main_msg")+"qwerty",
+        reply_markup=keyboard.as_markup(),
+        parse_mode="HTML",
+    )
