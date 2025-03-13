@@ -87,7 +87,7 @@ async def main_menu(callback: CallbackQuery = None, state: FSMContext = None, us
         func = callback.message.edit_text
 
     await func(
-        text=_("main_msg")+"qwerty",
+        text=_("main_msg"),
         reply_markup=keyboard.as_markup(),
         parse_mode="HTML",
     )
