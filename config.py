@@ -25,7 +25,7 @@ CRM_NAME = os.getenv("crm_db_name", default="crm")
 
 # crm chat db
 CHAT_CRM_HOST = os.getenv("chat_db_host", default="127.0.0.1")
-CHAT_CRM_PORT = inr(os.getenv("chat_db_port", default=3306))
+CHAT_CRM_PORT = int(os.getenv("chat_db_port", default=3306))
 CHAT_CRM_USER = os.getenv("chat_db_user", default="chat")
 CHAT_CRM_PASS = os.getenv("chat_db_pass")
 CHAT_CRM_NAME = os.getenv("chat_db_name", default="chat")
