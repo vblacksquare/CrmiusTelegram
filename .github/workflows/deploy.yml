@@ -20,6 +20,7 @@ jobs:
         run: |
           sshpass -p "${{ secrets.SSH_PASS }}" ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} <<EOF
             cd ./bots/CrmiusTelegram
+            git reset --hard
             git pull origin main
             cd ..
             docker compose up -d --build crmiustelegram
