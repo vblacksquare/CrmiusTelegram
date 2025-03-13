@@ -37,9 +37,9 @@ dev_crm_host = os.getenv("dev_crm_host")
 
 
 # grupochat api
-GRUPO_TOKEN = os.getenv("grupochat_token")
+GRUPO_TOKEN = os.getenv("chat_token")
 GRUPO_ENDPOINT = f"https://{crm_host}/chat/api_request/"
-GRUPO_BOT = os.getenv("grupochat_robot", default="robot@crmius.com")
+GRUPO_BOT = os.getenv("chat_robot", default="robot@crmius.com")
 
 
 # crm links
