@@ -6,5 +6,3 @@ class MainState(StatesGroup):
     verify = State()
     globale = State()
     plan = State()
-
-    temp_message_id: str
