@@ -49,7 +49,7 @@ async def generate_keyboard(
     keyboard = InlineKeyboardBuilder()
     keyboard.row(
         InlineKeyboardButton(
-            text=i18n.gettext("in_app_bt", locale=tuser),
+            text=i18n.gettext("in_app_bt", locale=tuser.language),
             web_app=WebAppInfo(url=app_redirect_link)
         )
     )
