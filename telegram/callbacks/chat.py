@@ -42,7 +42,7 @@ async def generate_keyboard(
     forward_to: CrmUser
 ):
 
-    app_redirect_link = generate_app_link(sender, reciever, forward_to)
+    app_redirect_link = await generate_app_link(sender, reciever, forward_to)
 
     tuser = forward_tuser if forward_tuser else reciever_tuser
 

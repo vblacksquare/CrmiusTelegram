@@ -42,7 +42,7 @@ async def generate_keyboard(
     task: Task
 ):
 
-    app_redirect_link = generate_app_link(reciever, task)
+    app_redirect_link = await generate_app_link(reciever, task)
 
     tuser = reciever_tuser
 
