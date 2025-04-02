@@ -82,7 +82,7 @@ async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, 
                 chat_id=forward_tuser.id,
                 link_preview_options=LinkPreviewOptions(is_disabled=False),
                 disable_notification=True,
-                keyboard=keyboard.as_markup()
+                reply_markup=keyboard.as_markup()
             )
 
         else:
@@ -101,7 +101,7 @@ async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, 
                 chat_id=reciever_tuser.id,
                 link_preview_options=LinkPreviewOptions(is_disabled=False),
                 disable_notification=not notificate,
-                keyboard=keyboard.as_markup()
+                reply_markup=keyboard.as_markup()
             )
 
         return message
@@ -134,7 +134,7 @@ async def __new_group_audio_message(sender: CrmUser, reciever: CrmUser, group: G
                 parse_mode="html",
                 chat_id=forward_tuser.id,
                 disable_notification=True,
-                keyboard=keyboard.as_markup()
+                reply_markup=keyboard.as_markup()
             )
 
         else:
@@ -153,7 +153,7 @@ async def __new_group_audio_message(sender: CrmUser, reciever: CrmUser, group: G
                 parse_mode="html",
                 chat_id=reciever_tuser.id,
                 disable_notification=not notificate,
-                keyboard=keyboard.as_markup()
+                reply_markup=keyboard.as_markup()
             )
 
         return message
@@ -194,7 +194,7 @@ async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: G
                 media=album,
                 chat_id=forward_tuser.id,
                 disable_notification=True,
-                keyboard=keyboard.as_markup()
+                reply_markup=keyboard.as_markup()
             )
 
         else:
@@ -221,7 +221,7 @@ async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: G
                 media=album,
                 chat_id=reciever_tuser.id,
                 disable_notification=not notificate,
-                keyboard=keyboard.as_markup()
+                reply_markup=keyboard.as_markup()
             )
 
         return message
