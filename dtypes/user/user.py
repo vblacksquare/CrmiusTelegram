@@ -59,6 +59,10 @@ class CrmUser(DatabaseItem):
         self.fields = ["id", "login", "password", "first_name", "last_name", "image", "user_id", "not_hashed_password", "chat_id"]
 
     @property
+    def username(self):
+        return self.login.split("@")[0]
+
+    @property
     def fullname(self):
         return " ".join((self.first_name, self.last_name))
 

@@ -4,7 +4,8 @@ from datetime import datetime
 
 from loguru import logger
 
-from aiogram.types import LinkPreviewOptions, URLInputFile, FSInputFile, InputMediaPhoto
+from aiogram.types import LinkPreviewOptions, URLInputFile, FSInputFile, InputMediaPhoto, WebAppInfo
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
 from ..telegram import bot, i18n
 
@@ -26,6 +27,16 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
+    task_link = f"https://innova.crmius.com/chat/{sender.username}/chat/"
+
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(
+        InlineKeyboardButton(
+            text=i18n.gettext("go_to_chat", locale=forward_tuser.language),
+            web_app=WebAppInfo(url=task_link)
+        )
+    )
+
     try:
         if forward_tuser:
             message = await bot.send_message(
@@ -37,7 +48,8 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
                 parse_mode="html",
                 chat_id=forward_tuser.id,
                 link_preview_options=LinkPreviewOptions(is_disabled=False),
-                disable_notification=True
+                disable_notification=True,
+                reply_markup=keyboard.as_markup()
             )
 
         else:
@@ -55,7 +67,8 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
                 parse_mode="html",
                 chat_id=reciever_tuser.id,
                 link_preview_options=LinkPreviewOptions(is_disabled=False),
-                disable_notification=not notificate
+                disable_notification=not notificate,
+                reply_markup=keyboard.as_markup()
             )
 
         return message
