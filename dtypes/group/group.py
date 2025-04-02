@@ -7,14 +7,16 @@ class Group(DatabaseItem):
         self,
         id: str,
         title: str,
+        slug: str,
         participants: list[str] = None
     ):
 
         self.id = id
         self.title = title
+        self.slug = slug
         self.participants = participants if participants else []
 
-        self.fields = ["id", "title", "participants"]
+        self.fields = ["id", "title", "slug", "participants"]
 
     @property
     def presence(self):

@@ -282,12 +282,9 @@ class CrmDb(metaclass=SingletonMeta):
 
         try:
             await cur.execute("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'")
-            await cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'gr_groups'")
-            raw_groups = await cur.fetchall()
-            print(raw_groups)
 
             await cur.execute("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'")
-            await cur.execute("SELECT group_id, name FROM gr_groups")
+            await cur.execute("SELECT group_id, name, slug FROM gr_groups")
             raw_groups = await cur.fetchall()
 
             groups = {}
