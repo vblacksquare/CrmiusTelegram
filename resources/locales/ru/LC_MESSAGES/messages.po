@@ -238,7 +238,7 @@ msgstr "<b>План 📝</b>"
 "\nВы ввели план неправильно"
 
 msgid "new_task_notification"
-msgstr "🏗 <b>{sender}</b> {notification_type} в задаче <a href='{task_link}'>{task_name}</a>"
+msgstr "🏗 <b>{sender}</b> {notification_type} в задаче <b>{task_name}</b>"
 "\n\n{attachment}"
 
 msgid "not_task_new_comment"

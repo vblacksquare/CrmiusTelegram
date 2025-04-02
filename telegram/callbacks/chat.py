@@ -14,10 +14,47 @@ from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User, CrmUser
 
-from config import ROOT_PORTAL_REDIRECT_URL, USER_CHAT_URL
+from config import PORTAL_REDIRECT_URL, USER_CHAT_URL
 
 
 db = Db()
+
+
+async def generate_app_link(
+    sender: CrmUser,
+    reciever: CrmUser,
+    forward_to: CrmUser
+) -> str:
+
+    resource_link = USER_CHAT_URL.format(username=sender.username)
+    resource_link = urllib.parse.quote_plus(resource_link)
+    reciever_user = forward_to if forward_to else reciever
+    login = urllib.parse.quote_plus(reciever_user.login)
+    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
+    return PORTAL_REDIRECT_URL.format(login=login, password=password, redirect=resource_link)
+
+
+async def generate_keyboard(
+    reciever_tuser: User,
+    forward_tuser: User,
+    sender: CrmUser,
+    reciever: CrmUser,
+    forward_to: CrmUser
+):
+
+    app_redirect_link = generate_app_link(sender, reciever, forward_to)
+
+    tuser = forward_tuser if forward_tuser else reciever_tuser
+
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(
+        InlineKeyboardButton(
+            text=i18n.gettext("in_app_bt", locale=tuser),
+            web_app=WebAppInfo(url=app_redirect_link)
+        )
+    )
+
+    return keyboard
 
 
 async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forward_to: CrmUser = None):
@@ -30,25 +67,10 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    resource_link = USER_CHAT_URL.format(username=sender.username)
-
-    resource_link = urllib.parse.quote_plus(resource_link)
-    reciever_user = forward_to if forward_to else reciever
-    login = urllib.parse.quote_plus(reciever_user.login)
-    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
-
-    app_redirect_link = ROOT_PORTAL_REDIRECT_URL.format(login=login, password=password, redirect=resource_link)
+    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, sender, reciever, forward_to)
 
     try:
         if forward_tuser:
-            keyboard = InlineKeyboardBuilder()
-            keyboard.row(
-                InlineKeyboardButton(
-                    text=i18n.gettext("in_app_bt", locale=forward_tuser.language),
-                    web_app=WebAppInfo(url=app_redirect_link)
-                )
-            )
-
             message = await bot.send_message(
                 text=i18n.gettext("new_forward_chat_message", locale=forward_tuser.language).format(
                     sender=" ".join((sender.first_name, sender.last_name)),
@@ -63,15 +85,6 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
             )
 
         else:
-
-            keyboard = InlineKeyboardBuilder()
-            keyboard.row(
-                InlineKeyboardButton(
-                    text=i18n.gettext("in_app_bt", locale=reciever_tuser.language),
-                    web_app=WebAppInfo(url=app_redirect_link)
-                )
-            )
-
             time_now = datetime.now(pytz.timezone("Europe/Kiev"))
             notificate = True
             if time_now.hour >= reciever_tuser.time[-1] or time_now.hour < reciever_tuser.time[0]:
@@ -105,6 +118,8 @@ async def __new_chat_audio_message(sender: CrmUser, reciever: CrmUser, caption: 
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
+    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, sender, reciever, forward_to)
+
     try:
         if forward_tuser:
             message = await bot.send_voice(
@@ -116,7 +131,8 @@ async def __new_chat_audio_message(sender: CrmUser, reciever: CrmUser, caption: 
                 ),
                 parse_mode="html",
                 chat_id=forward_tuser.id,
-                disable_notification=True
+                disable_notification=True,
+                reply_markup=keyboard.as_markup()
             )
 
         else:
@@ -133,7 +149,8 @@ async def __new_chat_audio_message(sender: CrmUser, reciever: CrmUser, caption: 
                 ),
                 parse_mode="html",
                 chat_id=reciever_tuser.id,
-                disable_notification=not notificate
+                disable_notification=not notificate,
+                reply_markup=keyboard.as_markup()
             )
 
         return message
@@ -151,6 +168,8 @@ async def __new_chat_photo_message(sender: CrmUser, reciever: CrmUser, caption: 
     reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
+
+    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, sender, reciever, forward_to)
 
     try:
 
@@ -172,7 +191,8 @@ async def __new_chat_photo_message(sender: CrmUser, reciever: CrmUser, caption: 
             message = await bot.send_media_group(
                 media=album,
                 chat_id=forward_tuser.id,
-                disable_notification=True
+                disable_notification=True,
+                reply_markup=keyboard.as_markup()
             )
 
         else:
@@ -197,7 +217,8 @@ async def __new_chat_photo_message(sender: CrmUser, reciever: CrmUser, caption: 
             message = await bot.send_media_group(
                 media=album,
                 chat_id=reciever_tuser.id,
-                disable_notification=not notificate
+                disable_notification=not notificate,
+                reply_markup=keyboard.as_markup()
             )
 
         return message
