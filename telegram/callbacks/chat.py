@@ -29,16 +29,17 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
 
     task_link = f"https://innova.crmius.com/chat/{sender.username}/chat/"
 
-    keyboard = InlineKeyboardBuilder()
-    keyboard.row(
-        InlineKeyboardButton(
-            text=i18n.gettext("in_app_bt", locale=forward_tuser.language),
-            web_app=WebAppInfo(url=task_link)
-        )
-    )
-
     try:
         if forward_tuser:
+
+            keyboard = InlineKeyboardBuilder()
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=i18n.gettext("in_app_bt", locale=forward_tuser.language),
+                    web_app=WebAppInfo(url=task_link)
+                )
+            )
+
             message = await bot.send_message(
                 text=i18n.gettext("new_forward_chat_message", locale=forward_tuser.language).format(
                     sender=" ".join((sender.first_name, sender.last_name)),
@@ -53,6 +54,14 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
             )
 
         else:
+
+            keyboard = InlineKeyboardBuilder()
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=i18n.gettext("in_app_bt", locale=reciever_tuser.language),
+                    web_app=WebAppInfo(url=task_link)
+                )
+            )
 
             time_now = datetime.now(pytz.timezone("Europe/Kiev"))
             notificate = True
