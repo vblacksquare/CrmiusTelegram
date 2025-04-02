@@ -28,7 +28,7 @@ async def generate_app_link(
     task: Task
 ) -> str:
 
-    resource_link = TASK_URL.format(username=task.id)
+    resource_link = TASK_URL.format(task_id=task.id)
     resource_link = urllib.parse.quote_plus(resource_link)
     reciever_user = reciever
     login = urllib.parse.quote_plus(reciever_user.login)
