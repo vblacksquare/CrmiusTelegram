@@ -32,7 +32,7 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
     keyboard = InlineKeyboardBuilder()
     keyboard.row(
         InlineKeyboardButton(
-            text=i18n.gettext("go_to_chat", locale=forward_tuser.language),
+            text=i18n.gettext("in_app_bt", locale=forward_tuser.language),
             web_app=WebAppInfo(url=task_link)
         )
     )
