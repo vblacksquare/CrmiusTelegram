@@ -29,6 +29,7 @@ async def generate_app_link(
 ) -> str:
 
     resource_link = GROUP_CHAT_URL.format(name=group.slug)
+    logger.info(resource_link)
     resource_link = urllib.parse.quote_plus(resource_link)
     reciever_user = forward_to if forward_to else reciever
     login = urllib.parse.quote_plus(reciever_user.login)
