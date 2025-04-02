@@ -7,6 +7,7 @@ from loguru import logger
 
 from aiogram.types import LinkPreviewOptions, URLInputFile, FSInputFile, InputMediaPhoto, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
+
 from ..telegram import bot, i18n
 
 from db import Db
