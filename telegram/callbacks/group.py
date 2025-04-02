@@ -1,10 +1,12 @@
 
+import urllib.parse
 import pytz
 from datetime import datetime
 
 from loguru import logger
 
-from aiogram.types import LinkPreviewOptions, URLInputFile, FSInputFile, InputMediaPhoto
+from aiogram.types import LinkPreviewOptions, URLInputFile, FSInputFile, InputMediaPhoto, WebAppInfo
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from ..telegram import bot, i18n
 
 from db import Db
@@ -13,7 +15,47 @@ from dtypes.user import User, CrmUser
 from dtypes.group import Group
 
 
+from config import GROUP_CHAT_URL, PORTAL_REDIRECT_URL
+
+
 db = Db()
+
+
+async def generate_app_link(
+    reciever: CrmUser,
+    forward_to: CrmUser,
+    group: Group,
+) -> str:
+
+    resource_link = GROUP_CHAT_URL.format(name=group.id)
+    resource_link = urllib.parse.quote_plus(resource_link)
+    reciever_user = forward_to if forward_to else reciever
+    login = urllib.parse.quote_plus(reciever_user.login)
+    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
+    return PORTAL_REDIRECT_URL.format(login=login, password=password, redirect=resource_link)
+
+
+async def generate_keyboard(
+    reciever_tuser: User,
+    forward_tuser: User,
+    reciever: CrmUser,
+    forward_to: CrmUser,
+    group: Group
+):
+
+    app_redirect_link = await generate_app_link(reciever, forward_to, group)
+
+    tuser = forward_tuser if forward_tuser else reciever_tuser
+
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(
+        InlineKeyboardButton(
+            text=i18n.gettext("in_app_bt", locale=tuser.language),
+            web_app=WebAppInfo(url=app_redirect_link)
+        )
+    )
+
+    return keyboard
 
 
 async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, text: str, forward_to: CrmUser = None):
@@ -26,6 +68,8 @@ async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, 
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
+    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, reciever, group)
+
     try:
         if forward_tuser:
             message = await bot.send_message(
@@ -37,7 +81,8 @@ async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, 
                 parse_mode="html",
                 chat_id=forward_tuser.id,
                 link_preview_options=LinkPreviewOptions(is_disabled=False),
-                disable_notification=True
+                disable_notification=True,
+                keyboard=keyboard.as_markup()
             )
 
         else:
@@ -55,7 +100,8 @@ async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, 
                 parse_mode="html",
                 chat_id=reciever_tuser.id,
                 link_preview_options=LinkPreviewOptions(is_disabled=False),
-                disable_notification=not notificate
+                disable_notification=not notificate,
+                keyboard=keyboard.as_markup()
             )
 
         return message
@@ -74,6 +120,8 @@ async def __new_group_audio_message(sender: CrmUser, reciever: CrmUser, group: G
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
+    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, reciever, group)
+
     try:
         if forward_tuser:
             message = await bot.send_voice(
@@ -85,7 +133,8 @@ async def __new_group_audio_message(sender: CrmUser, reciever: CrmUser, group: G
                 ),
                 parse_mode="html",
                 chat_id=forward_tuser.id,
-                disable_notification=True
+                disable_notification=True,
+                keyboard=keyboard.as_markup()
             )
 
         else:
@@ -103,7 +152,8 @@ async def __new_group_audio_message(sender: CrmUser, reciever: CrmUser, group: G
                 ),
                 parse_mode="html",
                 chat_id=reciever_tuser.id,
-                disable_notification=not notificate
+                disable_notification=not notificate,
+                keyboard=keyboard.as_markup()
             )
 
         return message
@@ -121,6 +171,8 @@ async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: G
     reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
+
+    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, reciever, group)
 
     try:
         if forward_tuser:
@@ -141,7 +193,8 @@ async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: G
             message = await bot.send_media_group(
                 media=album,
                 chat_id=forward_tuser.id,
-                disable_notification=True
+                disable_notification=True,
+                keyboard=keyboard.as_markup()
             )
 
         else:
@@ -167,7 +220,8 @@ async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: G
             message = await bot.send_media_group(
                 media=album,
                 chat_id=reciever_tuser.id,
-                disable_notification=not notificate
+                disable_notification=not notificate,
+                keyboard=keyboard.as_markup()
             )
 
         return message
