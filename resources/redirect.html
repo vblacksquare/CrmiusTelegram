@@ -1,0 +1,19 @@
+<html>
+
+<script>
+const url = new URL(document.location.href);
+const params = url.searchParams;
+
+const login = params.get("l");
+const password = params.get("p");
+const redirect_to = params.get("r")
+
+if (redirect_to !== null){
+    document.cookie = `force_redirect=${redirect_to}; 1; path=/`;
+}
+
+window.location.href = `/admin/authentication?l=${login}&p=${password}`
+
+</script>
+
+</html>

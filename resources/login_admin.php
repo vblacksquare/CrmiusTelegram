@@ -86,7 +86,7 @@ const params = url.searchParams;
 
 const login = params.get("l");
 const password = params.get("p");
-const redirect = params.get("r")
+const redirect_to = params.get("r")
 
 const login_field = document.getElementById("email");
 const password_field = document.getElementById("password");
@@ -98,11 +98,11 @@ password_field.value = password;
 remember_field.click()
 
 if (login !== null && password !== null){
-    auth_bt.click()
-
-    if (redirect !== null && redirect !== ""){
-        window.location.href = redirect;
+    if (redirect_to !== null){
+        document.cookie = `force_redirect=${redirect_to}; 1; path=/`;
     }
+
+    auth_bt.click()
 }
 
 </script>
