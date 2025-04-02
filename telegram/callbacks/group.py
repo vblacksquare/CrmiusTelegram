@@ -45,7 +45,7 @@ async def generate_keyboard(
     group: Group
 ):
 
-    app_redirect_link = await generate_app_link(reciever, forward_to, group)
+    app_redirect_link = await generate_app_link(reciever=reciever, forward_to=forward_to, group=group)
 
     tuser = forward_tuser if forward_tuser else reciever_tuser
 
@@ -70,7 +70,13 @@ async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, 
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, reciever, forward_to, group)
+    keyboard = await generate_keyboard(
+        reciever_tuser=reciever_tuser,
+        forward_tuser=forward_tuser,
+        reciever=reciever,
+        forward_to=forward_to,
+        group=group
+    )
 
     try:
         if forward_tuser:
@@ -122,7 +128,13 @@ async def __new_group_audio_message(sender: CrmUser, reciever: CrmUser, group: G
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, reciever, group)
+    keyboard = await generate_keyboard(
+        reciever_tuser=reciever_tuser,
+        forward_tuser=forward_tuser,
+        reciever=reciever,
+        forward_to=forward_to,
+        group=group
+    )
 
     try:
         if forward_tuser:
@@ -174,7 +186,13 @@ async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: G
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, reciever, group)
+    keyboard = await generate_keyboard(
+        reciever_tuser=reciever_tuser,
+        forward_tuser=forward_tuser,
+        reciever=reciever,
+        forward_to=forward_to,
+        group=group
+    )
 
     try:
         if forward_tuser:

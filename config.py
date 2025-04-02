@@ -45,7 +45,7 @@ GRUPO_BOT = os.getenv("chat_robot", default="robot@crmius.com")
 
 # crm links
 ROOT_PORTAL_URL = f"https://{crm_host}/admin/authentication?l={{login}}&p={{password}}"
-PORTAL_REDIRECT_URL = f"https://{crm_host}/redirect.html?l={{login}}&p={{password}}&r={{redirect}}"
+PORTAL_REDIRECT_URL = f"https://{crm_host}/redirect_v1.html?l={{login}}&p={{password}}&r={{redirect}}"
 
 USER_CHAT_URL = f"https://innova.crmius.com/chat/{{username}}/chat/"
 GROUP_CHAT_URL = f"https://innova.crmius.com/chat/{{name}}/"

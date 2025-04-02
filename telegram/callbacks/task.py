@@ -42,7 +42,7 @@ async def generate_keyboard(
     task: Task
 ):
 
-    app_redirect_link = await generate_app_link(reciever, task)
+    app_redirect_link = await generate_app_link(reciever=reciever, task=task)
 
     tuser = reciever_tuser
 
@@ -70,7 +70,11 @@ async def __new_task_notification(sender: CrmUser, reciever: CrmUser, task: Task
     if time_now.hour >= reciever_tuser.time[-1] or time_now.hour < reciever_tuser.time[0]:
         notificate = False
 
-    keyboard = await generate_keyboard(reciever_tuser, reciever, task)
+    keyboard = await generate_keyboard(
+        reciever_tuser=reciever_tuser,
+        reciever=reciever,
+        task=task
+    )
 
     try:
         attachment = ""

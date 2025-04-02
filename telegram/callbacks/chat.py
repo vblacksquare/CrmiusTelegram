@@ -42,7 +42,7 @@ async def generate_keyboard(
     forward_to: CrmUser
 ):
 
-    app_redirect_link = await generate_app_link(sender, reciever, forward_to)
+    app_redirect_link = await generate_app_link(sender=sender, reciever=reciever, forward_to=forward_to)
 
     tuser = forward_tuser if forward_tuser else reciever_tuser
 
@@ -67,7 +67,13 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, sender, reciever, forward_to)
+    keyboard = await generate_keyboard(
+        reciever_tuser=reciever_tuser,
+        forward_tuser=forward_tuser,
+        sender=sender,
+        reciever=reciever,
+        forward_to=forward_to
+    )
 
     try:
         if forward_tuser:
@@ -118,7 +124,13 @@ async def __new_chat_audio_message(sender: CrmUser, reciever: CrmUser, caption: 
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, sender, reciever, forward_to)
+    keyboard = await generate_keyboard(
+        reciever_tuser=reciever_tuser,
+        forward_tuser=forward_tuser,
+        sender=sender,
+        reciever=reciever,
+        forward_to=forward_to
+    )
 
     try:
         if forward_tuser:
@@ -169,7 +181,13 @@ async def __new_chat_photo_message(sender: CrmUser, reciever: CrmUser, caption: 
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, sender, reciever, forward_to)
+    keyboard = await generate_keyboard(
+        reciever_tuser=reciever_tuser,
+        forward_tuser=forward_tuser,
+        sender=sender,
+        reciever=reciever,
+        forward_to=forward_to
+    )
 
     try:
 
