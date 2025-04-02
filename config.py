@@ -45,6 +45,7 @@ GRUPO_BOT = os.getenv("chat_robot", default="robot@crmius.com")
 
 # crm links
 ROOT_PORTAL = f"https://{crm_host}/admin/authentication?l={{login}}&p={{password}}"
+ROOT_PORTAL_REDIRECT = f"https://{crm_host}/admin/authentication?l={{login}}&p={{password}}$r={{redirect}}"
 DEV_PORTAL = f"https://{dev_crm_host}/admin/authentication?l={{login}}&p={{password}}"
 
 

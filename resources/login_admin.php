@@ -99,6 +99,10 @@ remember_field.click()
 
 if (login !== null && password !== null){
     auth_bt.click()
+
+    if (redirect !== null && redirect !== ""){
+        window.location.href = redirect;
+    }
 }
 
 </script>

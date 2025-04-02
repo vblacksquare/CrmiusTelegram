@@ -1,4 +1,5 @@
 
+import urllib.parse
 import pytz
 from datetime import datetime
 
@@ -12,6 +13,8 @@ from ..telegram import bot, i18n
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User, CrmUser
+
+from config import ROOT_PORTAL_REDIRECT
 
 
 db = Db()
@@ -27,7 +30,8 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    task_link = f"https://innova.crmius.com/chat/{sender.username}/chat/"
+    chat_link = f"https://innova.crmius.com/chat/{sender.username}/chat/"
+    chat_link = urllib.parse.quote_plus(chat_link)
 
     try:
         if forward_tuser:
@@ -36,7 +40,7 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
             keyboard.row(
                 InlineKeyboardButton(
                     text=i18n.gettext("in_app_bt", locale=forward_tuser.language),
-                    web_app=WebAppInfo(url=task_link)
+                    web_app=WebAppInfo(url=chat_link)
                 )
             )
 
@@ -55,11 +59,15 @@ async def __new_chat_message(sender: CrmUser, reciever: CrmUser, text: str, forw
 
         else:
 
+            login = urllib.parse.quote_plus(reciever.login)
+            password = urllib.parse.quote_plus(reciever.not_hashed_password)
+            chat_link = ROOT_PORTAL_REDIRECT.format(login=login, password=password, redirect=chat_link)
+
             keyboard = InlineKeyboardBuilder()
             keyboard.row(
                 InlineKeyboardButton(
                     text=i18n.gettext("in_app_bt", locale=reciever_tuser.language),
-                    web_app=WebAppInfo(url=task_link)
+                    web_app=WebAppInfo(url=chat_link)
                 )
             )
 
