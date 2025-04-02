@@ -68,7 +68,7 @@ async def __new_group_message(sender: CrmUser, reciever: CrmUser, group: Group, 
     if not reciever_tuser and not forward_tuser:
         return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
-    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, reciever, group)
+    keyboard = await generate_keyboard(reciever_tuser, forward_tuser, reciever, forward_to, group)
 
     try:
         if forward_tuser:
