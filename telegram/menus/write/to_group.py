@@ -46,7 +46,7 @@ async def global_menu(callback: CallbackQuery, state: FSMContext):
 
     keyboard = InlineKeyboardBuilder()
 
-    groups: list[Group] = await db.ex(dmth.GetMany(Group, participants={"$in": [crm_user.id]}))
+    groups: list[Group] = await db.ex(dmth.GetMany(Group, participants={"$in": [crm_user.chat_id]}))
     for group in groups:
         app_url = await generate_app_link(crm_user, group)
 
