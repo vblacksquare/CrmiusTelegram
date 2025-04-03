@@ -23,15 +23,28 @@ async def write_menu(callback: CallbackQuery, state: FSMContext):
         await state.clear()
 
     user: User = await db.ex(dmth.GetOne(User, id=callback.from_user.id))
-    if user.role not in ["admin", "top_admin"]:
-        return
 
     keyboard = InlineKeyboardBuilder()
 
+    if user.role != "user":
+        keyboard.row(
+            InlineKeyboardButton(
+                text=_("global_bt"),
+                callback_data=CallbackFactory(action="global").pack()
+            )
+        )
+
     keyboard.row(
         InlineKeyboardButton(
-            text=_("global_bt"),
-            callback_data=CallbackFactory(action="global").pack()
+            text=_("to_user_bt"),
+            callback_data=CallbackFactory(action="to_user").pack()
+        )
+    )
+
+    keyboard.row(
+        InlineKeyboardButton(
+            text=_("to_group_bt"),
+            callback_data=CallbackFactory(action="to_group").pack()
         )
     )
 
@@ -41,14 +54,6 @@ async def write_menu(callback: CallbackQuery, state: FSMContext):
             callback_data=CallbackFactory(action="kick").pack()
         )
     )
-
-    if user.role == "top_admin":
-        keyboard.row(
-            InlineKeyboardButton(
-                text=_("plan_bt"),
-                callback_data=CallbackFactory(action="plan").pack()
-            )
-        )
 
     keyboard.row(
         InlineKeyboardButton(

@@ -300,3 +300,11 @@ msgstr "c {left} до {right} часов"
 #: v2
 msgid "in_app_bt"
 msgstr "Открыть в телеграме 📎"
+
+msgid "to_group_bt"
+msgstr "В группу 👥"
+
+msgid "to_group_msg"
+msgstr "<b>В группу 👥</b>"
+"\n..."
+

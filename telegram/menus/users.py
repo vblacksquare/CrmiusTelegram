@@ -20,9 +20,6 @@ crm = CrmDb()
 async def users_menu(callback: CallbackQuery):
     keyboard = InlineKeyboardBuilder()
 
-    tusers: list[User] = await db.ex(dmth.GetMany(User))
-    tusers_dict = {tuser.id: tuser  for tuser in tusers}
-
     users: list[CrmUser] = await db.ex(dmth.GetMany(CrmUser))
 
     authed_users = []
