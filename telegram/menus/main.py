@@ -46,23 +46,18 @@ async def main_menu(callback: CallbackQuery = None, state: FSMContext = None, us
         )
     )
 
-    if user.role in ["admin", "top_admin"]:
-        keyboard.row(
-            InlineKeyboardButton(
-                text=_("dev_portal_bt"),
-                web_app=WebAppInfo(url=DEV_PORTAL_URL.format(login=login, password=password))
-            )
+    keyboard.row(
+        InlineKeyboardButton(
+            text=_("write_bt"),
+            callback_data=CallbackFactory(action="write").pack()
         )
+    )
+
+    if user.role != "user":
         keyboard.row(
             InlineKeyboardButton(
                 text=_("users_bt"),
                 callback_data=CallbackFactory(action="users").pack()
-            )
-        )
-        keyboard.row(
-            InlineKeyboardButton(
-                text=_("write_bt"),
-                callback_data=CallbackFactory(action="write").pack()
             )
         )
 

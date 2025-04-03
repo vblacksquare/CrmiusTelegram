@@ -26,14 +26,6 @@ async def write_menu(callback: CallbackQuery, state: FSMContext):
 
     keyboard = InlineKeyboardBuilder()
 
-    if user.role != "user":
-        keyboard.row(
-            InlineKeyboardButton(
-                text=_("global_bt"),
-                callback_data=CallbackFactory(action="global").pack()
-            )
-        )
-
     keyboard.row(
         InlineKeyboardButton(
             text=_("to_user_bt"),
@@ -47,6 +39,14 @@ async def write_menu(callback: CallbackQuery, state: FSMContext):
             callback_data=CallbackFactory(action="to_group").pack()
         )
     )
+
+    if user.role != "user":
+        keyboard.row(
+            InlineKeyboardButton(
+                text=_("global_bt"),
+                callback_data=CallbackFactory(action="global").pack()
+            )
+        )
 
     keyboard.row(
         InlineKeyboardButton(

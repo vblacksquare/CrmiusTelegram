@@ -69,3 +69,35 @@ async def global_menu(callback: CallbackQuery, state: FSMContext):
         reply_markup=keyboard.as_markup(),
         parse_mode="HTML",
     )
+
+
+@to_group_router.message(Command("group"))
+async def global_menu(message: Message):
+    tuser: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
+    crm_user: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=tuser.crm_id))
+
+    keyboard = InlineKeyboardBuilder()
+
+    groups: list[Group] = await db.ex(dmth.GetMany(Group, participants={"$in": [crm_user.chat_id]}))
+    for group in groups:
+        app_url = await generate_app_link(crm_user, group)
+
+        keyboard.row(
+            InlineKeyboardButton(
+                text=group.title,
+                web_app=WebAppInfo(url=app_url)
+            )
+        )
+
+    keyboard.row(
+        InlineKeyboardButton(
+            text=_("back_bt"),
+            callback_data=CallbackFactory(action="write").pack()
+        )
+    )
+
+    await message.reply(
+        text=_("to_group_msg"),
+        reply_markup=keyboard.as_markup(),
+        parse_mode="HTML",
+    )
