@@ -307,3 +307,6 @@ msgstr "В групу 👥"
 msgid "to_group_msg"
 msgstr "<b>В групу 👥</b>"
 "\n..."
+
+msgid "to_user_bt"
+msgstr "В особисті 🫥"
