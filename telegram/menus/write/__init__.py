@@ -9,5 +9,6 @@ from .to_user import to_user_router
 write_router.include_routers(
     global_router,
     kick_router,
-    to_group_router
+    to_group_router,
+    to_user_router
 )

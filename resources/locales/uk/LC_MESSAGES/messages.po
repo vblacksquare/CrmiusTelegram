@@ -306,10 +306,11 @@ msgstr "В групу 👥"
 
 msgid "to_group_msg"
 msgstr "<b>В групу 👥</b>"
-"\n..."
+"\nНатисніть на кнопку чата щоб відкрити"
 
 msgid "to_user_bt"
 msgstr "В особисті 🫥"
 
 msgid "to_user_msg"
 msgstr "<b>В особисті 🫥</b>"
+"\nНатисніть на кнопку чата щоб відкрити"
