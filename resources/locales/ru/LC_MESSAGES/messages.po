@@ -310,3 +310,6 @@ msgstr "<b>В группу 👥</b>"
 
 msgid "to_user_bt"
 msgstr "В личнные 🫥"
+
+msgid "to_user_msg"
+msgstr "<b>В личнные 🫥</b>"

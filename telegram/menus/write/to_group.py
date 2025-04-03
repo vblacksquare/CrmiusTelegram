@@ -40,7 +40,7 @@ async def generate_app_link(
 
 
 @to_group_router.callback_query(CallbackFactory.filter(F.action == "to_group"))
-async def global_menu(callback: CallbackQuery, state: FSMContext):
+async def group_menu(callback: CallbackQuery, state: FSMContext):
     tuser: User = await db.ex(dmth.GetOne(User, id=callback.from_user.id))
     crm_user: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=tuser.crm_id))
 
@@ -72,7 +72,7 @@ async def global_menu(callback: CallbackQuery, state: FSMContext):
 
 
 @to_group_router.message(Command("group"))
-async def global_menu(message: Message):
+async def group_menu(message: Message):
     tuser: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
     crm_user: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=tuser.crm_id))
 
