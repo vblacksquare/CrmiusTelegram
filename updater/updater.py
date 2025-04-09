@@ -14,6 +14,8 @@ import functools
 
 from loguru import logger
 
+from grupo import Grupo
+
 from db import Db, CrmDb
 from dtypes import Notification
 from dtypes.db import method as dmth
@@ -41,6 +43,7 @@ class Updater(metaclass=SingletonMeta):
 
         self.db = Db()
         self.crm = CrmDb()
+        self.gr = Grupo()
         self.log = logger.bind(classname=self.__class__.__name__)
 
         self.tasks = [
@@ -229,7 +232,7 @@ class Updater(metaclass=SingletonMeta):
                 else:
                     resp = "йоу"
 
-                await self.crm.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
+                await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
         except Exception as err:
             self.log.exception(err)
