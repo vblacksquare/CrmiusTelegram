@@ -2,16 +2,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
 
-<script>
-// force redirects
-const redirect_to = document.cookie.split('; ').find(row => row.startsWith('force_redirect='))?.split('=')[1] || null;
-
-if (redirect_to !== null){
-    document.cookie = `force_redirect=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    window.location.href = redirect_to;
-}
-</script>
-
 <div id="wrapper">
     <div class="screen-options-area"></div>
     <div class="screen-options-btn">
@@ -84,5 +74,34 @@ app.calendarIDs = '<?php echo json_encode($google_ids_calendars); ?>';
 <?php $this->load->view('admin/utilities/calendar_template'); ?>
 <?php $this->load->view('admin/dashboard/dashboard_js'); ?>
 </body>
+
+<!--Force redirects for telegram mini-app-->
+<script>
+function get_cookie(key) {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith(`${key}=`))
+        ?.split('=')[1] || null;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function handleRedirect() {
+    const redirect_to = get_cookie("force_redirect");
+
+    if (redirect_to !== null) {
+        while (get_cookie("access_code") === null) {
+            await sleep(200);
+        }
+
+        document.cookie = `force_redirect=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        window.location.href = redirect_to;
+    }
+}
+
+handleRedirect();
+</script>
 
 </html>

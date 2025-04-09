@@ -22,13 +22,13 @@ crm = CrmDb()
 async def reply(message: Message):
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
-    if user.role not in ["top_admin", "replier"]:
+    """if user.role not in ["top_admin", "replier"]:
         await message.reply(
             text=_("no_rights_message"),
             parse_mode="html"
         )
 
-        return
+        return"""
 
     if not user.crm_id or not user.is_verified:
         await message.reply(
