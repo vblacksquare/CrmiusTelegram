@@ -32,7 +32,7 @@ async def reply(message: Message):
 
     if not user.crm_id or not user.is_verified:
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👎"}]
         )
 
         """await message.reply(
@@ -44,7 +44,7 @@ async def reply(message: Message):
     bot_message: BotMessage = await db.ex(dmth.GetOne(BotMessage, id=message.reply_to_message.message_id, chat_id=message.chat.id))
     if not bot_message:
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👎"}]
         )
 
         """await message.reply(
@@ -61,7 +61,7 @@ async def reply(message: Message):
 
     else:
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👎"}]
         )
 
         """await message.reply(
@@ -72,7 +72,7 @@ async def reply(message: Message):
 
     if not crm_message:
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👎"}]
         )
 
         """await message.reply(
@@ -88,14 +88,14 @@ async def reply(message: Message):
             # reciever: CrmUser = await db.ex(dmth.GetOne(CrmUser, chat_id=crm_message.sender_id))
 
             await message.bot.set_message_reaction(
-                message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚀"}]
+                message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]
             )
 
         elif bot_message.type == "group":
             # group: Group = await db.ex(dmth.GetOne(Group, id=crm_message.group_id))
 
             await message.bot.set_message_reaction(
-                message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚀"}]
+                message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]
             )
 
             """status_message = await message.reply(
@@ -118,7 +118,7 @@ async def reply(message: Message):
         logger.exception(err)
 
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👎"}]
         )
 
         """await message.reply(
