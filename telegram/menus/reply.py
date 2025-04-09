@@ -31,20 +31,26 @@ async def reply(message: Message):
         return"""
 
     if not user.crm_id or not user.is_verified:
-        await message.reply(
-            text=_("err_reply_no_user_message"),
-            parse_mode="html"
+        await message.bot.set_message_reaction(
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
         )
 
+        """await message.reply(
+            text=_("err_reply_no_user_message"),
+            parse_mode="html"
+        )"""
         return
 
     bot_message: BotMessage = await db.ex(dmth.GetOne(BotMessage, id=message.reply_to_message.message_id, chat_id=message.chat.id))
     if not bot_message:
-        await message.reply(
-            text=_("err_reply_no_bot_message"),
-            parse_mode="html"
+        await message.bot.set_message_reaction(
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
         )
 
+        """await message.reply(
+            text=_("err_reply_no_bot_message"),
+            parse_mode="html"
+        )"""
         return
 
     if bot_message.type == "chat":
@@ -54,55 +60,68 @@ async def reply(message: Message):
         crm_message: GroupMessage = await db.ex(dmth.GetOne(GroupMessage, id=bot_message.crm_id))
 
     else:
-        await message.reply(
-            text=_("err_reply_no_type_message").format(type=bot_message.type),
-            parse_mode="html"
+        await message.bot.set_message_reaction(
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
         )
 
+        """await message.reply(
+            text=_("err_reply_no_type_message").format(type=bot_message.type),
+            parse_mode="html"
+        )"""
         return
 
     if not crm_message:
-        await message.reply(
-            text=_("err_reply_no_crm_message"),
-            parse_mode="html"
+        await message.bot.set_message_reaction(
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
         )
 
+        """await message.reply(
+            text=_("err_reply_no_crm_message"),
+            parse_mode="html"
+        )"""
         return
 
     try:
         await crm.send_message(crm_message, message)
 
         if bot_message.type == "chat":
-            reciever: CrmUser = await db.ex(dmth.GetOne(CrmUser, chat_id=crm_message.sender_id))
+            # reciever: CrmUser = await db.ex(dmth.GetOne(CrmUser, chat_id=crm_message.sender_id))
 
-            status_message = await message.reply(
-                text=_("ok_chat_reply_message").format(name=reciever.fullname),
-                parse_mode="html"
+            await message.bot.set_message_reaction(
+                message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚀"}]
             )
 
         elif bot_message.type == "group":
-            group: Group = await db.ex(dmth.GetOne(Group, id=crm_message.group_id))
+            # group: Group = await db.ex(dmth.GetOne(Group, id=crm_message.group_id))
 
-            status_message = await message.reply(
+            await message.bot.set_message_reaction(
+                message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚀"}]
+            )
+
+            """status_message = await message.reply(
                 text=_("ok_group_reply_message").format(name=group.title),
                 parse_mode="html"
-            )
+            )"""
 
         else:
             raise ValueError
 
-        new_bot_message = BotMessage(
+        """new_bot_message = BotMessage(
             id=status_message.message_id,
             chat_id=status_message.chat.id,
             type=bot_message.type,
             crm_id=crm_message.id
         )
-        await db.ex(dmth.AddOne(BotMessage, new_bot_message))
+        await db.ex(dmth.AddOne(BotMessage, new_bot_message))"""
 
     except Exception as err:
         logger.exception(err)
 
-        await message.reply(
+        await message.bot.set_message_reaction(
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "❌"}]
+        )
+
+        """await message.reply(
             text=_("err_reply_message"),
             parse_mode="html"
-        )
+        )"""
