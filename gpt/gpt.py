@@ -91,7 +91,7 @@ async def submit_tool_outputs(tool_call: RequiredActionFunctionToolCall, dynamic
     elif tool_call.function.name == "send_private_message":
         try:
             text = data["text"]
-            email = data["email"]
+            email = data["target"]
 
             formatted_text = i18n.gettext("gpt_generated", locale=dynamic_data["sender"].language).format(text=text)
             crm_reciever = await db.ex(dmth.GetOne(CrmUser, login=email))
