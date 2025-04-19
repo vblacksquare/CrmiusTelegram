@@ -177,6 +177,7 @@ async def generate_answer(
     if not agent_thread:
         thread_id = (await create_gpt_thread()).id
         agent_thread = AgentThread(thread_id, user_id)
+        await db.ex(dmth.AddOne(AgentThread, agent_thread))
 
     chats: list[CrmUser] = await db.ex(dmth.GetMany(CrmUser))
 
