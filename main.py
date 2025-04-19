@@ -13,17 +13,11 @@ from config import MONGODB_NAME, MONGODB_URI, LOGS_DIR, LOGS_LEVEL
 from utils.logger import setup_logger
 
 
-from agent import generate_answer
-
-
 async def main():
     setup_logger(LOGS_DIR, LOGS_LEVEL)
 
     db = Db()
     db.connect(MONGODB_NAME, MONGODB_URI)
-
-    print(await generate_answer("Hello", 885554630))
-    return
 
     settings: Settings = await db.ex(dmth.GetOne(Settings))
     if not settings:
