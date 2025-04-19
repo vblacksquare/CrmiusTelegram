@@ -5,6 +5,7 @@ import functools
 import json
 from loguru import logger
 
+from dtypes import CrmUser
 from telegram import i18n
 
 from db import Db
@@ -76,31 +77,21 @@ async def send_to_assistant(thread_id: str, assistant_id: str, instructions=None
         return None
 
 
-def submit_tool_outputs(tool_call: RequiredActionFunctionToolCall, dynamic_data: dict):
+async def submit_tool_outputs(tool_call: RequiredActionFunctionToolCall, dynamic_data: dict):
     data = json.loads(tool_call.function.arguments)
 
     response = None
 
-    if tool_call.function.name == "get_creds":
-        bank_name = data.get("bank").lower()
-        response = "This bank is not powered by us"
+    if tool_call.function.name == "chats":
+        response = dynamic_data["chats"]
 
-        for payment in dynamic_data["payments"]:
-            if bank_name in payment["keys"]:
-                del payment["keys"]
-                del payment["name"]
-
-                response = payment
-
-    elif tool_call.function.name == "get_creds_list":
-        response = [{
-            "name": payment["name"],
-            "value": payment["value"]
-        } for payment in dynamic_data["payments"]]
+    elif tool_call.function.name == "send_private_message":
+        print(data["text"], data["email"])
+        response = "ok"
 
     return {
         "tool_call_id": tool_call.id,
-        "output": json.dumps(response) if response else "Not enought information"
+        "output": json.dumps(response) if response else "Error"
     }
 
 
@@ -168,10 +159,19 @@ async def generate_answer(
         thread_id = (await create_gpt_thread()).id
         agent_thread = AgentThread(thread_id, user_id)
 
+    chats: list[CrmUser] = await db.ex(dmth.GetMany(CrmUser))
+
+    dynamic_data = {
+        "chats": [
+            {"first_name": chat.first_name, "last_name": chat.last_name, "email": chat.login}
+            for chat in chats
+        ]
+    }
+
     await create_message(agent_thread.id, request)
 
     run_id = await send_to_assistant(agent_thread.id, TARAS_ID, None)
-    resp = await wait_for_response(agent_thread.id, run_id, {})
+    resp = await wait_for_response(agent_thread.id, run_id, dynamic_data)
 
     if resp in [None, ""]:
         resp = i18n.gettext("gpt_unkown_error", locale=user.language)
