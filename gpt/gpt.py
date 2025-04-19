@@ -101,6 +101,8 @@ async def submit_tool_outputs(tool_call: RequiredActionFunctionToolCall, dynamic
             response = "ok"
 
         except Exception as err:
+            gpt_log.exception(err)
+
             response = str(err)
 
     return {
