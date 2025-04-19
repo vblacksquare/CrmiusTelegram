@@ -8,6 +8,8 @@ from loguru import logger
 from dtypes import CrmUser
 from telegram import i18n
 
+from grupo import Grupo
+
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.agent_thread import AgentThread
@@ -20,6 +22,7 @@ from config import GPT_KEY, TARAS_ID
 
 
 db = Db()
+gr = Grupo()
 
 GPT = AsyncOpenAI(api_key=GPT_KEY)
 gpt_log = logger.bind(classname="GPT")
@@ -86,8 +89,19 @@ async def submit_tool_outputs(tool_call: RequiredActionFunctionToolCall, dynamic
         response = dynamic_data["chats"]
 
     elif tool_call.function.name == "send_private_message":
-        print(data["text"], data["email"])
-        response = "ok"
+        try:
+            text = data["text"]
+            email = data["email"]
+
+            formatted_text = i18n.gettext("gpt_generated", locale=dynamic_data["sender"].language).format(text=text)
+            crm_reciever = await db.ex(dmth.GetOne(CrmUser, login=email))
+
+            await gr.send_chat_message(sender=dynamic_data["crm_sender"], reciever=crm_reciever, message_text=formatted_text)
+
+            response = "ok"
+
+        except Exception as err:
+            response = str(err)
 
     return {
         "tool_call_id": tool_call.id,
@@ -105,8 +119,13 @@ async def wait_for_response(thread_id: str, run_id: str, dynamic_data: dict) -> 
 
             if run.required_action:
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                tool_outputs = list(map(functools.partial(submit_tool_outputs, dynamic_data=dynamic_data), tool_calls))
-                gpt_log.debug(f"Answered tool cals -> {tool_calls} -> {tool_outputs}")
+
+                tool_outputs = []
+                for tool_call in tool_calls:
+                    output = await submit_tool_outputs(tool_call, dynamic_data)
+                    tool_outputs.append(output)
+
+                    gpt_log.debug(f"Answered tool calls -> {tool_call} -> {output}")
 
                 run = await GPT.beta.threads.runs.submit_tool_outputs(
                     thread_id=thread_id,
@@ -162,6 +181,8 @@ async def generate_answer(
     chats: list[CrmUser] = await db.ex(dmth.GetMany(CrmUser))
 
     dynamic_data = {
+        "sender": user,
+        "crm_sender": await db.ex(dmth.GetOne(CrmUser, user_id=user.id)),
         "chats": [
             {"first_name": chat.first_name, "last_name": chat.last_name, "email": chat.login}
             for chat in chats

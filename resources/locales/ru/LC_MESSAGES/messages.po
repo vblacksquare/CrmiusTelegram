@@ -317,3 +317,12 @@ msgstr "<b>В личнные 🫥</b>"
 
 msgid "not_task_marked_as_complete"
 msgstr "Закрыл"
+
+msgid "gpt_not_implemented"
+msgstr "Скорее всего такой тип сообщений не поддерживаеться"
+
+msgid "gpt_unkown_error"
+msgstr "Неизвестная ошибка"
+
+msgid "gpt_generated"
+msgstr "{text} (Сгенерировано)"
