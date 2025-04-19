@@ -87,8 +87,8 @@ class Updater(metaclass=SingletonMeta):
             self.log.warning(f"Unknown attachment type -> {message.attachments}")
             return "text"
 
-    def prepare_text(self, message: ChatMessage | GroupMessage) -> ChatMessage | GroupMessage:
-        soup = bs4.BeautifulSoup(message.text, "html.parser")
+    def prepare_text(self, message: ChatMessage | GroupMessage | str) -> ChatMessage | GroupMessage:
+        soup = bs4.BeautifulSoup(message if isinstance(message, str) else message.text, "html.parser")
 
         for comment in soup.find_all(string=lambda text: isinstance(text, bs4.element.Comment)):
             comment.extract()
@@ -129,8 +129,12 @@ class Updater(metaclass=SingletonMeta):
         if len(text) > 1000:
             text = text[:1000] + f"... (+{len(text)-1000})"
 
-        message.text = text
-        return message
+        if isinstance(message, str):
+            return text
+
+        else:
+            message.text = text
+            return message
 
     def prepare_audio_text(self, message: ChatMessage | GroupMessage) -> str:
         audio_file = message.attachments["audio_message"].replace("\\", "")
@@ -228,6 +232,7 @@ class Updater(metaclass=SingletonMeta):
 
             if reciever_user.login == GRUPO_BOT and not forward_to:
                 resp = await generate_answer(message.text, sender_user.user_id)
+                resp = self.prepare_text(resp)
                 await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
         except Exception as err:
