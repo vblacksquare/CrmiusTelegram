@@ -325,4 +325,4 @@ msgid "gpt_unkown_error"
 msgstr "Неизвестная ошибка"
 
 msgid "gpt_generated"
-msgstr "{text} (Сгенерировано)"
+msgstr "(Сгенерировано) {text}"
