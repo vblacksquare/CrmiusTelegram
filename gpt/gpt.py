@@ -14,6 +14,7 @@ from db import Db
 from dtypes.db import method as dmth
 from dtypes.agent_thread import AgentThread
 from dtypes.user import User
+from dtypes.group import Group
 
 from openai import AsyncOpenAI
 from openai.types.beta.threads import RequiredActionFunctionToolCall
@@ -94,9 +95,26 @@ async def submit_tool_outputs(tool_call: RequiredActionFunctionToolCall, dynamic
             email = data["target"]
 
             formatted_text = i18n.gettext("gpt_generated", locale=dynamic_data["sender"].language).format(text=text)
-            crm_reciever = await db.ex(dmth.GetOne(CrmUser, login=email))
+            crm_reciever: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=email))
 
             await gr.send_chat_message(sender=dynamic_data["crm_sender"], reciever=crm_reciever, message_text=formatted_text)
+
+            response = "ok"
+
+        except Exception as err:
+            gpt_log.exception(err)
+
+            response = str(err)
+
+    elif tool_call.function.name == "send_group_message":
+        try:
+            text = data["text"]
+            slug = data["target"]
+
+            formatted_text = i18n.gettext("gpt_generated", locale=dynamic_data["sender"].language).format(text=text)
+            group: Group = await db.ex(dmth.GetOne(Grupo, slug=slug))
+
+            await gr.send_group_message(sender=dynamic_data["crm_sender"], group=group, message_text=formatted_text)
 
             response = "ok"
 
@@ -182,13 +200,20 @@ async def generate_answer(
         await db.ex(dmth.AddOne(AgentThread, agent_thread))
 
     chats: list[CrmUser] = await db.ex(dmth.GetMany(CrmUser))
+    groups: list[Group] = await db.ex(dmth.GetMany(Group))
 
     dynamic_data = {
         "sender": user,
         "crm_sender": await db.ex(dmth.GetOne(CrmUser, user_id=user.id)),
         "chats": [
-            {"first_name": chat.first_name, "last_name": chat.last_name, "email": chat.login}
-            for chat in chats
+            *[
+                {"first_name": chat.first_name, "last_name": chat.last_name, "email": chat.login, "type": "private"}
+                for chat in chats
+            ],
+            *[
+                {"name": group.title, "slug": group.slug, "type": "group"}
+                for group in groups
+            ]
         ]
     }
 
