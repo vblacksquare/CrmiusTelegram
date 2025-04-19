@@ -15,6 +15,7 @@ import functools
 from loguru import logger
 
 from grupo import Grupo
+from agent import generate_answer
 
 from db import Db, CrmDb
 from dtypes import Notification
@@ -226,12 +227,7 @@ class Updater(metaclass=SingletonMeta):
                 return
 
             if reciever_user.login == GRUPO_BOT and not forward_to:
-                if message.text == "йоу":
-                    resp = "мега йоу"
-
-                else:
-                    resp = "йоу"
-
+                resp = await generate_answer(message.text, sender_user.user_id)
                 await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
         except Exception as err:

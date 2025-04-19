@@ -55,6 +55,10 @@ TASK_URL = f"https://innova.crmius.com/admin/tasks/view/{{task_id}}"
 DEV_PORTAL_URL = f"https://{dev_crm_host}/admin/authentication?l={{login}}&p={{password}}"
 
 
+# gpt
+TARAS_ID = os.getenv("taras_id")
+
+
 # logs
 LOGS_LEVEL = "DEBUG"
 

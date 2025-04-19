@@ -6,3 +6,5 @@ from .group import Group
 from .settings import Settings
 from .plan import Plan
 from .task import Task
+
+from .agent_thread import AgentThread
