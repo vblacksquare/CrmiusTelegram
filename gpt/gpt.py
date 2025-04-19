@@ -112,7 +112,7 @@ async def submit_tool_outputs(tool_call: RequiredActionFunctionToolCall, dynamic
             slug = data["target"]
 
             formatted_text = i18n.gettext("gpt_generated", locale=dynamic_data["sender"].language).format(text=text)
-            group: Group = await db.ex(dmth.GetOne(Grupo, slug=slug))
+            group: Group = await db.ex(dmth.GetOne(Group, slug=slug))
 
             await gr.send_group_message(sender=dynamic_data["crm_sender"], group=group, message_text=formatted_text)
 
