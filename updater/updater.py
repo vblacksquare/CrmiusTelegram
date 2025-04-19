@@ -15,7 +15,7 @@ import functools
 from loguru import logger
 
 from grupo import Grupo
-from agent import generate_answer
+from gpt import generate_answer
 
 from db import Db, CrmDb
 from dtypes import Notification
