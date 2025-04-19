@@ -12,15 +12,15 @@ from dtypes.db import method as dmth
 from dtypes.agent_thread import AgentThread
 from dtypes.user import User
 
-from openai import AsyncClient
+from openai import AsyncOpenAI
 from openai.types.beta.threads import RequiredActionFunctionToolCall
 
-from config import TARAS_ID
+from config import GPT_KEY, TARAS_ID
 
 
 db = Db()
 
-GPT = AsyncClient
+GPT = AsyncOpenAI(api_key=GPT_KEY)
 gpt_log = logger.bind(classname="GPT")
 
 

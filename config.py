@@ -56,6 +56,7 @@ DEV_PORTAL_URL = f"https://{dev_crm_host}/admin/authentication?l={{login}}&p={{p
 
 
 # gpt
+GPT_KEY = os.getenv("gpt_key")
 TARAS_ID = os.getenv("taras_id")
 
 
