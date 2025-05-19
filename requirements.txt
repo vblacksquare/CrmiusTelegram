@@ -12,3 +12,4 @@ bcrypt
 pusher
 aiocryptopay
 openai
+AgentService

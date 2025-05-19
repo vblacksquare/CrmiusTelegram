@@ -226,4 +226,3 @@ async def generate_answer(
         resp = i18n.gettext("gpt_unkown_error", locale=user.language)
 
     return resp
-

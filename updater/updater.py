@@ -15,7 +15,7 @@ import functools
 from loguru import logger
 
 from grupo import Grupo
-from gpt import generate_answer
+from agent import taras_agent
 
 from db import Db, CrmDb
 from dtypes import Notification
@@ -45,6 +45,7 @@ class Updater(metaclass=SingletonMeta):
         self.db = Db()
         self.crm = CrmDb()
         self.gr = Grupo()
+
         self.log = logger.bind(classname=self.__class__.__name__)
 
         self.tasks = [
@@ -231,7 +232,7 @@ class Updater(metaclass=SingletonMeta):
                 return
 
             if reciever_user.login == GRUPO_BOT and not forward_to:
-                resp = await generate_answer(message.text, sender_user.user_id)
+                resp = await taras_agent.send(sender_user.id, message.text, context=sender_user.to_dict())
                 resp = self.prepare_text(resp)
                 await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
