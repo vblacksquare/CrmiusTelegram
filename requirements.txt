@@ -12,4 +12,4 @@ bcrypt
 pusher
 aiocryptopay
 openai
-AgentService==0.0.32
+AgentService==0.0.33
