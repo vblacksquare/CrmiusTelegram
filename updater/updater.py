@@ -232,7 +232,7 @@ class Updater(metaclass=SingletonMeta):
                 return
 
             if reciever_user.login == GRUPO_BOT and not forward_to:
-                resp = await taras_agent.send(sender_user.id, message.text, context=sender_user.to_dict())
+                resp = await taras_agent.send(str(sender_user.id), message.text, context=sender_user.to_dict())
                 resp = self.prepare_text(resp)
                 await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
