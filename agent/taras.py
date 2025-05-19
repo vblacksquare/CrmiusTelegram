@@ -38,7 +38,7 @@ async def send_private_message(data: str, chat_id: str):
     chat_id = int(chat_id)
 
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=chat_id))
-    tsender: User = await db.ex(dmth.GetOne(User, id=sender.chat_id))
+    tsender: User = await db.ex(dmth.GetOne(User, id=sender.user_id))
 
     data = json.loads(data)
     text = data["text"]
@@ -59,7 +59,7 @@ async def send_group_message(data: str, chat_id: str):
     chat_id = int(chat_id)
 
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=chat_id))
-    tsender: User = await db.ex(dmth.GetOne(User, id=sender.chat_id))
+    tsender: User = await db.ex(dmth.GetOne(User, id=sender.user_id))
 
     data = json.loads(data)
     text = data["text"]
