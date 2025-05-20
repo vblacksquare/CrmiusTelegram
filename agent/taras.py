@@ -97,11 +97,11 @@ async def translate(data: str, chat_id: str):
     t2 = t1
     message = None
 
-    while t2 - t1 < 10:
+    while t2 - t1 < 15:
         message: ChatMessage = await db.ex(dmth.GetOne(ChatMessage, sender_id=sender.chat_id, reciever_id=receiver.chat_id, time_sent={"gt": t1}))
 
         t2 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
-        await asyncio.sleep(.5)
+        await asyncio.sleep(1)
 
     if message:
         return message.text
