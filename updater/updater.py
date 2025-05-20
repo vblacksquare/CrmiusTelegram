@@ -15,7 +15,7 @@ import functools
 from loguru import logger
 
 from grupo import Grupo
-from agent import taras_agent
+from agent import taras_agent, danila_agent
 
 from db import Db, CrmDb
 from dtypes import Notification
@@ -28,7 +28,7 @@ from dtypes.task import Task
 
 from utils.singleton import SingletonMeta
 
-from config import AUDIOS_DIR, GRUPO_BOT
+from config import AUDIOS_DIR, GRUPO_BOT, GRUPO_TRANSLATOR_BOT
 
 
 semaphore = asyncio.Semaphore(8)
@@ -231,10 +231,17 @@ class Updater(metaclass=SingletonMeta):
                 self.log.warning(f"No such text type supported: {text_type} -> {message.id}")
                 return
 
-            if reciever_user.login == GRUPO_BOT and not forward_to:
-                resp = await taras_agent.send(str(sender_user.id), message.text, context=sender_user.to_dict())
-                resp = self.prepare_text(resp.content)
-                await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
+            agent = {
+                GRUPO_BOT: taras_agent,
+                GRUPO_TRANSLATOR_BOT: danila_agent
+            }.get(reciever_user.login)
+
+            if not agent or forward_to:
+                return
+
+            resp = await agent.send(str(sender_user.id), message.text, context=sender_user.to_dict())
+            resp = self.prepare_text(resp.content)
+            await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
         except Exception as err:
             self.log.exception(err)

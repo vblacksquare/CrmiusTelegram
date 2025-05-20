@@ -40,7 +40,9 @@ dev_crm_host = os.getenv("dev_crm_host")
 # grupochat api
 GRUPO_TOKEN = os.getenv("chat_token")
 GRUPO_ENDPOINT = f"https://{crm_host}/chat/api_request/"
+
 GRUPO_BOT = os.getenv("chat_robot", default="robot@crmius.com")
+GRUPO_TRANSLATOR_BOT = os.getenv("translator_bot", default="robot@crmius.com")
 
 
 # crm links
@@ -53,11 +55,6 @@ GROUP_CHAT_URL = f"https://innova.crmius.com/chat/{{name}}/"
 TASK_URL = f"https://innova.crmius.com/admin/tasks/view/{{task_id}}"
 
 DEV_PORTAL_URL = f"https://{dev_crm_host}/admin/authentication?l={{login}}&p={{password}}"
-
-
-# gpt
-GPT_KEY = os.getenv("gpt_key")
-TARAS_ID = os.getenv("taras_id")
 
 
 # logs
