@@ -92,7 +92,7 @@ async def translate(data: str, chat_id: str):
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
     receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
 
-    t1 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
+    t1 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp() - 1
     t2 = t1 + 1
 
     await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
