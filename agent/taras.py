@@ -106,7 +106,7 @@ async def translate(data: str, chat_id: str):
     if message:
         return message.text
 
-    return f"No response from translator agent Danila (Данила in russian)"
+    return f"No response from translator Danila"
 
 
 taras_agent = AgentConnector(endpoint="https://bots.innova.ua/agents/taras/")
