@@ -92,7 +92,7 @@ async def translate(data: str, chat_id: str):
 
     t1 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
 
-    await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
+    task = asyncio.create_task(gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}"))
 
     t2 = t1
     message = None
