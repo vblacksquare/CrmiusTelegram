@@ -102,7 +102,7 @@ async def translate(data: str, chat_id: str):
         message: ChatMessage = await db.ex(dmth.GetOne(ChatMessage, sender_id=sender.chat_id, reciever_id=receiver.chat_id, time_sent={"gt": t1}))
 
         t2 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
-        await asyncio.sleep(1)
+        await asyncio.sleep(3)
 
     if message is None:
         return f"No response from translator Danila"
