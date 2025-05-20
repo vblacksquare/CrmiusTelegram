@@ -95,7 +95,7 @@ async def translate(data: str, chat_id: str):
     await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
 
     t1 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
-    t2 = t1
+    t2 = t1 + 1
 
     message = None
     while t2 - t1 < 30 and message is None:
