@@ -254,6 +254,7 @@ class Updater(metaclass=SingletonMeta):
         new_last_message_id = 0
 
         chat_messages = await self.crm.get_chat_messages(from_id=old_last_message_id)
+        self.log.debug(f"New chat messages: {len(chat_messages)}")
 
         admins: list[User] = await self.db.ex(dmth.GetMany(User, role="top_admin"))
         admins_crm: list[CrmUser] = await self.find_users([admin.crm_id for admin in admins if admin.crm_id], by_crm=True)
