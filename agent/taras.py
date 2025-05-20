@@ -97,6 +97,8 @@ async def translate(data: str, chat_id: str):
 
     await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
 
+    log.debug(f"Waiting for answer from {t1}")
+
     message = None
     while t2 - t1 < 30 and message is None:
         message: ChatMessage = await db.ex(dmth.GetOne(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id, time_sent={"$gt": t1}))
