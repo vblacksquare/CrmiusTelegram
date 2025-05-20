@@ -92,17 +92,17 @@ async def translate(data: str, chat_id: str):
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
     receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
 
-    await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
-
     t1 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
     t2 = t1 + 1
+
+    await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
 
     message = None
     while t2 - t1 < 30 and message is None:
         message: ChatMessage = await db.ex(dmth.GetOne(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id, time_sent={"gt": t1}))
 
         t2 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
-        await asyncio.sleep(3)
+        await asyncio.sleep(1)
 
     if message is None:
         return f"No response from translator Danila"
