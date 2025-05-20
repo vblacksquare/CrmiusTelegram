@@ -1,5 +1,7 @@
 
 import json
+import pytz
+from datetime import datetime
 
 from db import Db
 from grupo import Grupo
@@ -7,10 +9,13 @@ from grupo import Grupo
 from dtypes.db import method as dmth
 from dtypes.user import CrmUser, User
 from dtypes.group import Group
+from dtypes.message import ChatMessage
 
 from telegram import i18n
 
 from AgentService.connector import AgentConnector
+
+from config import GRUPO_BOT, GRUPO_TRANSLATOR_BOT
 
 
 async def get_chats(data: str, chat_id: str):
@@ -73,7 +78,37 @@ async def send_group_message(data: str, chat_id: str):
     return "ok"
 
 
+async def translate(data: str, chat_id: str):
+    db = Db()
+    gr = Grupo()
+
+    data = json.loads(data)
+    text = data["text"]
+    target_language = data["target_language"]
+
+    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
+    receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
+
+    t1 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
+
+    await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
+
+    t2 = t1
+    message = None
+
+    while t2 - t1 < 3600:
+        message: ChatMessage = await db.ex(dmth.GetOne(ChatMessage, sender_id=sender.chat_id, reciever_id=receiver.chat_id, time_sent={"gt": t1}))
+
+        t2 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
+
+    if message:
+        return message.text
+
+    return f"No response from translator agent Danila (Данила in russian)"
+
+
 taras_agent = AgentConnector(endpoint="https://bots.innova.ua/agents/taras/")
 taras_agent.bind_tool_output("get_chats", get_chats)
 taras_agent.bind_tool_output("send_private_message", send_private_message)
 taras_agent.bind_tool_output("send_group_message", send_group_message)
+taras_agent.bind_tool_output("translate", translate)
