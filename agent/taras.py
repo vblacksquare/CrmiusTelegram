@@ -92,7 +92,7 @@ async def translate(data: str, chat_id: str):
     receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
 
     last_message: ChatMessage = max(
-        await db.ex(dmth.GetOne(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id)),
+        await db.ex(dmth.GetMany(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id)),
         key=lambda x: x.time_sent
     )
 
