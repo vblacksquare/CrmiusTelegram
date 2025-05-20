@@ -209,6 +209,11 @@ class Updater(metaclass=SingletonMeta):
 
         return group
 
+    async def to_agent(self, agent_receiver, sender_user, reciever_user, message):
+        resp = await agent_receiver.send(str(sender_user.id), message.text, context=sender_user.to_dict())
+        resp = self.prepare_text(resp.content)
+        await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
+
     async def notificate_chat_message(self, message: ChatMessage, forward_to: CrmUser = None) -> None:
         try:
             sender_user = await self.find_user(message.sender_id)
@@ -241,9 +246,7 @@ class Updater(metaclass=SingletonMeta):
             if not agent_receiver or forward_to or sender_user.login in [GRUPO_TRANSLATOR_BOT]:
                 return
 
-            resp = await agent_receiver.send(str(sender_user.id), message.text, context=sender_user.to_dict())
-            resp = self.prepare_text(resp.content)
-            await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
+            asyncio.create_task(self.to_agent(agent_receiver, sender_user, reciever_user, message))
 
         except Exception as err:
             self.log.exception(err)
