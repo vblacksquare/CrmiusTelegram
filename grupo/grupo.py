@@ -35,7 +35,7 @@ class Grupo(metaclass=SingletonMeta):
                     }
                 ) as response:
 
-                    self.log.info(f"Sent message response -> {await response.text()}")
+                    self.log.debug(f"Sent group message {sender.login} -> {group.slug}: {message_text}")
 
         except Exception as err:
             self.log.exception(err)
@@ -54,7 +54,7 @@ class Grupo(metaclass=SingletonMeta):
                     }
                 ) as response:
 
-                    self.log.info(f"Sent message response -> {await response.text()}")
+                    self.log.debug(f"Sent chat message {sender.login} -> {reciever.login}: {message_text}")
 
         except Exception as err:
             self.log.exception(err)

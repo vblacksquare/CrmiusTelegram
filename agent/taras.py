@@ -4,6 +4,8 @@ import json
 import pytz
 from datetime import datetime
 
+from loguru import logger as log
+
 from db import Db
 from grupo import Grupo
 
@@ -90,7 +92,9 @@ async def translate(data: str, chat_id: str):
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
     receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
 
-    task = asyncio.create_task(gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}"))
+    await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
+
+    await asyncio.sleep(10)
 
     t1 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
     t2 = t1
