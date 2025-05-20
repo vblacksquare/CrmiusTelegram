@@ -1,8 +1,7 @@
 
 import asyncio
 import json
-import pytz
-from datetime import datetime
+import time
 
 from loguru import logger as log
 
@@ -92,19 +91,27 @@ async def translate(data: str, chat_id: str):
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
     receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
 
-    t1 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp() - 1
-    t2 = t1 + 1
+    last_message: ChatMessage = max(
+        await db.ex(dmth.GetOne(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id)),
+        key=lambda x: x.time_sent
+    )
 
     await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
 
-    log.debug(f"Waiting for answer from {t1}")
-
+    t1 = time.time()
+    t2 = t1 + 1
     message = None
-    while t2 - t1 < 30 and message is None:
-        message: ChatMessage = await db.ex(dmth.GetOne(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id, time_sent={"$gt": t1}))
 
-        t2 = datetime.now(pytz.timezone("Europe/Kiev")).timestamp()
+    while t2 - t1 < 30 and message is None:
+        message: ChatMessage = await db.ex(dmth.GetOne(
+            ChatMessage,
+            sender_id=receiver.chat_id,
+            reciever_id=sender.chat_id,
+            time_sent={"$gt": last_message.time_sent}
+        ))
+
         await asyncio.sleep(1)
+        t2 = time.time()
 
     if message is None:
         return f"No response from translator Danila"
