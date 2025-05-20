@@ -31,6 +31,11 @@ from utils.singleton import SingletonMeta
 from config import AUDIOS_DIR, GRUPO_BOT, GRUPO_TRANSLATOR_BOT
 
 
+AGENTS = {
+    GRUPO_BOT: taras_agent,
+    GRUPO_TRANSLATOR_BOT: danila_agent
+}
+
 semaphore = asyncio.Semaphore(8)
 
 
@@ -231,15 +236,12 @@ class Updater(metaclass=SingletonMeta):
                 self.log.warning(f"No such text type supported: {text_type} -> {message.id}")
                 return
 
-            agent = {
-                GRUPO_BOT: taras_agent,
-                GRUPO_TRANSLATOR_BOT: danila_agent
-            }.get(reciever_user.login)
+            agent_receiver = AGENTS.get(reciever_user.login)
 
-            if not agent or forward_to:
+            if not agent_receiver or forward_to or sender_user.login in [GRUPO_TRANSLATOR_BOT]:
                 return
 
-            resp = await agent.send(str(sender_user.id), message.text, context=sender_user.to_dict())
+            resp = await agent_receiver.send(str(sender_user.id), message.text, context=sender_user.to_dict())
             resp = self.prepare_text(resp.content)
             await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
