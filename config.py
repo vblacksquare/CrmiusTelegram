@@ -42,7 +42,8 @@ GRUPO_TOKEN = os.getenv("chat_token")
 GRUPO_ENDPOINT = f"https://{crm_host}/chat/api_request/"
 
 GRUPO_BOT = os.getenv("chat_robot", default="robot@crmius.com")
-GRUPO_TRANSLATOR_BOT = os.getenv("translator_robot", default="robot@crmius.com")
+GRUPO_TRANSLATOR_BOT = os.getenv("translator_robot", default="robot_translator@crmius.com")
+GRUPO_WRITER_BOT = os.getenv("writer_robot", default="robot_writer@crmius.com")
 
 
 # crm links

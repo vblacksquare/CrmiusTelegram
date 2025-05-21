@@ -28,7 +28,7 @@ from dtypes.task import Task
 
 from utils.singleton import SingletonMeta
 
-from config import AUDIOS_DIR, GRUPO_BOT, GRUPO_TRANSLATOR_BOT
+from config import AUDIOS_DIR, GRUPO_BOT, GRUPO_TRANSLATOR_BOT, GRUPO_WRITER_BOT
 
 
 AGENTS = {
@@ -243,7 +243,10 @@ class Updater(metaclass=SingletonMeta):
 
             agent_receiver = AGENTS.get(reciever_user.login)
 
-            if not agent_receiver or forward_to or sender_user.login in [GRUPO_TRANSLATOR_BOT]:
+            if not agent_receiver or forward_to:
+                return
+
+            elif reciever_user.login in [GRUPO_BOT, GRUPO_WRITER_BOT] and sender_user.login == GRUPO_TRANSLATOR_BOT:
                 return
 
             asyncio.create_task(self.to_agent(agent_receiver, sender_user, reciever_user, message))
