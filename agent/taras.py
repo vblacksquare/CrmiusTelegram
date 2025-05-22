@@ -3,8 +3,6 @@ import asyncio
 import json
 import time
 
-from loguru import logger as log
-
 from db import Db
 from grupo import Grupo
 
@@ -17,7 +15,7 @@ from telegram import i18n
 
 from AgentService.connector import AgentConnector
 
-from config import GRUPO_BOT, GRUPO_TRANSLATOR_BOT
+from config import GRUPO_BOT, GRUPO_TRANSLATOR_BOT, GRUPO_WRITER_BOT
 
 
 async def get_chats(data: str, chat_id: str):
@@ -91,10 +89,12 @@ async def translate(data: str, chat_id: str):
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
     receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
 
-    last_message: ChatMessage = max(
-        await db.ex(dmth.GetMany(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id)),
-        key=lambda x: x.time_sent
-    )
+    all_messages: list[ChatMessage] = await db.ex(dmth.GetMany(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id))
+    if len(all_messages):
+        last_message_time = max(all_messages, key=lambda x: x.time_sent).time_sent
+
+    else:
+        last_message_time = 0
 
     await gr.send_chat_message(sender=sender, reciever=receiver, message_text=f"{text}\n\nTranslate to {target_language}")
 
@@ -107,7 +107,47 @@ async def translate(data: str, chat_id: str):
             ChatMessage,
             sender_id=receiver.chat_id,
             reciever_id=sender.chat_id,
-            time_sent={"$gt": last_message.time_sent}
+            time_sent={"$gt": last_message_time}
+        ))
+
+        await asyncio.sleep(1)
+        t2 = time.time()
+
+    if message is None:
+        return f"No response from translator Danila"
+
+    return message.text
+
+
+async def generate(data: str, chat_id: str):
+    db = Db()
+    gr = Grupo()
+
+    data = json.loads(data)
+    query = data["query"]
+
+    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
+    receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_WRITER_BOT))
+
+    all_messages: list[ChatMessage] = await db.ex(dmth.GetMany(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id))
+    if len(all_messages):
+        last_message_time = max(all_messages, key=lambda x: x.time_sent).time_sent
+
+    else:
+        last_message_time = 0
+
+    await gr.send_chat_message(sender=sender, reciever=receiver, message_text=query)
+
+    t1 = time.time()
+    t2 = t1 + 1
+    message = None
+
+    while t2 - t1 < 30 and message is None:
+        message: ChatMessage = await db.ex(dmth.GetOne(
+            ChatMessage,
+            sender_id=receiver.chat_id,
+            reciever_id=sender.chat_id,
+            time_sent={"$gt": last_message_time}
         ))
 
         await asyncio.sleep(1)
@@ -124,3 +164,4 @@ taras_agent.bind_tool_output("get_chats", get_chats)
 taras_agent.bind_tool_output("send_private_message", send_private_message)
 taras_agent.bind_tool_output("send_group_message", send_group_message)
 taras_agent.bind_tool_output("translate", translate)
+taras_agent.bind_tool_output("generate", generate)
