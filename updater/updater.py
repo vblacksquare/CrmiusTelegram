@@ -15,7 +15,7 @@ import functools
 from loguru import logger
 
 from grupo import Grupo
-from agent import taras_agent, danila_agent
+from agent import taras_agent, danila_agent, vasiliy_agent
 
 from db import Db, CrmDb
 from dtypes import Notification
@@ -33,7 +33,8 @@ from config import AUDIOS_DIR, GRUPO_BOT, GRUPO_TRANSLATOR_BOT, GRUPO_WRITER_BOT
 
 AGENTS = {
     GRUPO_BOT: taras_agent,
-    GRUPO_TRANSLATOR_BOT: danila_agent
+    GRUPO_TRANSLATOR_BOT: danila_agent,
+    GRUPO_WRITER_BOT: vasiliy_agent
 }
 
 semaphore = asyncio.Semaphore(8)
