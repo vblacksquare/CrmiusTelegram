@@ -213,8 +213,7 @@ async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: G
             message = await bot.send_media_group(
                 media=album,
                 chat_id=forward_tuser.id,
-                disable_notification=True,
-                reply_markup=keyboard.as_markup()
+                disable_notification=True
             )
 
         else:
@@ -240,8 +239,7 @@ async def __new_group_photo_message(sender: CrmUser, reciever: CrmUser, group: G
             message = await bot.send_media_group(
                 media=album,
                 chat_id=reciever_tuser.id,
-                disable_notification=not notificate,
-                reply_markup=keyboard.as_markup()
+                disable_notification=not notificate
             )
 
         return message
