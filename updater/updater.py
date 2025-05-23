@@ -151,9 +151,12 @@ class Updater(metaclass=SingletonMeta):
         return f"https://innova.crmius.com/chat/{audio_file}"
 
     def prepare_photo_text(self, message: ChatMessage | GroupMessage) -> list[str]:
-        photo_file = message.attachments["screenshot"].replace("\\", "")
+        backslashes = "\\"
 
-        return [f"https://innova.crmius.com/chat/{photo_file}"]
+        return [
+            f"https://innova.crmius.com/chat/{image['file'].replace(backslashes, '')}"
+            for image in message
+        ]
 
     async def prepare_audio(self, url) -> str:
         def func():
