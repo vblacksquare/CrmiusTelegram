@@ -84,11 +84,13 @@ class Updater(metaclass=SingletonMeta):
         if not message.attachments or not len(message.attachments):
             return "text"
 
-        if "screenshot" in message.attachments:
+        first_attachment = message.attachments[0]
+
+        if first_attachment["file_type"] == "image\\/png":
             return "photo"
 
-        elif "audio_message" in message.attachments:
-            return "audio"
+        elif first_attachment["file_type"] == "text\\/plain":
+            return "document"
 
         else:
             self.log.warning(f"Unknown attachment type -> {message.attachments}")
