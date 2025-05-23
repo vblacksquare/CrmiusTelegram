@@ -155,7 +155,7 @@ class Updater(metaclass=SingletonMeta):
 
         return [
             f"https://innova.crmius.com/chat/{image['file'].replace(backslashes, '')}"
-            for image in message
+            for image in message.attachments
         ]
 
     async def prepare_audio(self, url) -> str:
