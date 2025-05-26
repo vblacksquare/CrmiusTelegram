@@ -163,7 +163,7 @@ class Updater(metaclass=SingletonMeta):
     def prepare_document_text(self, message: ChatMessage | GroupMessage) -> list[str]:
         return [
             f"https://innova.crmius.com/chat/download/attachment/group_id/{message.group_id}/message_id/{message.id}/attachment_index/{i}"
-            for i, document in message.attachments
+            for i, document in enumerate(message.attachments)
         ]
 
     async def prepare_audio(self, url) -> str:
