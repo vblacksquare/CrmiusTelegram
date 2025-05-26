@@ -161,11 +161,9 @@ class Updater(metaclass=SingletonMeta):
         ]
 
     def prepare_document_text(self, message: ChatMessage | GroupMessage) -> list[str]:
-        backslashes = "\\"
-
         return [
-            f"https://innova.crmius.com/chat/{document['file'].replace(backslashes, '')}"
-            for document in message.attachments
+            f"https://innova.crmius.com/chat/download/attachment/group_id/{message.group_id}/message_id/{message.id}/attachment_index/{i}"
+            for i, document in message.attachments
         ]
 
     async def prepare_audio(self, url) -> str:
