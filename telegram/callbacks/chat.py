@@ -1,37 +1,26 @@
 
-import urllib.parse
 import pytz
 from datetime import datetime
+
+from agent.taras import TEMP_DATA
 
 from loguru import logger
 
 from aiogram.types import LinkPreviewOptions, URLInputFile, FSInputFile, InputMediaPhoto, WebAppInfo, InputMediaDocument
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
-from ..telegram import bot, i18n
+from telegram import bot, i18n
 
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User, CrmUser
+from dtypes.group import Group
 
-from config import PORTAL_REDIRECT_URL, USER_CHAT_URL
+
+from .utils import generate_private_app_link, generate_group_app_link
 
 
 db = Db()
-
-
-async def generate_app_link(
-    sender: CrmUser,
-    reciever: CrmUser,
-    forward_to: CrmUser
-) -> str:
-
-    resource_link = USER_CHAT_URL.format(username=sender.username)
-    resource_link = urllib.parse.quote_plus(resource_link)
-    reciever_user = forward_to if forward_to else reciever
-    login = urllib.parse.quote_plus(reciever_user.login)
-    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
-    return PORTAL_REDIRECT_URL.format(login=login, password=password, redirect=resource_link)
 
 
 async def generate_keyboard(
@@ -42,17 +31,40 @@ async def generate_keyboard(
     forward_to: CrmUser
 ):
 
-    app_redirect_link = await generate_app_link(sender=sender, reciever=reciever, forward_to=forward_to)
+    app_redirect_link = generate_private_app_link(sender=sender, reciever=reciever, forward_to=forward_to)
 
     tuser = forward_tuser if forward_tuser else reciever_tuser
 
     keyboard = InlineKeyboardBuilder()
-    keyboard.row(
-        InlineKeyboardButton(
-            text=i18n.gettext("in_app_bt", locale=tuser.language),
-            web_app=WebAppInfo(url=app_redirect_link)
+
+    if reciever_tuser.id in TEMP_DATA:
+        entity = TEMP_DATA[reciever_tuser.id]
+
+        if isinstance(entity, CrmUser):
+            app_redirect_link = generate_private_app_link(sender=entity, reciever=sender, forward_to=forward_to)
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=i18n.gettext("in_app_bt", locale=tuser.language),
+                    web_app=WebAppInfo(url=app_redirect_link)
+                )
+            )
+
+        elif isinstance(entity, Group):
+            app_redirect_link = generate_group_app_link(group=entity, reciever=sender, forward_to=forward_to)
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=i18n.gettext("in_app_bt", locale=tuser.language),
+                    web_app=WebAppInfo(url=app_redirect_link)
+                )
+            )
+
+    else:
+        keyboard.row(
+            InlineKeyboardButton(
+                text=i18n.gettext("in_app_bt", locale=tuser.language),
+                web_app=WebAppInfo(url=app_redirect_link)
+            )
         )
-    )
 
     return keyboard
 

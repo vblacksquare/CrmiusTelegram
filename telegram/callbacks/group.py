@@ -8,32 +8,17 @@ from loguru import logger
 from aiogram.types import LinkPreviewOptions, URLInputFile, FSInputFile, InputMediaPhoto, WebAppInfo, InputMediaDocument
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
-from ..telegram import bot, i18n
+from telegram import bot, i18n
 
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User, CrmUser
 from dtypes.group import Group
 
-
-from config import GROUP_CHAT_URL, PORTAL_REDIRECT_URL
+from .utils import generate_group_app_link
 
 
 db = Db()
-
-
-async def generate_app_link(
-    reciever: CrmUser,
-    forward_to: CrmUser,
-    group: Group,
-) -> str:
-
-    resource_link = GROUP_CHAT_URL.format(name=group.slug)
-    resource_link = urllib.parse.quote_plus(resource_link)
-    reciever_user = forward_to if forward_to else reciever
-    login = urllib.parse.quote_plus(reciever_user.login)
-    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
-    return PORTAL_REDIRECT_URL.format(login=login, password=password, redirect=resource_link)
 
 
 async def generate_keyboard(
@@ -44,7 +29,7 @@ async def generate_keyboard(
     group: Group
 ):
 
-    app_redirect_link = await generate_app_link(reciever=reciever, forward_to=forward_to, group=group)
+    app_redirect_link = generate_group_app_link(reciever=reciever, forward_to=forward_to, group=group)
 
     tuser = forward_tuser if forward_tuser else reciever_tuser
 
