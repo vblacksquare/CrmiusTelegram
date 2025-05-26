@@ -124,6 +124,10 @@ msgid "new_chat_photo_message"
 msgstr "🗣 Фото от <b>{sender}</b>"
 "\n\n{caption}"
 
+msgid "new_chat_document_message"
+msgstr "🗣 Файл от <b>{sender}</b>"
+"\n\n{caption}"
+
 msgid "new_forward_chat_message"
 msgstr "🫥 Сообщение от <b>{sender}</b> для <b>{reciever}</b>"
 "\n\n{text}"
@@ -134,6 +138,10 @@ msgstr "🫥 Голосовое от <b>{sender}</b> для <b>{reciever}</b>"
 
 msgid "new_forward_chat_photo_message"
 msgstr "🫥 Фото от <b>{sender}</b> для <b>{reciever}</b>"
+"\n\n{caption}"
+
+msgid "new_forward_chat_document_message"
+msgstr "🫥 Файл от <b>{sender}</b> для <b>{reciever}</b>"
 "\n\n{caption}"
 
 msgid "new_group_message"
