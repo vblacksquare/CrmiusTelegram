@@ -148,6 +148,10 @@ msgid "new_group_photo_message"
 msgstr "👥 Фото в <b>группе {group}</b> от <b>{sender}</b>"
 "\n\n{caption}"
 
+msgid "new_group_document_message"
+msgstr "👥 Файл в <b>группе {group}</b> от <b>{sender}</b>"
+"\n\n{caption}"
+
 msgid "new_forward_group_message"
 msgstr "🫥 Сообщение в <b>группе {group}</b> от <b>{sender}</b>"
 "\n\n{text}"
@@ -158,6 +162,10 @@ msgstr "🫥 Голосовое в <b>группе {group}</b> от <b>{sender}<
 
 msgid "new_forward_group_photo_message"
 msgstr "🫥 Фото в <b>группе {group}</b> от <b>{sender}</b>"
+"\n\n{caption}"
+
+msgid "new_forward_group_document_message"
+msgstr "🫥 Файл в <b>группе {group}</b> от <b>{sender}</b>"
 "\n\n{caption}"
 
 msgid "global_bot_message"

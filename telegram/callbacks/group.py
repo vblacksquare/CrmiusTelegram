@@ -260,9 +260,9 @@ async def __new_group_document_message(sender: CrmUser, reciever: CrmUser, group
         album = []
         for i, document in enumerate(documents[:10]):
             album.append(InputMediaDocument(
-                media=URLInputFile(url=document),
+                media=URLInputFile(url=document[0], filename=document[1]),
                 caption=caption if i == 0 else None,
-                parse_mode="html"
+                parse_mode="html",
             ))
 
         message = await bot.send_media_group(

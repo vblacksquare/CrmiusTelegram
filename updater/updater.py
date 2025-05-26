@@ -160,9 +160,12 @@ class Updater(metaclass=SingletonMeta):
             for image in message.attachments
         ]
 
-    def prepare_document_text(self, message: ChatMessage | GroupMessage) -> list[str]:
+    def prepare_document_text(self, message: ChatMessage | GroupMessage) -> list[list[str, str]]:
         return [
-            f"https://innova.crmius.com/chat/download/attachment/group_id/{message.group_id}/message_id/{message.id}/attachment_index/{i}"
+            [
+                f"https://innova.crmius.com/chat/download/attachment/group_id/{message.group_id}/message_id/{message.id}/attachment_index/{i}",
+                document['name']
+            ]
             for i, document in enumerate(message.attachments)
         ]
 
