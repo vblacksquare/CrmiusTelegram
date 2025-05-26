@@ -73,10 +73,12 @@ class Updater(metaclass=SingletonMeta):
         self.callback_chat_message = _cork
         self.callback_chat_audio_message = _cork
         self.callback_chat_photo_message = _cork
+        self.callback_chat_document_message = _cork
 
         self.callback_group_message = _cork
         self.callback_group_audio_message = _cork
         self.callback_group_photo_message = _cork
+        self.callback_group_document_message = _cork
 
         self.callback_task_notification = _cork
 
@@ -158,6 +160,14 @@ class Updater(metaclass=SingletonMeta):
             for image in message.attachments
         ]
 
+    def prepare_document_text(self, message: ChatMessage | GroupMessage) -> list[str]:
+        backslashes = "\\"
+
+        return [
+            f"https://innova.crmius.com/chat/{document['file'].replace(backslashes, '')}"
+            for document in message.attachments
+        ]
+
     async def prepare_audio(self, url) -> str:
         def func():
             audio = pydub.AudioSegment.from_ogg(audio_raw_path)
@@ -179,6 +189,9 @@ class Updater(metaclass=SingletonMeta):
         return audio_encoded_path
 
     async def prepare_photos(self, urls) -> list[str]:
+        return urls
+
+    async def prepare_documents(self, urls) -> list[str]:
         return urls
 
     async def find_task(self, task_id: int) -> Task:
@@ -242,6 +255,12 @@ class Updater(metaclass=SingletonMeta):
                 photos_paths = await self.prepare_photos(photos)
                 self.prepare_text(message)
                 await self.callback_chat_photo_message(sender=sender_user, reciever=reciever_user, caption=message.text, photos=photos_paths, forward_to=forward_to, crm_msg_id=message.id)
+
+            elif text_type == "document":
+                documents = self.prepare_document_text(message)
+                documents_paths = await self.prepare_documents(documents)
+                self.prepare_text(message)
+                await self.callback_chat_document_message(sender=sender_user, reciever=reciever_user, caption=message.text, documents=documents_paths, forward_to=forward_to, crm_msg_id=message.id)
 
             else:
                 self.log.warning(f"No such text type supported: {text_type} -> {message.id}")
@@ -311,6 +330,12 @@ class Updater(metaclass=SingletonMeta):
                 photos_paths = await self.prepare_photos(photos)
                 self.prepare_text(message)
                 callback = functools.partial(self.callback_group_photo_message, caption=message.text, photos=photos_paths, crm_msg_id=message.id)
+
+            elif text_type == "document":
+                documents = self.prepare_document_text(message)
+                documents_paths = await self.prepare_documents(documents)
+                self.prepare_text(message)
+                callback = functools.partial(self.callback_group_document_message, caption=message.text, documents=documents_paths, crm_msg_id=message.id)
 
             else:
                 self.log.warning(f"No such text type supported: {text_type} -> {message.id}")
