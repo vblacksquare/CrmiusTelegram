@@ -58,7 +58,6 @@ async def send_private_message(data: str, chat_id: str):
     await gr.send_chat_message(sender=sender, reciever=crm_reciever, message_text=formatted_text)
 
     TEMP_DATA.update({chat_id: crm_reciever})
-    print(TEMP_DATA)
 
     return "ok"
 
@@ -82,7 +81,6 @@ async def send_group_message(data: str, chat_id: str):
     await gr.send_group_message(sender=sender, group=group, message_text=formatted_text)
 
     TEMP_DATA.update({chat_id: group})
-    print(TEMP_DATA)
 
     return "ok"
 

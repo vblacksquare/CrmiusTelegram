@@ -37,10 +37,8 @@ async def generate_keyboard(
 
     keyboard = InlineKeyboardBuilder()
 
-    print(reciever_tuser.id, TEMP_DATA)
-
-    if reciever_tuser.id in TEMP_DATA:
-        entity = TEMP_DATA[reciever_tuser.id]
+    if reciever.id in TEMP_DATA:
+        entity = TEMP_DATA.pop(reciever.id)
 
         if isinstance(entity, CrmUser):
             app_redirect_link = generate_private_app_link(sender=entity, reciever=sender, forward_to=forward_to)
