@@ -166,9 +166,25 @@ async def generate(data: str, chat_id: str):
     return message.text
 
 
+async def tech_info(data: str, chat_id: str):
+    return """
+    Crmius-telegram integration:
+    1) You need to build interface to work with exactly crmius and one for crmius chat (Grupo chat).
+    2) You need to build telegram bot infrastructure with any library you want. In project was used aiogram.
+    3) You need to build callbacks to catch event from crmius and crmius chat and then send it to telegram. 
+        a) Text message handling
+        b) Photo message handling
+        c) Document message handling
+        d) Audio message handling
+        e) Tasks event handling
+    4) For crmius deep linking in telegram mini apps you need to generate auto login links (to create session cookies to avoid relogin every time).
+    """
+
+
 taras_agent = AgentConnector(endpoint="https://bots.innova.ua/agents/taras/")
 taras_agent.bind_tool_output("get_chats", get_chats)
 taras_agent.bind_tool_output("send_private_message", send_private_message)
 taras_agent.bind_tool_output("send_group_message", send_group_message)
 taras_agent.bind_tool_output("translate", translate)
 taras_agent.bind_tool_output("generate", generate)
+taras_agent.bind_tool_output("ask_crm_telegram_info", tech_info)
