@@ -37,6 +37,8 @@ async def generate_keyboard(
 
     keyboard = InlineKeyboardBuilder()
 
+    print(reciever_tuser.id, TEMP_DATA)
+
     if reciever_tuser.id in TEMP_DATA:
         entity = TEMP_DATA[reciever_tuser.id]
 
