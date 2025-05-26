@@ -28,10 +28,12 @@ async def main():
     updater.callback_chat_message = callbacks.new_chat_message
     updater.callback_chat_audio_message = callbacks.new_chat_audio_message
     updater.callback_chat_photo_message = callbacks.new_chat_photo_message
+    updater.callback_chat_document_message = callbacks.new_chat_document_message
 
     updater.callback_group_message = callbacks.new_group_message
     updater.callback_group_audio_message = callbacks.new_group_audio_message
     updater.callback_group_photo_message = callbacks.new_group_photo_message
+    updater.callback_group_document_message = callbacks.new_group_document_message
 
     updater.callback_task_notification = callbacks.new_task_notification
 
