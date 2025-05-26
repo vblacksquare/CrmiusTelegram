@@ -45,7 +45,6 @@ async def generate_keyboard(
 ):
 
     app_redirect_link = await generate_app_link(reciever=reciever, forward_to=forward_to, group=group)
-    logger.info(app_redirect_link)
 
     tuser = forward_tuser if forward_tuser else reciever_tuser
 

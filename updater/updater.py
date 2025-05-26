@@ -240,6 +240,8 @@ class Updater(metaclass=SingletonMeta):
 
             text_type = self.get_text_type(message)
 
+            self.log.info(f"New chat message: {sender_user.login} -> {reciever_user.login} {message.id}@{text_type}")
+
             if text_type == "text":
                 self.prepare_text(message)
                 await self.callback_chat_message(sender=sender_user, reciever=reciever_user, text=message.text, forward_to=forward_to, crm_msg_id=message.id)
@@ -314,6 +316,8 @@ class Updater(metaclass=SingletonMeta):
             reciever_users = await self.find_users(group.participants)
 
             text_type = self.get_text_type(message)
+
+            self.log.info(f"New group message: {sender_user.login} -> {group.slug} {message.id}@{text_type}")
 
             if text_type == "text":
                 self.prepare_text(message)
