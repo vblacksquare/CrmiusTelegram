@@ -267,6 +267,12 @@ class Updater(metaclass=SingletonMeta):
                 self.prepare_text(message)
                 await self.callback_chat_photo_message(sender=sender_user, reciever=reciever_user, caption=message.text, photos=photos_paths, forward_to=forward_to, crm_msg_id=message.id)
 
+            elif text_type == "screenshot":
+                photos = self.prepare_screenshot_text(message)
+                photos_paths = await self.prepare_photos(photos)
+                self.prepare_text(message)
+                await self.callback_chat_photo_message(sender=sender_user, reciever=reciever_user, caption=message.text, photos=photos_paths, forward_to=forward_to, crm_msg_id=message.id)
+
             elif text_type == "document":
                 documents = self.prepare_document_text(message)
                 documents_paths = await self.prepare_documents(documents)
@@ -340,6 +346,12 @@ class Updater(metaclass=SingletonMeta):
 
             elif text_type == "photo":
                 photos = self.prepare_photo_text(message)
+                photos_paths = await self.prepare_photos(photos)
+                self.prepare_text(message)
+                callback = functools.partial(self.callback_group_photo_message, caption=message.text, photos=photos_paths, crm_msg_id=message.id)
+
+            elif text_type == "screenshot":
+                photos = self.prepare_screenshot_text(message)
                 photos_paths = await self.prepare_photos(photos)
                 self.prepare_text(message)
                 callback = functools.partial(self.callback_group_photo_message, caption=message.text, photos=photos_paths, crm_msg_id=message.id)
