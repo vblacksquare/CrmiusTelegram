@@ -86,6 +86,9 @@ class Updater(metaclass=SingletonMeta):
         if not message.attachments or not len(message.attachments):
             return "text"
 
+        if "screenshot" in message.attachments:
+            return "screenshot"
+
         first_attachment = message.attachments[0]
 
         if first_attachment["file_type"] == "image\\/png":
