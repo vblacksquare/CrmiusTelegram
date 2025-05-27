@@ -166,7 +166,7 @@ class Updater(metaclass=SingletonMeta):
     def prepare_screenshot_text(self, message: ChatMessage | GroupMessage) -> str:
         backslashes = "\\"
 
-        return [message.attachments["image"].replace(backslashes, '')]
+        return [message.attachments["screenshot"].replace(backslashes, '')]
 
     def prepare_document_text(self, message: ChatMessage | GroupMessage) -> list[list[str, str]]:
         return [
