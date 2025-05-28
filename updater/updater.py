@@ -89,16 +89,22 @@ class Updater(metaclass=SingletonMeta):
         if "screenshot" in message.attachments:
             return "screenshot"
 
-        first_attachment = message.attachments[0]
+        try:
+            first_attachment = message.attachments[0]
 
-        if first_attachment["file_type"] == "image\\/png":
-            return "photo"
+            if first_attachment["file_type"] == "image\\/png":
+                return "photo"
 
-        elif first_attachment["file_type"] == "text\\/plain":
-            return "document"
+            elif first_attachment["file_type"] == "text\\/plain":
+                return "document"
 
-        else:
-            self.log.warning(f"Unknown attachment type -> {message.attachments}")
+            else:
+                self.log.warning(f"Unknown attachment type -> {message.attachments}")
+                return "text"
+
+        except Exception as err:
+            self.log.exception(err)
+
             return "text"
 
     def prepare_text(self, message: ChatMessage | GroupMessage | str) -> ChatMessage | GroupMessage:
