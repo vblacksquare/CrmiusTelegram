@@ -5,10 +5,11 @@ import os
 # telegram
 COMMANDS = ["/start"]
 
-
 LANGUAGES = ["ru", "uk"]
 DEFAULT_LANGUAGE = LANGUAGES[0]
 BOT_TOKEN = os.getenv("telegram_token")
+
+LEAD_GROUP_ID = os.getenv("lead_group_id")
 
 
 # main db

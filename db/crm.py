@@ -1,17 +1,15 @@
 
 import aiomysql
-import aiohttp
-from aiogram.types import Message
 import asyncio
-import pytz
-import pusher
 
 from loguru import logger
 from datetime import datetime
 
+from utils.convert import string_to_uuid
 from .db import Db
 from dtypes.db import method as dmth
-from dtypes.user import CrmUser, User
+from dtypes.user import CrmUser
+from dtypes.lead import Lead
 from dtypes.message import GroupMessage, ChatMessage, TaskMessage
 from dtypes.notification import Notification
 from dtypes.task import Task
@@ -21,7 +19,6 @@ from utils.singleton import SingletonMeta
 
 from config import CRM_HOST, CRM_PORT, CRM_USER, CRM_PASS, CRM_NAME
 from config import CHAT_CRM_HOST, CHAT_CRM_PORT, CHAT_CRM_USER, CHAT_CRM_PASS, CHAT_CRM_NAME
-from config import GRUPO_TOKEN, GRUPO_ENDPOINT
 
 
 db = Db()
@@ -577,3 +574,31 @@ class CrmDb(metaclass=SingletonMeta):
             conn.close()
 
             return None
+
+    async def get_leads(self, from_id: int = 0) -> list[Lead]:
+        conn = await self.connection()
+        cur = await conn.cursor()
+
+        try:
+            await cur.execute("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'")
+            await cur.execute("SELECT id, subject, body FROM tbllead_integration_emails WHERE id > %s", (from_id,))
+            raw_leads = await cur.fetchall()
+
+            leads = []
+            for raw_lead in raw_leads:
+                leads.append(Lead(
+                    id=string_to_uuid(str(raw_lead[0])),
+                    crm_id=raw_lead[0],
+                    raw_subject=raw_lead[1],
+                    raw_content=raw_lead[2]
+                ))
+
+            return leads
+
+        except Exception as err:
+            self.log.exception(err)
+
+            await cur.close()
+            conn.close()
+
+            return []

@@ -14,6 +14,7 @@ import functools
 
 from loguru import logger
 
+from dtypes.lead import Lead
 from grupo import Grupo
 from agent import taras_agent, danila_agent, vasiliy_agent
 
@@ -56,11 +57,12 @@ class Updater(metaclass=SingletonMeta):
 
         self.tasks = [
             self.new_chat_messages, self.new_group_messages,
-            self.new_task_notifications
+            self.new_task_notifications, self.new_raw_leads
         ]
         self.long_tasks = [
             self.new_users, self.new_groups, self.new_tasks
         ]
+        self.__tasks = []
 
         self.short_task_func = None
         self.long_task_func = None
@@ -518,31 +520,38 @@ class Updater(metaclass=SingletonMeta):
                 tuser.is_verified = False
                 await self.db.ex(dmth.UpdateOne(User, tuser, to_update=["crm_id", "is_verified"]))
 
-    async def wrapper(self, task: typing.Callable):
-        try:
-            await task()
+    async def new_raw_leads(self):
+        settings: Settings = await self.db.ex(dmth.GetOne(Settings, id="main"))
+        old_last_raw_lead_id = settings.last_raw_lead_id
+        new_last_raw_lead_id = 0
 
-        except Exception as err:
-            self.log.exception(err)
+        new_leads = await self.crm.get_leads(from_id=old_last_raw_lead_id)
+        await self.db.ex(dmth.AddMany(Lead, new_leads))
 
-    async def __run(self):
+        if new_last_raw_lead_id > old_last_raw_lead_id:
+            settings.last_raw_lead_id = new_last_raw_lead_id
+            await self.db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_lead_id"]))
+
+    async def task_wrapper(self, func, delay):
         while True:
-            for task in self.tasks:
-                await self.wrapper(task)
+            try:
+                await func()
 
-            await asyncio.sleep(self.delay)
+            except Exception as err:
+                self.log.error(f"Occurred error with {func.__name__} -> {err}")
+                self.log.exception(err)
 
-    async def __long_run(self):
-        while True:
-            for task in self.long_tasks:
-                await self.wrapper(task)
-
-            await asyncio.sleep(self.long_delay)
+            await asyncio.sleep(delay)
 
     async def run(self):
         try:
-            self.short_task_func = self.loop.create_task(self.__run())
-            self.long_task_func = self.loop.create_task(self.__long_run())
+            for task in self.tasks:
+                self.tasks.append(asyncio.create_task(self.task_wrapper(task, self.delay)))
+                self.log.info(f"Started task -> {task.__name__}")
+
+            for task in self.long_tasks:
+                self.tasks.append(asyncio.create_task(self.task_wrapper(task, self.long_delay)))
+                self.log.info(f"Started task -> {task.__name__}")
 
         except Exception as err:
             self.log.exception(err)
