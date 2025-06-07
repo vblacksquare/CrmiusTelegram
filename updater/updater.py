@@ -563,19 +563,17 @@ class Updater(metaclass=SingletonMeta):
                 )
 
                 raw_lead.__dict__.update(**json.loads(answer.content))
-
                 if not raw_lead.subject:
                     raw_lead.subject = raw_lead.raw_subject
-
-                raw_lead.is_processed = True
-
-                await self.db.ex(dmth.UpdateOne(Lead, raw_lead))
 
             except Exception as err:
                 self.log.exception(err)
 
                 if answer:
                     self.log.debug(f"{answer.to_dict()}")
+
+            raw_lead.is_processed = True
+            await self.db.ex(dmth.UpdateOne(Lead, raw_lead))
 
     async def task_wrapper(self, func, delay):
         while True:
