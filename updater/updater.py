@@ -525,6 +525,9 @@ class Updater(metaclass=SingletonMeta):
         settings: Settings = await self.db.ex(dmth.GetOne(Settings, id="main"))
 
         new_leads = await self.crm.get_leads(from_id=settings.last_raw_lead_id)
+        if not len(new_leads):
+            return
+
         await self.db.ex(dmth.AddMany(Lead, new_leads))
 
         last_lead = max(new_leads, key=lambda x: x.crm_id)
