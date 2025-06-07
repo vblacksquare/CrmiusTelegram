@@ -547,13 +547,14 @@ class Updater(metaclass=SingletonMeta):
                             "first_name": "client's first name",
                             "last_name": "client's last name",
                             "sur_name": "client's surname",
-                            "phone": "client's phone number",
+                            "phone": "client's phone number (format: \'+{CODE} {NUMBERS}\')",
                             "email": "client's email address",
                             "message": "client's message",
                             "service_name": "name of service asked",
                             "source_page_name": "name of page where client asked",
                             "source_page": "link of page where client asked",
                             "source": "source where client found form (like google)",
+                            "ip": "client's ip",
                             "additional_info": "info that didn't match other fields. Format: {unmatched_field: value}"
                         },
                         "page_link": None
