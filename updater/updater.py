@@ -16,7 +16,7 @@ from loguru import logger
 
 from dtypes.lead import Lead
 from grupo import Grupo
-from agent import taras_agent, danila_agent, vasiliy_agent
+from agent import taras_agent, danila_agent, vasiliy_agent, parser_agent
 
 from db import Db, CrmDb
 from dtypes import Notification
@@ -531,6 +531,48 @@ class Updater(metaclass=SingletonMeta):
         if new_last_raw_lead_id > old_last_raw_lead_id:
             settings.last_raw_lead_id = new_last_raw_lead_id
             await self.db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_lead_id"]))
+
+    async def process_leads(self):
+        raw_leads: list[Lead] = await self.db.ex(dmth.GetMany(Lead, is_processed=False))
+        for raw_lead in raw_leads[:10]:
+            answer = None
+
+            try:
+                answer = await parser_agent.send(
+                    chat_id="q",
+                    context={
+                        "fields": {
+                            "subject": "subject of ask",
+                            "first_name": "client's first name",
+                            "last_name": "client's last name",
+                            "sur_name": "client's surname",
+                            "phone": "client's phone number",
+                            "email": "client's email address",
+                            "message": "client's message",
+                            "service_name": "name of service asked",
+                            "source_page_name": "name of page where client asked",
+                            "source_page": "link of page where client asked",
+                            "source": "source where client found form (like google)",
+                            "additional_info": "info that didn't match other fields. Format: {unmatched_field: value}"
+                        }
+                    },
+                    text=raw_lead.raw_content
+                )
+
+                raw_lead.__dict__.update(**answer.to_dict())
+
+                if not raw_lead.subject:
+                    raw_lead.subject = raw_lead.raw_subject
+
+                raw_lead.is_processed = True
+
+                await self.db.ex(dmth.UpdateOne(Lead, raw_lead))
+
+            except Exception as err:
+                self.log.exception(err)
+
+                if answer:
+                    self.log.debug(f"{answer.to_dict()}")
 
     async def task_wrapper(self, func, delay):
         while True:
