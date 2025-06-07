@@ -527,10 +527,9 @@ class Updater(metaclass=SingletonMeta):
         new_leads = await self.crm.get_leads(from_id=settings.last_raw_lead_id)
         await self.db.ex(dmth.AddMany(Lead, new_leads))
 
-        new_last_raw_lead_id = max(new_leads, key=lambda x: x.crm_id)
-
-        if new_last_raw_lead_id > settings.last_raw_lead_id:
-            settings.last_raw_lead_id = new_last_raw_lead_id
+        last_lead = max(new_leads, key=lambda x: x.crm_id)
+        if last_lead.crm_id > settings.last_raw_lead_id:
+            settings.last_raw_lead_id = last_lead.crm_id
             await self.db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_raw_lead_id"]))
 
     async def process_leads(self):
