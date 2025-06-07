@@ -555,7 +555,8 @@ class Updater(metaclass=SingletonMeta):
                             "source_page": "link of page where client asked",
                             "source": "source where client found form (like google)",
                             "additional_info": "info that didn't match other fields. Format: {unmatched_field: value}"
-                        }
+                        },
+                        "page_link": None
                     },
                     text=raw_lead.raw_content
                 )
