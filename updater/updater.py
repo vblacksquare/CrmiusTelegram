@@ -583,7 +583,7 @@ class Updater(metaclass=SingletonMeta):
                 await func()
 
             except Exception as err:
-                self.log.error(f"Occurred error with {func.__name__} -> {err}")
+                self.log.error(f"Occurred error with {func} -> {err}")
                 self.log.exception(err)
 
             await asyncio.sleep(delay)
@@ -592,11 +592,11 @@ class Updater(metaclass=SingletonMeta):
         try:
             for task in self.tasks:
                 self.tasks.append(asyncio.create_task(self.task_wrapper(task, self.delay)))
-                self.log.info(f"Started task -> {task.__name__}")
+                self.log.info(f"Started task -> {task}")
 
             for task in self.long_tasks:
                 self.tasks.append(asyncio.create_task(self.task_wrapper(task, self.long_delay)))
-                self.log.info(f"Started task -> {task.__name__}")
+                self.log.info(f"Started task -> {task}")
 
         except Exception as err:
             self.log.exception(err)
