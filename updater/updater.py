@@ -2,7 +2,7 @@
 import asyncio
 import html
 import os.path
-import typing
+import json
 
 import pydub
 
@@ -560,7 +560,7 @@ class Updater(metaclass=SingletonMeta):
                     text=raw_lead.raw_content
                 )
 
-                raw_lead.__dict__.update(**answer.to_dict())
+                raw_lead.__dict__.update(**json.loads(answer.content))
 
                 if not raw_lead.subject:
                     raw_lead.subject = raw_lead.raw_subject
