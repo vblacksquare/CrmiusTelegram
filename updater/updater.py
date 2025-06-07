@@ -591,12 +591,12 @@ class Updater(metaclass=SingletonMeta):
     async def run(self):
         try:
             for task in self.tasks:
-                self.tasks.append(asyncio.create_task(self.task_wrapper(task, self.delay)))
-                self.log.info(f"Started task -> {task}")
+                self.__tasks.append(asyncio.create_task(self.task_wrapper(task, self.delay)))
+                self.log.info(f"Started task -> {task.__name__}")
 
             for task in self.long_tasks:
-                self.tasks.append(asyncio.create_task(self.task_wrapper(task, self.long_delay)))
-                self.log.info(f"Started task -> {task}")
+                self.__tasks.append(asyncio.create_task(self.task_wrapper(task, self.long_delay)))
+                self.log.info(f"Started task -> {task.__name__}")
 
         except Exception as err:
             self.log.exception(err)
