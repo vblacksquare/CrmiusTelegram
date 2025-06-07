@@ -535,7 +535,7 @@ class Updater(metaclass=SingletonMeta):
 
     async def process_leads(self):
         raw_leads: list[Lead] = await self.db.ex(dmth.GetMany(Lead, is_processed=False))
-        for raw_lead in raw_leads[:10]:
+        for raw_lead in raw_leads:
             answer = None
 
             try:

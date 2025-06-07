@@ -30,7 +30,7 @@ class Lead(DatabaseItem):
         additional_info: dict = None,
 
         is_processed: bool = False,
-        is_valid: bool = False
+        **kwargs
     ):
 
         self.id = id
@@ -54,7 +54,6 @@ class Lead(DatabaseItem):
         self.additional_info = additional_info
 
         self.is_processed = is_processed
-        self.is_valid = is_valid
 
         self.fields = [
             "id", "crm_id",
@@ -63,5 +62,5 @@ class Lead(DatabaseItem):
             "sur_name", "phone", "email",
             "message", "service_name", "source_page_name",
             "source_page", "source", "ip", "additional_info",
-            "is_processed", "is_valid"
+            "is_processed"
         ]
