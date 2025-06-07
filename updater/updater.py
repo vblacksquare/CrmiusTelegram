@@ -583,7 +583,7 @@ class Updater(metaclass=SingletonMeta):
                 await func()
 
             except Exception as err:
-                self.log.error(f"Occurred error with {func} -> {err}")
+                self.log.error(f"Occurred error with {func.__name__} -> {err}")
                 self.log.exception(err)
 
             await asyncio.sleep(delay)
