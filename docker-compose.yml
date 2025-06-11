@@ -1,0 +1,12 @@
+services:
+  crmiustelegram:
+    container_name: crmiustelegram
+    build: ./CrmiusTelegram
+    restart: always
+    tty: true
+    stdin_open: true
+    volumes:
+      - crmiustelegram:/app
+
+volumes:
+  crmiustelegram:

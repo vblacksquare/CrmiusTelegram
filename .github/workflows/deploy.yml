@@ -19,10 +19,9 @@ jobs:
       - name: Deploy
         run: |
           sshpass -p "${{ secrets.SSH_PASS }}" ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} <<EOF
-            cd ./bots/CrmiusTelegram
+            cd ./bots/${{ github.event.repository.name }}
             git reset --hard
             git pull origin main
-            cd ..
-            docker compose down --volumes crmiustelegram
-            docker compose up -d --build crmiustelegram
+            docker compose down --volumes
+            docker compose up -d --build
           EOF
