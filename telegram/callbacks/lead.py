@@ -51,7 +51,7 @@ async def __new_lead(lead):
         )
         await db.ex(dmth.AddOne(LeadGroup, lead_group))
 
-    await bot.send_message(
+    message = await bot.send_message(
         chat_id=get_config().telegram.lead_group_id,
         message_thread_id=lead_group.thread_id,
         text=i18n.gettext("lead_msg", locale=language).format(**data),
@@ -65,5 +65,6 @@ async def __new_lead(lead):
             text=i18n.gettext("lead_message_msg", locale=language).format(
                 message=lead.message
             ),
-            parse_mode="HTML"
+            parse_mode="HTML",
+            reply_to_message_id=message.message_id
         )
