@@ -581,14 +581,17 @@ class CrmDb(metaclass=SingletonMeta):
 
         try:
             await cur.execute("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'")
-            await cur.execute("SELECT lead_edata FROM tblleads WHERE id > %s AND lead_edata is not NULL", (from_id,))
+            await cur.execute("SELECT id, lead_edata FROM tblleads WHERE id > %s AND lead_edata is not NULL", (from_id,))
             raw_leads = await cur.fetchall()
 
             leads = []
             for raw_lead in raw_leads:
-                lead_data = json.loads(raw_lead[0])
+                crm_id, data = raw_lead
 
-                leads.append(Lead(**lead_data))
+                lead = Lead(**json.loads(data))
+                lead.crm_id = crm_id
+
+                leads.append(lead)
 
             return leads
 

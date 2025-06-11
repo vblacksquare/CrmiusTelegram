@@ -348,6 +348,7 @@ msgstr "<b>{subject}</b>"
 "\n\n<b>ФИО</b>: <code>{full_name}</code>"
 "\n<b>Телефон</b>: <code>{phone}</code>"
 "\n<b>Почта</b>: <code>{email}</code>"
+"\n<b>Дата</b>: <code>{date}</code>"
 
 msgid "lead_message_msg"
 msgstr "<b>Клиент написал</b>"
