@@ -26,7 +26,7 @@ async def __new_lead(lead):
         "page": lead.source_page
     }
 
-    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup,{"$or": [{"email": {"$in": lead.email}}, {"phone": {"$in": "lead.phone"}}]}))
+    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, data={"$or": [{"email": {"$in": lead.email}}, {"phone": {"$in": "lead.phone"}}]}))
     if lead_group:
         if lead.email:
             lead_group.email.append(lead.email)
@@ -44,8 +44,8 @@ async def __new_lead(lead):
 
         lead_group = LeadGroup(
             id=lead.id,
-            email=lead.email,
-            phone=lead.phone,
+            email=[lead.email],
+            phone=[lead.phone],
             thread_id=topic.message_thread_id
         )
         await db.ex(dmth.AddOne(LeadGroup, lead_group))
