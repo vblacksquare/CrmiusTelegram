@@ -20,12 +20,11 @@ gr = Grupo()
 
 @bot_router.message()
 async def reply(message: Message):
+    print(message.from_user)
+
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
     try:
-        if not user:
-            raise ValueError
-
         if not user.is_verified:
             raise ValueError
 
