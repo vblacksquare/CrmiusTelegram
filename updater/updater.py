@@ -56,7 +56,7 @@ class Updater(metaclass=SingletonMeta):
 
         self.tasks = [
             self.new_chat_messages, self.new_group_messages,
-            self.new_task_notifications
+            self.new_task_notifications, self.new_leads
         ]
         self.long_tasks = [
             self.new_users, self.new_groups, self.new_tasks
