@@ -361,7 +361,7 @@ msgstr "немає"
 msgid "lead_new_name"
 msgstr "🆕 {name}"
 
-msgid "work_completed_name"
+msgid "lead_work_name"
 msgstr "🛠 {name}"
 
 msgid "lead_completed_name"
