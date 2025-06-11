@@ -26,7 +26,7 @@ async def __new_lead(lead):
         "page": lead.source_page
     }
 
-    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, data={"$or": [{"email": {"$in": lead.email}}, {"phone": {"$in": "lead.phone"}}]}))
+    lead_group: LeadGroup = await db.db[LeadGroup.__name__].find_one({"$or": [{"email": {"$in": lead.email}}, {"phone": {"$in": "lead.phone"}}]})
     if lead_group:
         if lead.email:
             lead_group.email.append(lead.email)
