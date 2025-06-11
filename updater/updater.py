@@ -533,6 +533,9 @@ class Updater(metaclass=SingletonMeta):
         new_lead_id = 0
 
         leads = await self.crm.get_leads(from_id=settings.last_lead_id)
+        if not len(leads):
+            return
+
         await self.db.ex(dmth.AddMany(Lead, leads))
 
         for lead in leads:
