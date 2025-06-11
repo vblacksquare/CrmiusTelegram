@@ -20,7 +20,8 @@ gr = Grupo()
 
 @bot_router.message()
 async def reply(message: Message):
-    print(message.from_user)
+    if message.from_user.is_bot:
+        return
 
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 

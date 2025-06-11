@@ -32,7 +32,7 @@ async def __new_lead(lead):
             full_name=lead.full_name if lead.full_name else nothing,
             phone=lead.phone if lead.phone else nothing,
             email=lead.email if lead.email else nothing,
-            date=datetime.fromtimestamp(lead.date).strftime("%Y-%m-%d %H:%M") if lead.date else nothing
+            date=datetime.fromtimestamp(lead.added_time).strftime("%Y-%m-%d %H:%M") if lead.added_time else nothing
         ),
         parse_mode="HTML"
     )
