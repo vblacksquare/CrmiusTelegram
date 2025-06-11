@@ -347,7 +347,7 @@ msgstr "(Сгенеровано) {text}"
 msgid "lead_msg"
 msgstr "<b>{subject}</b>"
 "\n<a href="{page}">&#8203;</a>"
-"\n\n<b>ПІБ</b>: <code>{full_name}</code>"
+"\n<b>ПІБ</b>: <code>{full_name}</code>"
 "\n<b>Телефон</b>: <code>{phone}</code>"
 "\n<b>Пошта</b>: <code>{email}</code>"
 
