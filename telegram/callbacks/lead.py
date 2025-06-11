@@ -5,7 +5,7 @@ from telegram import bot, i18n
 
 from db import Db
 from dtypes.db import method as dmth
-from dtypes.lead import Lead
+from dtypes.lead import Lead, LeadGroup
 
 from config import get_config
 
@@ -26,17 +26,35 @@ async def __new_lead(lead):
         "page": lead.source_page
     }
 
-    topic = await bot.create_forum_topic(
-        chat_id=get_config().telegram.lead_group_id,
-        name=data["subject"]
-    )
+    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup,
+        {"$or": [{"email": lead.email}, {"phone": lead.phone}]}
+    ))
+    if lead_group:
+        if lead.email:
+            lead_group.email = lead.email
 
-    lead.thread_id = topic.message_thread_id
-    await db.ex(dmth.UpdateOne(Lead, lead, to_update=["thread_id"]))
+        if lead.phone:
+            lead_group.phone = lead.phone
+
+        await db.ex(dmth.UpdateOne(LeadGroup, lead_group, to_update=["email", "phone"]))
+
+    else:
+        topic = await bot.create_forum_topic(
+            chat_id=get_config().telegram.lead_group_id,
+            name=lead.full_name
+        )
+
+        lead_group = LeadGroup(
+            id=lead.id,
+            email=lead.email,
+            phone=lead.phone,
+            thread_id=topic.message_thread_id
+        )
+        await db.ex(dmth.AddOne(LeadGroup, lead_group))
 
     await bot.send_message(
         chat_id=get_config().telegram.lead_group_id,
-        message_thread_id=lead.thread_id,
+        message_thread_id=lead_group.thread_id,
         text=i18n.gettext("lead_msg", locale=language).format(**data),
         parse_mode="HTML"
     )
@@ -44,7 +62,7 @@ async def __new_lead(lead):
     if lead.message:
         await bot.send_message(
             chat_id=get_config().telegram.lead_group_id,
-            message_thread_id=lead.thread_id,
+            message_thread_id=lead_group.thread_id,
             text=i18n.gettext("lead_message_msg", locale=language).format(
                 message=lead.message
             ),
