@@ -40,7 +40,7 @@ async def __new_lead(lead):
     else:
         topic = await bot.create_forum_topic(
             chat_id=get_config().telegram.lead_group_id,
-            name=lead.full_name
+            name=i18n.gettext("new_lead_msg").format(name=lead.full_name)
         )
 
         lead_group = LeadGroup(
