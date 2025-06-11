@@ -21,7 +21,7 @@ gr = Grupo()
 async def reply(message: Message):
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
-    if not user.crm_id or not user.is_verified:
+    if not user or not user.crm_id or not user.is_verified:
         await message.bot.set_message_reaction(
             message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👎"}]
         )
