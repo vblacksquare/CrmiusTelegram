@@ -6,8 +6,8 @@ class LeadGroup(DatabaseItem):
     def __init__(
         self,
         id: str,
-        email: str,
-        phone: str,
+        email: list[str],
+        phone: list[str],
         thread_id: int
     ):
 
