@@ -26,12 +26,12 @@ async def __new_lead(lead):
         "page": lead.source_page
     }
 
-    lead_group: LeadGroup = await db.db[LeadGroup.__name__].find_one({"$or": [{"email": lead.email}, {"phone": "lead.phone"}]})
+    lead_group: LeadGroup = await db.db[LeadGroup.__name__].find_one({"$or": [{"email": lead.email}, {"phone": lead.phone}]})
     if lead_group:
-        if lead.email:
+        if lead.email and lead.email not in lead_group.email:
             lead_group.email.append(lead.email)
 
-        if lead.phone:
+        if lead.phone and lead.phone not in lead_group.phone:
             lead_group.phone.append(lead.phone)
 
         await db.ex(dmth.UpdateOne(LeadGroup, lead_group, to_update=["email", "phone"]))
