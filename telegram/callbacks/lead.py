@@ -14,14 +14,6 @@ db = Db()
 
 
 async def __new_lead(lead):
-    topic = await bot.create_forum_topic(
-        chat_id=get_config().telegram.lead_group_id,
-        name=lead.subject
-    )
-
-    lead.thread_id = topic.message_thread_id
-    await db.ex(dmth.UpdateOne(Lead, lead, to_update=["thread_id"]))
-
     language = get_config().telegram.languages[0]
     nothing = i18n.gettext("nothing", locale=get_config().telegram.languages[0])
 
@@ -33,6 +25,14 @@ async def __new_lead(lead):
         "date": datetime.fromtimestamp(lead.added_time).strftime("%Y-%m-%d %H:%M") if lead.added_time else nothing,
         "page": lead.source_page
     }
+
+    topic = await bot.create_forum_topic(
+        chat_id=get_config().telegram.lead_group_id,
+        name=data["subject"]
+    )
+
+    lead.thread_id = topic.message_thread_id
+    await db.ex(dmth.UpdateOne(Lead, lead, to_update=["thread_id"]))
 
     await bot.send_message(
         chat_id=get_config().telegram.lead_group_id,
