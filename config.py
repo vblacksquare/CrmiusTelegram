@@ -1,70 +1,102 @@
 
-import os
+from functools import lru_cache
+
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-# telegram
-COMMANDS = ["/start"]
-
-LANGUAGES = ["ru", "uk"]
-DEFAULT_LANGUAGE = LANGUAGES[0]
-BOT_TOKEN = os.getenv("telegram_token")
-
-LEAD_GROUP_ID = os.getenv("lead_group_id")
+class Telegram(BaseModel):
+    bot_token: str
+    lead_group_id: int
+    languages: list[str] = ["ru", "uk"]
+    commands: list[str] = ["/start"]
 
 
-# main db
-MONGODB_URI = os.getenv("mongo_uri")
-MONGODB_NAME = os.getenv("mongo_name", default="CrmiusBot")
+class Database(BaseModel):
+    uri: str
+    name: str
 
 
-# crm db
-CRM_HOST = os.getenv("crm_db_host", default="127.0.0.1")
-CRM_PORT = int(os.getenv("crm_db_port", default=3306))
-CRM_USER = os.getenv("crm_db_user", default="crm")
-CRM_PASS = os.getenv("crm_db_pass")
-CRM_NAME = os.getenv("crm_db_name", default="crm")
+class CrmDatabase(BaseModel):
+    hostname: str = "127.0.0.1"
+    username: str = ""
+    password: str = ""
+    port: int = 5432
+    db: str = "db"
 
 
-# crm chat db
-CHAT_CRM_HOST = os.getenv("chat_db_host", default="127.0.0.1")
-CHAT_CRM_PORT = int(os.getenv("chat_db_port", default=3306))
-CHAT_CRM_USER = os.getenv("chat_db_user", default="chat")
-CHAT_CRM_PASS = os.getenv("chat_db_pass")
-CHAT_CRM_NAME = os.getenv("chat_db_name", default="chat")
+class ChatDatabase(BaseModel):
+    hostname: str = "127.0.0.1"
+    username: str = ""
+    password: str = ""
+    port: int = 5432
+    db: str = "db"
 
 
-# hosts
-crm_host = os.getenv("crm_host")
-dev_crm_host = os.getenv("dev_crm_host")
+class Crm(BaseModel):
+    hostname: str
+    dev_hostname: str
+
+    @property
+    def url(self) -> str:
+        return f"https://{self.hostname}/admin/authentication?l={{login}}&p={{password}}"
+
+    @property
+    def redirect_url(self) -> str:
+        return f"https://{self.hostname}/redirect_v1.html?l={{login}}&p={{password}}&r={{redirect}}"
+
+    @property
+    def private_chat_url(self) -> str:
+        return f"https://{self.hostname}/chat/{{username}}/chat/"
+
+    @property
+    def group_chat_url(self) -> str:
+        return f"https://{self.hostname}/chat/{{name}}/"
+
+    @property
+    def task_url(self) -> str:
+        return f"https://{self.hostname}/admin/tasks/view/{{task_id}}"
+
+    @property
+    def dev_url(self) -> str:
+        return f"https://{self.dev_hostname}/admin/authentication?l={{login}}&p={{password}}"
 
 
-# grupochat api
-GRUPO_TOKEN = os.getenv("chat_token")
-GRUPO_ENDPOINT = f"https://{crm_host}/chat/api_request/"
-
-GRUPO_BOT = os.getenv("chat_robot", default="robot@crmius.com")
-GRUPO_TRANSLATOR_BOT = os.getenv("translator_robot", default="robot_translator@crmius.com")
-GRUPO_WRITER_BOT = os.getenv("writer_robot", default="robot_writer@crmius.com")
-
-
-# crm links
-ROOT_PORTAL_URL = f"https://{crm_host}/admin/authentication?l={{login}}&p={{password}}"
-PORTAL_REDIRECT_URL = f"https://{crm_host}/redirect_v1.html?l={{login}}&p={{password}}&r={{redirect}}"
-
-USER_CHAT_URL = f"https://innova.crmius.com/chat/{{username}}/chat/"
-GROUP_CHAT_URL = f"https://innova.crmius.com/chat/{{name}}/"
-
-TASK_URL = f"https://innova.crmius.com/admin/tasks/view/{{task_id}}"
-
-DEV_PORTAL_URL = f"https://{dev_crm_host}/admin/authentication?l={{login}}&p={{password}}"
+class Grupo(BaseModel):
+    token: str
+    chat_robot: str
+    translator_robot: str
+    writer_robot: str
+    endpoint: str
 
 
-# logs
-LOGS_LEVEL = "DEBUG"
+class Logger(BaseModel):
+    path: str = "resources/logs"
+    level: str = "DEBUG"
 
 
-# resources
-RESOURCES_DIR = "resources"
-LOGS_DIR = os.path.join(RESOURCES_DIR, "logs")
-LOCALES_DIR = os.path.join(RESOURCES_DIR, "locales")
-AUDIOS_DIR = os.path.join(RESOURCES_DIR, "audios")
+class Resources(BaseModel):
+    locales_path: str = "resources/locales"
+    audios_path: str = "resources/audios"
+
+
+class Settings(BaseSettings):
+    telegram: Telegram
+    database: Database
+    crmdatabase: CrmDatabase
+    chatdatabase: ChatDatabase
+    crm: Crm
+    grupo: Grupo
+    logger: Logger
+    resources: Resources
+
+    model_config = SettingsConfigDict(
+        env_file=f".env",
+        case_sensitive=False,
+        env_nested_delimiter="__",
+    )
+
+
+@lru_cache(maxsize=1)
+def get_config() -> Settings:
+    return Settings()

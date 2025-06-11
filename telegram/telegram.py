@@ -9,13 +9,13 @@ from aiogram.fsm.storage.mongo import MongoStorage
 from .i18n import UserLanguageMiddleware
 from .middleware import ClearFsmMiddleware
 
-from config import BOT_TOKEN, LOCALES_DIR, MONGODB_URI
+from config import get_config
 
 
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=get_config().telegram.bot_tokenN)
 
-os.system(f"pybabel compile -d {LOCALES_DIR} -D messages")
-i18n = I18n(path=LOCALES_DIR, default_locale="en", domain="messages")
+os.system(f"pybabel compile -d {get_config().resources.locales_path} -D messages")
+i18n = I18n(path=get_config().resources.locales_path, default_locale="en", domain="messages")
 
 
 async def run(updater):
@@ -24,7 +24,7 @@ async def run(updater):
 
         await bot.delete_webhook(drop_pending_updates=True)
 
-        dp = Dispatcher(storage=MongoStorage.from_url(MONGODB_URI))
+        dp = Dispatcher(storage=MongoStorage.from_url(get_config().database.uri))
         dp.include_router(menus_router)
 
         dp.message.middleware(ClearFsmMiddleware(bot, dp))

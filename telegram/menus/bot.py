@@ -10,7 +10,7 @@ from db import Db, CrmDb
 from dtypes.db import method as dmth
 from dtypes.user import User, CrmUser
 
-from config import GRUPO_BOT
+from config import get_config
 
 
 bot_router = Router()
@@ -30,7 +30,7 @@ async def reply(message: Message):
             raise ValueError
 
         sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=user.crm_id))
-        reciever: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
+        reciever: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=get_config().grupo.chat_robot))
 
         await gr.send_chat_message(
             sender=sender,

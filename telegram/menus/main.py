@@ -15,7 +15,7 @@ from .verify import verify_menu
 
 from telegram.factory import CallbackFactory
 
-from config import ROOT_PORTAL_URL, DEV_PORTAL_URL
+from config import get_config
 
 
 main_router = Router()
@@ -42,7 +42,7 @@ async def main_menu(callback: CallbackQuery = None, state: FSMContext = None, us
     keyboard.row(
         InlineKeyboardButton(
             text=_("root_portal_bt"),
-            web_app=WebAppInfo(url=ROOT_PORTAL_URL.format(login=login, password=password))
+            web_app=WebAppInfo(url=get_config().crm.url.format(login=login, password=password))
         )
     )
 

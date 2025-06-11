@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from db import Db
 
-from config import COMMANDS
+from config import get_config
 
 
 class ClearFsmMiddleware(BaseMiddleware):
@@ -18,7 +18,7 @@ class ClearFsmMiddleware(BaseMiddleware):
     async def __call__(self, handler, event: Message, data: dict):
         state: FSMContext = data.get("state")
 
-        if event.text and event.text.lower() in COMMANDS and await state.get_state():
+        if event.text and event.text.lower() in get_config().telegram.commands and await state.get_state():
             await state.clear()
             return await self.dp._process_update(bot=self.bot, update=data['event_update'])
 

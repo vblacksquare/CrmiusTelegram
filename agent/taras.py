@@ -15,7 +15,7 @@ from telegram import i18n
 
 from AgentService.connector import AgentConnector
 
-from config import GRUPO_BOT, GRUPO_TRANSLATOR_BOT, GRUPO_WRITER_BOT
+from config import get_config
 
 
 TEMP_DATA = {}
@@ -93,8 +93,8 @@ async def translate(data: str, chat_id: str):
     text = data["text"]
     target_language = data["target_language"]
 
-    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
-    receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
+    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=get_config().grupo.chat_robot))
+    receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=get_config().grupo.translator_robot))
 
     all_messages: list[ChatMessage] = await db.ex(dmth.GetMany(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id))
     if len(all_messages):
@@ -133,8 +133,8 @@ async def generate(data: str, chat_id: str):
     data = json.loads(data)
     query = data["query"]
 
-    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_BOT))
-    receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_WRITER_BOT))
+    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=get_config().grupo.chat_robot))
+    receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=get_config().grupo.writer_robot))
 
     all_messages: list[ChatMessage] = await db.ex(dmth.GetMany(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id))
     if len(all_messages):

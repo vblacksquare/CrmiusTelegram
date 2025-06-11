@@ -11,7 +11,7 @@ from dtypes.user import User
 from .language import language_menu
 from .main import main_menu
 
-from config import LANGUAGES, DEFAULT_LANGUAGE
+from config import get_config
 
 
 auth_router = Router()
@@ -30,7 +30,7 @@ async def start(message: Message, state: FSMContext):
             first_name=message.from_user.first_name.lower() if message.from_user.first_name else None,
             second_name=message.from_user.last_name.lower() if message.from_user.last_name else None,
             username=message.from_user.username.lower() if message.from_user.username else None,
-            language=message.from_user.language_code if message.from_user.language_code in LANGUAGES else DEFAULT_LANGUAGE
+            language=message.from_user.language_code if message.from_user.language_code in get_config().telegram.languages else get_config().telegram.languages[0]
         )
         await db.ex(dmth.AddOne(User, user))
 

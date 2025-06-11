@@ -342,3 +342,17 @@ msgstr "Невідома помилка"
 
 msgid "gpt_generated"
 msgstr "(Сгенеровано) {text}"
+
+
+msgid "lead_msg"
+msgstr "<b>{subject}</b>"
+"\n\n<b>ПІБ</b>: <code>{full_name}</code>"
+"\n<b>Телефон</b>: <code>{phone}</code>"
+"\n<b>Пошта</b>: <code>{email}</code>"
+
+msgid "lead_message_msg"
+msgstr "<b>Кліент написав</b>"
+"\n{message}"
+
+msgid "nothing"
+msgstr "немає"

@@ -11,7 +11,7 @@ from dtypes.user import User
 
 from telegram.factory import CallbackFactory
 
-from config import LANGUAGES
+from config import get_config
 
 
 language_router = Router()
@@ -26,7 +26,7 @@ async def language_menu(callback: CallbackQuery = None, user_message: Message = 
                 text=_(language),
                 callback_data=CallbackFactory(action="change_language", value=f"{action}|{language}").pack()
             )
-            for language in LANGUAGES
+            for language in get_config().telegram.languages
         ]
     )
     keyboard.row(

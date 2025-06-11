@@ -2,7 +2,6 @@
 import asyncio
 import html
 import os.path
-import json
 
 import pydub
 
@@ -16,7 +15,7 @@ from loguru import logger
 
 from dtypes.lead import Lead
 from grupo import Grupo
-from agent import taras_agent, danila_agent, vasiliy_agent, parser_agent
+from agent import taras_agent, danila_agent, vasiliy_agent
 
 from db import Db, CrmDb
 from dtypes import Notification
@@ -29,13 +28,13 @@ from dtypes.task import Task
 
 from utils.singleton import SingletonMeta
 
-from config import AUDIOS_DIR, GRUPO_BOT, GRUPO_TRANSLATOR_BOT, GRUPO_WRITER_BOT
+from config import get_config
 
 
 AGENTS = {
-    GRUPO_BOT: taras_agent,
-    GRUPO_TRANSLATOR_BOT: danila_agent,
-    GRUPO_WRITER_BOT: vasiliy_agent
+    get_config().grupo.chat_robot: taras_agent,
+    get_config().grupo.translator_robot: danila_agent,
+    get_config().grupo.writer_robot: vasiliy_agent
 }
 
 semaphore = asyncio.Semaphore(8)
@@ -83,6 +82,8 @@ class Updater(metaclass=SingletonMeta):
         self.callback_group_document_message = _cork
 
         self.callback_task_notification = _cork
+
+        self.callback_lead = _cork
 
     def get_text_type(self, message: ChatMessage | GroupMessage) -> str:
         if not message.attachments or not len(message.attachments):
@@ -191,8 +192,8 @@ class Updater(metaclass=SingletonMeta):
             audio.export(audio_encoded_path, format="ogg", codec="libopus")
 
         audio_id = uuid.uuid4().hex
-        audio_raw_path = os.path.join(AUDIOS_DIR, f"{audio_id}.webm")
-        audio_encoded_path = os.path.join(AUDIOS_DIR, f"{audio_id}_opus.ogg")
+        audio_raw_path = os.path.join(get_config().resources.audios_path, f"{audio_id}.webm")
+        audio_encoded_path = os.path.join(get_config().resources.audios_path, f"{audio_id}_opus.ogg")
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
@@ -296,7 +297,9 @@ class Updater(metaclass=SingletonMeta):
             if not agent_receiver or forward_to:
                 return
 
-            elif reciever_user.login in [GRUPO_BOT, GRUPO_WRITER_BOT] and sender_user.login == GRUPO_TRANSLATOR_BOT:
+            elif reciever_user.login in [
+                get_config().grupo.chat_robot, get_config().grupo.writer_robot
+            ] and sender_user.login == get_config().grupo.translator_robot:
                 return
 
             asyncio.create_task(self.to_agent(agent_receiver, sender_user, reciever_user, message))
@@ -435,9 +438,8 @@ class Updater(metaclass=SingletonMeta):
         task_notifications = await self.crm.get_task_notifications(from_id=old_last_task_notification_id)
 
         for task_notification in task_notifications:
-            task_notification_id = task_notification.id
             if task_notification.id > new_last_task_notification_id:
-                new_last_task_notification_id = task_notification_id
+                new_last_task_notification_id = task_notification.id
 
             await self.notificate_task_action(task_notification)
 
@@ -505,76 +507,43 @@ class Updater(metaclass=SingletonMeta):
             await self.db.ex(dmth.AddMany(CrmUser, to_add))
 
         for old_user in old_users:
-            if old_user.id not in new_users_ids:
-                await self.db.ex(dmth.RemoveOne(CrmUser, old_user))
+            if old_user.id in new_users_ids:
+                continue
 
-                if not old_user.user_id:
-                    continue
+            await self.db.ex(dmth.RemoveOne(CrmUser, old_user))
 
-                tuser: User = await self.db.ex(dmth.GetOne(User, id=old_user.user_id))
+            if not old_user.user_id:
+                continue
 
-                if not tuser:
-                    continue
+            tuser: User = await self.db.ex(dmth.GetOne(User, id=old_user.user_id))
 
-                tuser.crm_id = None
-                tuser.is_verified = False
-                await self.db.ex(dmth.UpdateOne(User, tuser, to_update=["crm_id", "is_verified"]))
+            if not tuser:
+                continue
 
-    async def new_raw_leads(self):
+            tuser.crm_id = None
+            tuser.is_verified = False
+            await self.db.ex(dmth.UpdateOne(User, tuser, to_update=["crm_id", "is_verified"]))
+
+    async def notificate_new_lead(self, lead: Lead):
+        await self.callback_lead(lead)
+
+    async def new_leads(self):
         settings: Settings = await self.db.ex(dmth.GetOne(Settings, id="main"))
+        old_lead_id = settings.last_lead_id
+        new_lead_id = 0
 
-        new_leads = await self.crm.get_leads(from_id=settings.last_raw_lead_id)
-        if not len(new_leads):
-            return
+        leads = await self.crm.get_leads(from_id=settings.last_lead_id)
+        await self.db.ex(dmth.AddMany(Lead, leads))
 
-        await self.db.ex(dmth.AddMany(Lead, new_leads))
+        for lead in leads:
+            if lead.crm_id > new_lead_id:
+                new_lead_id = lead.crm_id
 
-        last_lead = max(new_leads, key=lambda x: x.crm_id)
-        if last_lead.crm_id > settings.last_raw_lead_id:
-            settings.last_raw_lead_id = last_lead.crm_id
-            await self.db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_raw_lead_id"]))
+            await self.notificate_new_lead(lead)
 
-    async def process_leads(self):
-        raw_leads: list[Lead] = await self.db.ex(dmth.GetMany(Lead, is_processed=False))
-        for raw_lead in raw_leads:
-            answer = None
-
-            try:
-                answer = await parser_agent.send(
-                    chat_id="q",
-                    context={
-                        "fields": {
-                            "subject": "subject of ask",
-                            "first_name": "client's first name",
-                            "last_name": "client's last name",
-                            "sur_name": "client's surname",
-                            "phone": "client's phone number (format: \'+{CODE} {NUMBERS}\')",
-                            "email": "client's email address",
-                            "message": "client's message",
-                            "service_name": "name of service asked",
-                            "source_page_name": "name of page where client asked",
-                            "source_page": "link of page where client asked",
-                            "source": "source where client found form (like google)",
-                            "ip": "client's ip",
-                            "additional_info": "info that didn't match other fields. Format: {unmatched_field: value}"
-                        },
-                        "page_link": None
-                    },
-                    text=raw_lead.raw_content
-                )
-
-                raw_lead.__dict__.update(**json.loads(answer.content))
-                if not raw_lead.subject:
-                    raw_lead.subject = raw_lead.raw_subject
-
-            except Exception as err:
-                self.log.exception(err)
-
-                if answer:
-                    self.log.debug(f"{answer.to_dict()}")
-
-            raw_lead.is_processed = True
-            await self.db.ex(dmth.UpdateOne(Lead, raw_lead))
+        if new_lead_id > old_lead_id:
+            settings.last_lead_id = new_lead_id
+            await self.db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_lead_id"]))
 
     async def task_wrapper(self, func, delay):
         while True:

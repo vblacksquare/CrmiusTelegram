@@ -10,8 +10,9 @@ from dtypes.user import User, CrmUser
 from dtypes.task import Task
 from dtypes.message import ChatMessage, GroupMessage
 
-from config import GRUPO_ENDPOINT, GRUPO_TOKEN
 from utils.singleton import SingletonMeta
+
+from config import get_config
 
 
 db = Db()
@@ -25,9 +26,9 @@ class Grupo(metaclass=SingletonMeta):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    url=GRUPO_ENDPOINT,
+                    url=get_config().grupo.endpoint,
                     data={
-                        "api_secret_key": GRUPO_TOKEN,
+                        "api_secret_key": get_config().grupo.token,
                         "add": "message",
                         "group": group.id,
                         "sender": sender.login,
@@ -44,9 +45,9 @@ class Grupo(metaclass=SingletonMeta):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    url=GRUPO_ENDPOINT,
+                    url=get_config().grupo.endpoint,
                     data={
-                        "api_secret_key": GRUPO_TOKEN,
+                        "api_secret_key": get_config().grupo.token,
                         "add": "message",
                         "user": reciever.login,
                         "sender": sender.login,

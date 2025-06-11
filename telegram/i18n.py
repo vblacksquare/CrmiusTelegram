@@ -7,7 +7,7 @@ from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User
 
-from config import DEFAULT_LANGUAGE
+from config import get_config
 
 
 class UserLanguageMiddleware(I18nMiddleware):
@@ -17,11 +17,11 @@ class UserLanguageMiddleware(I18nMiddleware):
             user_id = event.from_user.id
 
         except Exception as err:
-            return DEFAULT_LANGUAGE
+            return get_config().telegram.languages[0]
 
         user: User = await Db().ex(dmth.GetOne(User, id=user_id))
 
         if not user or not user.language:
-            return DEFAULT_LANGUAGE
+            return get_config().telegram.languages[0]
 
         return user.language

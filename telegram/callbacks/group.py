@@ -1,5 +1,4 @@
 
-import urllib.parse
 import pytz
 from datetime import datetime
 

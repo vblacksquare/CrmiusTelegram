@@ -8,9 +8,6 @@ class Lead(DatabaseItem):
         id: int,
         crm_id: int,
 
-        raw_subject: str,
-        raw_content: str,
-
         subject: str = None,
 
         first_name: str = None,
@@ -28,16 +25,16 @@ class Lead(DatabaseItem):
         ip: str = None,
 
         additional_info: dict = None,
+        sender: str = None,
+        added_time: int = None,
 
-        is_processed: bool = False,
+        thread_id: int = None,
+
         **kwargs
     ):
 
         self.id = id
         self.crm_id = crm_id
-
-        self.raw_subject = raw_subject
-        self.raw_content = raw_content
 
         self.subject = subject
         self.first_name = first_name
@@ -52,15 +49,25 @@ class Lead(DatabaseItem):
         self.source = source
         self.ip = ip
         self.additional_info = additional_info
-
-        self.is_processed = is_processed
+        self.sender = sender
+        self.added_time = added_time
+        self.thread_id = thread_id
 
         self.fields = [
             "id", "crm_id",
-            "raw_subject", "raw_content",
             "subject", "first_name", "last_name",
             "sur_name", "phone", "email",
             "message", "service_name", "source_page_name",
             "source_page", "source", "ip", "additional_info",
-            "is_processed"
+            "sender", "added_time", "thread_id"
         ]
+
+    @property
+    def full_name(self):
+        parts = [self.last_name, self.first_name, self.sur_name]
+        name = " ".join([
+            part
+            for part in parts if part not in ["", " ", None]
+        ])
+
+        return name

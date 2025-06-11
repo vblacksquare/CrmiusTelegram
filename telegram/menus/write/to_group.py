@@ -14,11 +14,9 @@ from dtypes.db import method as dmth
 from dtypes.group import Group
 from dtypes.user import User
 
-from telegram.telegram import bot, i18n
 from telegram.factory import CallbackFactory
-from telegram.state import MainState
 
-from config import GROUP_CHAT_URL, PORTAL_REDIRECT_URL
+from config import get_config
 
 
 to_group_router = Router()
@@ -31,12 +29,12 @@ async def generate_app_link(
     group: Group,
 ) -> str:
 
-    resource_link = GROUP_CHAT_URL.format(name=group.slug)
+    resource_link = get_config().crm.group_chat_url.format(name=group.slug)
     resource_link = urllib.parse.quote_plus(resource_link)
 
     login = urllib.parse.quote_plus(auth.login)
     password = urllib.parse.quote_plus(auth.not_hashed_password)
-    return PORTAL_REDIRECT_URL.format(login=login, password=password, redirect=resource_link)
+    return get_config().crm.redirect_url.format(login=login, password=password, redirect=resource_link)
 
 
 @to_group_router.callback_query(CallbackFactory.filter(F.action == "to_group"))

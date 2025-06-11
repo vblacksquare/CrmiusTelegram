@@ -10,7 +10,7 @@ from dtypes.message import ChatMessage
 
 from grupo import Grupo
 
-from config import GRUPO_WRITER_BOT, GRUPO_TRANSLATOR_BOT
+from config import get_config
 
 from AgentService.connector import AgentConnector
 
@@ -23,8 +23,8 @@ async def translate(data: str, chat_id: str):
     text = data["text"]
     target_language = data["target_language"]
 
-    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_WRITER_BOT))
-    receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=GRUPO_TRANSLATOR_BOT))
+    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=get_config().grupo.writer_robot))
+    receiver: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=get_config().grupo.translator_robot))
 
     last_message: ChatMessage = max(
         await db.ex(dmth.GetMany(ChatMessage, sender_id=receiver.chat_id, reciever_id=sender.chat_id)),

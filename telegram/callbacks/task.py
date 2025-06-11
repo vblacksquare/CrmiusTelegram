@@ -7,7 +7,6 @@ from loguru import logger
 
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from aiogram.types import LinkPreviewOptions, WebAppInfo
-from aiogram.utils.i18n import gettext as _
 
 from ..telegram import bot, i18n
 
@@ -17,7 +16,7 @@ from dtypes.user import User, CrmUser
 from dtypes.message import TaskMessage
 from dtypes.task import Task
 
-from config import TASK_URL, PORTAL_REDIRECT_URL
+from config import get_config
 
 
 db = Db()
@@ -28,12 +27,12 @@ async def generate_app_link(
     task: Task
 ) -> str:
 
-    resource_link = TASK_URL.format(task_id=task.id)
+    resource_link = get_config().crm.task_url.format(task_id=task.id)
     resource_link = urllib.parse.quote_plus(resource_link)
     reciever_user = reciever
     login = urllib.parse.quote_plus(reciever_user.login)
     password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
-    return PORTAL_REDIRECT_URL.format(login=login, password=password, redirect=resource_link)
+    return get_config().crm.redirect_url.format(login=login, password=password, redirect=resource_link)
 
 
 async def generate_keyboard(

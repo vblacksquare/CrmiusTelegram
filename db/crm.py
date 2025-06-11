@@ -1,3 +1,4 @@
+import json
 
 import aiomysql
 import asyncio
@@ -17,8 +18,7 @@ from dtypes.group import Group
 
 from utils.singleton import SingletonMeta
 
-from config import CRM_HOST, CRM_PORT, CRM_USER, CRM_PASS, CRM_NAME
-from config import CHAT_CRM_HOST, CHAT_CRM_PORT, CHAT_CRM_USER, CHAT_CRM_PASS, CHAT_CRM_NAME
+from config import get_config
 
 
 db = Db()
@@ -28,17 +28,17 @@ class CrmDb(metaclass=SingletonMeta):
     def __init__(self):
         self.log = logger.bind(classname=self.__class__.__name__)
 
-        self.host = CRM_HOST
-        self.port = CRM_PORT
-        self.user = CRM_USER
-        self.password = CRM_PASS
-        self.db = CRM_NAME
+        self.host = get_config().crmdatabase.hostname
+        self.port = get_config().crmdatabase.port
+        self.user = get_config().crmdatabase.username
+        self.password = get_config().crmdatabase.password
+        self.db = get_config().crmdatabase.db
 
-        self.chat_host = CHAT_CRM_HOST
-        self.chat_port = CHAT_CRM_PORT
-        self.chat_user = CHAT_CRM_USER
-        self.chat_password = CHAT_CRM_PASS
-        self.chat_db = CHAT_CRM_NAME
+        self.chat_host = get_config().chatdatabase.hostname
+        self.chat_port = get_config().chatdatabase.port
+        self.chat_user = get_config().chatdatabase.username
+        self.chat_password = get_config().chatdatabase.password
+        self.chat_db = get_config().chatdatabase.db
 
         self.updated = 0
 
@@ -581,17 +581,14 @@ class CrmDb(metaclass=SingletonMeta):
 
         try:
             await cur.execute("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'")
-            await cur.execute("SELECT id, subject, body FROM tbllead_integration_emails WHERE id > %s", (from_id,))
+            await cur.execute("SELECT lead_edata FROM tblleads WHERE id > %s AND lead_edata is not NULL", (from_id,))
             raw_leads = await cur.fetchall()
 
             leads = []
             for raw_lead in raw_leads:
-                leads.append(Lead(
-                    id=string_to_uuid(str(raw_lead[0])),
-                    crm_id=raw_lead[0],
-                    raw_subject=raw_lead[1],
-                    raw_content=raw_lead[2]
-                ))
+                lead_data = json.loads(raw_lead[0])
+
+                leads.append(Lead(**lead_data))
 
             return leads
 

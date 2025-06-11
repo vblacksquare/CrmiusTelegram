@@ -9,15 +9,18 @@ from db import Db
 from dtypes.db import method as dmth
 from dtypes.settings import Settings
 
-from config import MONGODB_NAME, MONGODB_URI, LOGS_DIR, LOGS_LEVEL
 from utils.logger import setup_logger
+
+from config import get_config
 
 
 async def main():
-    setup_logger(LOGS_DIR, LOGS_LEVEL)
+    config = get_config()
+
+    setup_logger(config.logger.path, config.logger.level)
 
     db = Db()
-    db.connect(MONGODB_NAME, MONGODB_URI)
+    db.connect(config.database.name, config.database.uri)
 
     settings: Settings = await db.ex(dmth.GetOne(Settings))
     if not settings:
@@ -36,6 +39,7 @@ async def main():
     updater.callback_group_document_message = callbacks.new_group_document_message
 
     updater.callback_task_notification = callbacks.new_task_notification
+    updater.callback_lead = callbacks.new_lead
 
     await run(updater=updater)
 
