@@ -12,7 +12,13 @@ db = Db()
 
 
 async def base_callback(crm_msg_id: int, message_type: str, callback):
-    messages: list[Message] = await callback
+    messages = []
+
+    try:
+        messages: list[Message] = await callback
+
+    except Exception as err:
+        logger.exception(err)
 
     if not crm_msg_id:
         return

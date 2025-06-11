@@ -1,4 +1,6 @@
 
+from datetime import datetime
+
 from telegram import bot, i18n
 
 from db import Db
@@ -29,7 +31,8 @@ async def __new_lead(lead):
             subject=lead.subject if lead.subject else nothing,
             full_name=lead.full_name if lead.full_name else nothing,
             phone=lead.phone if lead.phone else nothing,
-            email=lead.email if lead.email else nothing
+            email=lead.email if lead.email else nothing,
+            date=datetime.fromtimestamp(lead.date).strftime("%Y-%m-%d %H:%M") if lead.date else nothing
         ),
         parse_mode="HTML"
     )
