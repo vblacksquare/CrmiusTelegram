@@ -42,7 +42,7 @@ async def __new_lead(lead):
             chat_id=get_config().telegram.lead_group_id,
             name=i18n.gettext("lead_new_name", locale=language).format(
                 name=lead.full_name,
-                tags=', '.join([f"#{lead.source_domain}"])
+                tags=', '.join([f"#{lead.source_domain}", "#new"])
             )
         )
 

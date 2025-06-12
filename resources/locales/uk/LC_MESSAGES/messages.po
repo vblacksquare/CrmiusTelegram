@@ -350,6 +350,7 @@ msgstr "<b>{subject}</b>"
 "\n<b>ПІБ</b>: <code>{full_name}</code>"
 "\n<b>Телефон</b>: <code>{phone}</code>"
 "\n<b>Пошта</b>: <code>{email}</code>"
+"\n\n#{source_domain}"
 
 msgid "lead_message_msg"
 msgstr "<b>Кліент написав</b>"
@@ -359,13 +360,13 @@ msgid "nothing"
 msgstr "немає"
 
 msgid "lead_new_name"
-msgstr "🆕 {name} #new {tags}"
+msgstr "🆕 {name} | {tags}"
 
 msgid "lead_work_name"
-msgstr "🛠 {name} #working {tags}"
+msgstr "🛠 {name} | {tags}"
 
 msgid "lead_completed_name"
-msgstr "✅ {name} #completed {tags}"
+msgstr "✅ {name} | {tags}"
 
 msgid "lead_cancelled_name"
-msgstr "🚫 {name} #cancelled {tags} "
+msgstr "🚫 {name} | {tags}"

@@ -359,13 +359,13 @@ msgid "nothing"
 msgstr "нет"
 
 msgid "lead_new_name"
-msgstr "🆕 {name} {tags} #new"
+msgstr "🆕 {name} | {tags}"
 
 msgid "lead_work_name"
-msgstr "🛠 {name} {tags} #working"
+msgstr "🛠 {name} | {tags}"
 
 msgid "lead_completed_name"
-msgstr "✅ {name} {tags} #completed"
+msgstr "✅ {name} | {tags}"
 
 msgid "lead_cancelled_name"
-msgstr "🚫 {name} {tags} #cancelled"
+msgstr "🚫 {name} | {tags}"
