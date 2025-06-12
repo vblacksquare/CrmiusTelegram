@@ -24,7 +24,7 @@ async def __new_lead(lead):
         "email": lead.email if lead.email else nothing,
         "date": datetime.fromtimestamp(lead.added_time).strftime("%Y-%m-%d %H:%M") if lead.added_time else nothing,
         "page": lead.source_page,
-        "source_domain": lead.source_domain,
+        "source_domain": lead.source_domain.replace(".", ""),
         "status": "new"
     }
 
