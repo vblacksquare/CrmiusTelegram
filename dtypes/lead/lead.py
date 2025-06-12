@@ -21,6 +21,7 @@ class Lead(DatabaseItem):
 
         source_page_name: str = None,
         source_page: str = None,
+        source_domain: str = None,
         source: str = None,
         ip: str = None,
 
@@ -44,6 +45,7 @@ class Lead(DatabaseItem):
         self.service_name = service_name
         self.source_page_name = source_page_name
         self.source_page = source_page
+        self.source_domain = source_domain
         self.source = source
         self.ip = ip
         self.additional_info = additional_info
@@ -55,7 +57,8 @@ class Lead(DatabaseItem):
             "subject", "first_name", "last_name",
             "sur_name", "phone", "email",
             "message", "service_name", "source_page_name",
-            "source_page", "source", "ip", "additional_info",
+            "source_page", "source_domain", "source", "ip",
+            "additional_info",
             "sender", "added_time"
         ]
 

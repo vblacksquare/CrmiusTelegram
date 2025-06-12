@@ -18,7 +18,7 @@ async def __new_lead(lead):
     nothing = i18n.gettext("nothing", locale=get_config().telegram.languages[0])
 
     data = {
-        "subject": lead.subject.split(":", maxsplit=1)[-1].strip() if lead.subject else nothing,
+        "subject": lead.subject if lead.subject else nothing,
         "full_name": lead.full_name if lead.full_name else nothing,
         "phone": lead.phone if lead.phone else nothing,
         "email": lead.email if lead.email else nothing,
@@ -26,7 +26,7 @@ async def __new_lead(lead):
         "page": lead.source_page
     }
 
-    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, {"$or": [{"email": lead.email}, {"phone": lead.phone}]}))
+    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, {"$or": [{"email": lead.email}, {"phone": lead.phone}], "source_domain": lead.source_domain}))
 
     if lead_group:
         if lead.email and lead.email not in lead_group.email:
