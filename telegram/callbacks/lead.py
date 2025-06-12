@@ -51,7 +51,8 @@ async def __new_lead(lead):
             id=lead.id,
             email=[lead.email],
             phone=[lead.phone],
-            thread_id=topic.message_thread_id
+            thread_id=topic.message_thread_id,
+            source_domain=lead.source_domain
         )
         await db.ex(dmth.AddOne(LeadGroup, lead_group))
 
