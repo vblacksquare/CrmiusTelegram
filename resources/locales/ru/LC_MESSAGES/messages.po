@@ -350,6 +350,7 @@ msgstr "<b>{subject}</b>"
 "\n<b>Телефон</b>: <code>{phone}</code>"
 "\n<b>Почта</b>: <code>{email}</code>"
 "\n<b>Дата</b>: <code>{date}</code>"
+"\n\n#{source_domain} #{status}"
 
 msgid "lead_message_msg"
 msgstr "<b>Клиент написал</b>"

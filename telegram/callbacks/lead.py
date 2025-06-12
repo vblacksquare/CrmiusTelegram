@@ -24,7 +24,8 @@ async def __new_lead(lead):
         "email": lead.email if lead.email else nothing,
         "date": datetime.fromtimestamp(lead.added_time).strftime("%Y-%m-%d %H:%M") if lead.added_time else nothing,
         "page": lead.source_page,
-        "source_domain": lead.source_domain
+        "source_domain": lead.source_domain,
+        "status": "new"
     }
 
     lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, {"$or": [{"email": lead.email}, {"phone": lead.phone}], "source_domain": lead.source_domain}))
