@@ -24,9 +24,9 @@ async def load_private_messages():
 
         emitter.emit(EventType.new_message, message)
 
-    #if new_last_message_id > old_last_message_id:
-    #    settings.last_chat_message_id = new_last_message_id
-    #    await db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_chat_message_id"]))
+    if new_last_message_id > old_last_message_id:
+        settings.last_chat_message_id = new_last_message_id
+        await db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_chat_message_id"]))
 
 
 async def load_group_messages():
@@ -43,7 +43,7 @@ async def load_group_messages():
 
         emitter.emit(EventType.new_message, message)
 
-    #if new_last_message_id > old_last_message_id:
-    #    settings.last_group_message_id = new_last_message_id
-    #    await db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_group_message_id"]))
+    if new_last_message_id > old_last_message_id:
+        settings.last_group_message_id = new_last_message_id
+        await db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_group_message_id"]))
 
