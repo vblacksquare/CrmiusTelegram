@@ -135,15 +135,19 @@ async def new_message(message: ChatMessage | GroupMessage):
         if reciever.id == sender.id:
             continue
 
-        logger.debug(f"Sending message -> {reciever.id} -> {sender.id} -> {message.to_dict()}")
+        kwargs = {
+            "sender": sender,
+            "reciever": reciever,
+            "text": message.text,
+            "group": group,
+            "audio": audio,
+            "photos": photos,
+            "documents": documents,
+        }
+        data = {key: str(kwargs[key]) for key in kwargs}
+        logger.debug(f"Sending message -> {data}")
 
         emitter.emit(
             EventType.send_message,
-            sender=sender,
-            reciever=reciever,
-            text=message.text,
-            group=group,
-            audio=audio,
-            photos=photos,
-            documents=documents
+            **kwargs
         )
