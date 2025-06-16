@@ -101,7 +101,7 @@ async def generate_keyboard(
 
 
 @emitter.on(EventType.send_message)
-async def new_message(
+async def send_message(
     sender: CrmUser,
     reciever: CrmUser,
     text: str,
