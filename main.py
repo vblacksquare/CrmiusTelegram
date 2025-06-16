@@ -1,9 +1,8 @@
 
 import asyncio
 
-from telegram import run
-from telegram import callbacks
-from updater import Updater
+from telegram import run_telegram
+from scheduler import run_cheduler
 
 from db import Db
 from dtypes.db import method as dmth
@@ -27,21 +26,12 @@ async def main():
         settings = Settings()
         await db.ex(dmth.AddOne(Settings, settings))
 
-    updater = Updater(loop=loop)
-    updater.callback_chat_message = callbacks.new_chat_message
-    updater.callback_chat_audio_message = callbacks.new_chat_audio_message
-    updater.callback_chat_photo_message = callbacks.new_chat_photo_message
-    updater.callback_chat_document_message = callbacks.new_chat_document_message
+    await run_cheduler()
 
-    updater.callback_group_message = callbacks.new_group_message
-    updater.callback_group_audio_message = callbacks.new_group_audio_message
-    updater.callback_group_photo_message = callbacks.new_group_photo_message
-    updater.callback_group_document_message = callbacks.new_group_document_message
+    while True:
+        await asyncio.sleep(1)
 
-    updater.callback_task_notification = callbacks.new_task_notification
-    updater.callback_lead = callbacks.new_lead
-
-    await run(updater=updater)
+    #await run_telegram()
 
 
 if __name__ == '__main__':

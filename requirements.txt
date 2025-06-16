@@ -14,3 +14,5 @@ aiocryptopay
 openai
 AgentService==0.0.37
 pydantic-settings
+apscheduler
+pyee

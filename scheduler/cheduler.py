@@ -1,0 +1,18 @@
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+
+from .messages import load_private_messages, load_group_messages
+
+
+scheduler = AsyncIOScheduler()
+scheduler.add_job(
+    id="load_private_messages",
+    func=load_private_messages,
+    trigger=IntervalTrigger(seconds=1)
+)
+scheduler.add_job(
+    id="load_group_messages",
+    func=load_group_messages,
+    trigger=IntervalTrigger(seconds=1)
+)

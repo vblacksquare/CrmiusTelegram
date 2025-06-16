@@ -1,6 +1,39 @@
 
 from dtypes.db import DatabaseItem
 
+import enum
+
+
+class MessageType(enum.Enum):
+    text = 'text'
+    screenshot = 'photo'
+    photo = 'photo'
+    document = 'document'
+    audio = 'audio'
+
+
+def get_message_type(message: "ChatMessage") -> str:
+    if not message.attachments or not len(message.attachments):
+        return MessageType.text
+
+    if "screenshot" in message.attachments:
+        return MessageType.screenshot
+
+    try:
+        first_attachment = message.attachments[0]
+
+        if first_attachment["file_type"] == "image\\/png":
+            return MessageType.photo
+
+        elif first_attachment["file_type"] == "text\\/plain":
+            return MessageType.document
+
+        else:
+            return MessageType.text
+
+    except Exception as err:
+        return MessageType.text
+
 
 class GroupMessage(DatabaseItem):
     def __init__(
@@ -21,6 +54,10 @@ class GroupMessage(DatabaseItem):
         self.attachments = attachments if attachments else {}
 
         self.fields = ["id", "group_id", "text", "sender_id", "time_sent", "attachments"]
+
+    @property
+    def type(self):
+        return get_message_type(self)
 
 
 class ChatMessage(DatabaseItem):
@@ -47,7 +84,14 @@ class ChatMessage(DatabaseItem):
         self.chat_id = chat_id
         self.attachments = attachments if attachments else {}
 
-        self.fields = ["id", "sender_id", "reciever_id", "text", "viewed", "time_sent", "viewed_at", "chat_id", "attachments"]
+        self.fields = [
+            "id", "sender_id", "reciever_id", "text", "viewed",
+            "time_sent", "viewed_at", "chat_id", "attachments"
+        ]
+
+    @property
+    def type(self):
+        return get_message_type(self)
 
 
 class TaskMessage(DatabaseItem):

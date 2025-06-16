@@ -1,2 +1,2 @@
 
-from .message import GroupMessage, ChatMessage, BotMessage, TaskMessage
+from .message import GroupMessage, ChatMessage, BotMessage, TaskMessage, MessageType

@@ -5,7 +5,7 @@ from telegram import bot, i18n
 
 from db import Db
 from dtypes.db import method as dmth
-from dtypes.lead import Lead, LeadGroup
+from dtypes.lead import LeadGroup
 
 from config import get_config
 
@@ -56,6 +56,14 @@ async def __new_lead(lead):
             source_domain=lead.source_domain
         )
         await db.ex(dmth.AddOne(LeadGroup, lead_group))
+
+    """keyboard = InlineKeyboardBuilder()
+    keyboard.row(
+        InlineKeyboardButton(
+            text=i18n.gettext("in_app_bt", locale=language),
+            web_app=WebAppInfo(url=)
+        )
+    )"""
 
     message = await bot.send_message(
         chat_id=get_config().telegram.lead_group_id,
