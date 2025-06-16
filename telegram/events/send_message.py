@@ -209,6 +209,7 @@ async def new_message(
                 reply_markup=keyboard.as_markup()
             )
 
+        logger.debug(f"Sent message -> {message}")
         return message
 
     except Exception as err:
