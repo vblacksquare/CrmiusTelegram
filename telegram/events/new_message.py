@@ -1,5 +1,6 @@
 
 import bs4
+from loguru import logger
 
 from db import Db
 from dtypes.db import method as dmth
@@ -95,6 +96,8 @@ def prepare_document(message: ChatMessage | GroupMessage) -> list[list[str, str]
 
 @emitter.on(EventType.new_message)
 async def new_message(message: ChatMessage | GroupMessage):
+    logger.debug(f"New message -> {message.to_dict()}")
+
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=message.sender_id))
     recievers: list[CrmUser] = []
 
