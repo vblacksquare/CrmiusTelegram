@@ -6,7 +6,7 @@ import enum
 
 class MessageType(enum.Enum):
     text = 'text'
-    screenshot = 'photo'
+    screenshot = 'screenshot'
     photo = 'photo'
     document = 'document'
     audio = 'audio'
