@@ -1,6 +1,7 @@
 
 import bs4
 from loguru import logger
+from torch.distributed import group
 
 from db import Db
 from dtypes.db import method as dmth
@@ -85,13 +86,23 @@ def prepare_screenshot(message: ChatMessage | GroupMessage) -> str:
 
 
 def prepare_document(message: ChatMessage | GroupMessage) -> list[list[str, str]]:
-    return [
-        [
-            f"https://innova.crmius.com/chat/download/attachment/group_id/{message.group_id}/message_id/{message.id}/attachment_index/{i}",
-            document['name']
+    if message.group_id:
+        return [
+            [
+                f"https://innova.crmius.com/chat/download/attachment/group_id/{message.group_id}/message_id/{message.id}/attachment_index/{i}",
+                document['name']
+            ]
+            for i, document in enumerate(message.attachments)
         ]
-        for i, document in enumerate(message.attachments)
-    ]
+
+    else:
+        return [
+            [
+                f"https://innova.crmius.com/chat/download/attachment/private_conversation_id/{message.chat_id}/message_id/{message.id}/attachment_index/{i}",
+                document['name']
+            ]
+            for i, document in enumerate(message.attachments)
+        ]
 
 
 @emitter.on(EventType.new_message)
