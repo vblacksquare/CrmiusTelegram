@@ -110,6 +110,13 @@ async def new_message(message: ChatMessage | GroupMessage):
         group: Group = await db.ex(dmth.GetOne(Group, id=message.group_id))
         recievers += await db.ex(dmth.GetMany(CrmUser, chat_id={"$in": group.participants}))
 
+    elif isinstance(message, ChatMessage):
+        user = await db.ex(dmth.GetOne(CrmUser, chat_id=message.reciever_id))
+        recievers.append(user)
+
+    else:
+        raise TypeError(f"Only accepting {GroupMessage} or {ChatMessage}")
+
     if message.type == MessageType.audio:
         audio = prepare_audio(message)
 
