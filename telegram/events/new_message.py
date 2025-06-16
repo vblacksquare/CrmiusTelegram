@@ -85,7 +85,7 @@ def prepare_screenshot(message: ChatMessage | GroupMessage) -> str:
 
 
 def prepare_document(message: ChatMessage | GroupMessage) -> list[list[str, str]]:
-    if message.group_id:
+    if isinstance(message, GroupMessage):
         return [
             [
                 f"https://innova.crmius.com/chat/download/attachment/group_id/{message.group_id}/message_id/{message.id}/attachment_index/{i}",
@@ -94,7 +94,7 @@ def prepare_document(message: ChatMessage | GroupMessage) -> list[list[str, str]
             for i, document in enumerate(message.attachments)
         ]
 
-    else:
+    elif isinstance(message, ChatMessage):
         return [
             [
                 f"https://innova.crmius.com/chat/download/attachment/private_conversation_id/{message.chat_id}/message_id/{message.id}/attachment_index/{i}",
