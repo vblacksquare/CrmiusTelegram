@@ -98,7 +98,7 @@ def prepare_document(message: ChatMessage | GroupMessage) -> list[list[str, str]
 async def new_message(message: ChatMessage | GroupMessage):
     logger.debug(f"New message -> {message.to_dict()}")
 
-    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=message.sender_id))
+    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, chat_id=message.sender_id))
     recievers: list[CrmUser] = []
 
     group = None
@@ -108,7 +108,7 @@ async def new_message(message: ChatMessage | GroupMessage):
 
     if isinstance(message, GroupMessage):
         group: Group = await db.ex(dmth.GetOne(Group, id=message.group_id))
-        recievers += await db.ex(dmth.GetMany(CrmUser, id={"$in": group.participants}))
+        recievers += await db.ex(dmth.GetMany(CrmUser, chat_id={"$in": group.participants}))
 
     if message.type == MessageType.audio:
         audio = prepare_audio(message)
