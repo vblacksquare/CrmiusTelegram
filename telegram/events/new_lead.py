@@ -1,11 +1,12 @@
 
-from datetime import datetime
+from emitter import emitter, EventType
 
+from datetime import datetime
 from telegram import bot, i18n
 
 from db import Db
 from dtypes.db import method as dmth
-from dtypes.lead import LeadGroup
+from dtypes.lead import Lead, LeadGroup
 
 from config import get_config
 
@@ -13,7 +14,8 @@ from config import get_config
 db = Db()
 
 
-async def __new_lead(lead):
+@emitter.on(EventType.new_lead)
+async def new_lead(lead: Lead):
     language = get_config().telegram.languages[0]
     nothing = i18n.gettext("nothing", locale=get_config().telegram.languages[0])
 

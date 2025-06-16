@@ -13,6 +13,65 @@ from emitter import emitter, EventType
 db = Db()
 
 
+@emitter.on(EventType.new_message)
+async def new_message(message: ChatMessage | GroupMessage):
+    logger.debug(f"New message -> {message.to_dict()}")
+
+    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, chat_id=message.sender_id))
+    recievers: list[CrmUser] = []
+
+    group = None
+    audio = None
+    photos = []
+    documents = []
+
+    if isinstance(message, GroupMessage):
+        group: Group = await db.ex(dmth.GetOne(Group, id=message.group_id))
+        recievers += await db.ex(dmth.GetMany(CrmUser, chat_id={"$in": group.participants}))
+
+    elif isinstance(message, ChatMessage):
+        user = await db.ex(dmth.GetOne(CrmUser, chat_id=message.reciever_id))
+        recievers.append(user)
+
+    else:
+        raise TypeError(f"Only accepting {GroupMessage} or {ChatMessage}")
+
+    if message.type == MessageType.audio:
+        audio = prepare_audio(message)
+
+    elif message.type == MessageType.photo:
+        photos = prepare_photo(message)
+
+    elif message.type == MessageType.screenshot:
+        photos = prepare_screenshot(message)
+
+    elif message.type == MessageType.document:
+        documents = prepare_document(message)
+
+    prepare_text(message)
+
+    for reciever in recievers:
+        if reciever.id == sender.id:
+            continue
+
+        kwargs = {
+            "sender": sender,
+            "reciever": reciever,
+            "text": message.text,
+            "group": group,
+            "audio": audio,
+            "photos": photos,
+            "documents": documents,
+        }
+        data = {key: str(kwargs[key]) for key in kwargs}
+        logger.debug(f"Sending message -> {data}")
+
+        emitter.emit(
+            EventType.send_message,
+            **kwargs
+        )
+
+
 def prepare_text(message: ChatMessage | GroupMessage | str) -> ChatMessage | GroupMessage:
     soup = bs4.BeautifulSoup(message if isinstance(message, str) else message.text, "html.parser")
 
@@ -102,62 +161,3 @@ def prepare_document(message: ChatMessage | GroupMessage) -> list[list[str, str]
             ]
             for i, document in enumerate(message.attachments)
         ]
-
-
-@emitter.on(EventType.new_message)
-async def new_message(message: ChatMessage | GroupMessage):
-    logger.debug(f"New message -> {message.to_dict()}")
-
-    sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, chat_id=message.sender_id))
-    recievers: list[CrmUser] = []
-
-    group = None
-    audio = None
-    photos = []
-    documents = []
-
-    if isinstance(message, GroupMessage):
-        group: Group = await db.ex(dmth.GetOne(Group, id=message.group_id))
-        recievers += await db.ex(dmth.GetMany(CrmUser, chat_id={"$in": group.participants}))
-
-    elif isinstance(message, ChatMessage):
-        user = await db.ex(dmth.GetOne(CrmUser, chat_id=message.reciever_id))
-        recievers.append(user)
-
-    else:
-        raise TypeError(f"Only accepting {GroupMessage} or {ChatMessage}")
-
-    if message.type == MessageType.audio:
-        audio = prepare_audio(message)
-
-    elif message.type == MessageType.photo:
-        photos = prepare_photo(message)
-
-    elif message.type == MessageType.screenshot:
-        photos = prepare_screenshot(message)
-
-    elif message.type == MessageType.document:
-        documents = prepare_document(message)
-
-    prepare_text(message)
-
-    for reciever in recievers:
-        if reciever.id == sender.id:
-            continue
-
-        kwargs = {
-            "sender": sender,
-            "reciever": reciever,
-            "text": message.text,
-            "group": group,
-            "audio": audio,
-            "photos": photos,
-            "documents": documents,
-        }
-        data = {key: str(kwargs[key]) for key in kwargs}
-        logger.debug(f"Sending message -> {data}")
-
-        emitter.emit(
-            EventType.send_message,
-            **kwargs
-        )

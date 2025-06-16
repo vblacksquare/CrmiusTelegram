@@ -14,7 +14,6 @@ import urllib.parse
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.group import Group
-from dtypes.message import ChatMessage, GroupMessage, MessageType
 from dtypes.user import User, CrmUser
 
 from emitter import emitter, EventType
@@ -23,81 +22,6 @@ from config import get_config
 
 
 db = Db()
-
-
-def generate_group_app_link(
-    reciever: CrmUser,
-    group: Group,
-) -> str:
-
-    resource_link = get_config().crm.group_chat_url.format(name=group.slug)
-    resource_link = urllib.parse.quote_plus(resource_link)
-    reciever_user = reciever
-    login = urllib.parse.quote_plus(reciever_user.login)
-    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
-    return get_config().crm.redirect_url.format(login=login, password=password, redirect=resource_link)
-
-
-def generate_private_app_link(
-    sender: CrmUser,
-    reciever: CrmUser
-) -> str:
-
-    resource_link = get_config().crm.private_chat_url.format(username=sender.username)
-    resource_link = urllib.parse.quote_plus(resource_link)
-    reciever_user = reciever
-    login = urllib.parse.quote_plus(reciever_user.login)
-    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
-    return get_config().crm.redirect_url.format(login=login, password=password, redirect=resource_link)
-
-
-async def generate_keyboard(
-    reciever_tuser: User,
-    sender: CrmUser,
-    reciever: CrmUser,
-    group: Group
-):
-
-    if group:
-        app_redirect_link = generate_group_app_link(reciever=reciever, group=group)
-
-    else:
-        app_redirect_link = generate_private_app_link(sender=sender, reciever=reciever)
-
-    tuser = reciever_tuser
-
-    keyboard = InlineKeyboardBuilder()
-
-    if reciever.id in TEMP_DATA:
-        entity = TEMP_DATA.pop(reciever.id)
-
-        if isinstance(entity, CrmUser):
-            app_redirect_link = generate_private_app_link(sender=entity, reciever=sender)
-            keyboard.row(
-                InlineKeyboardButton(
-                    text=i18n.gettext("in_app_bt", locale=tuser.language),
-                    web_app=WebAppInfo(url=app_redirect_link)
-                )
-            )
-
-        elif isinstance(entity, Group):
-            app_redirect_link = generate_group_app_link(group=entity, reciever=sender)
-            keyboard.row(
-                InlineKeyboardButton(
-                    text=i18n.gettext("in_app_bt", locale=tuser.language),
-                    web_app=WebAppInfo(url=app_redirect_link)
-                )
-            )
-
-    else:
-        keyboard.row(
-            InlineKeyboardButton(
-                text=i18n.gettext("in_app_bt", locale=tuser.language),
-                web_app=WebAppInfo(url=app_redirect_link)
-            )
-        )
-
-    return keyboard
 
 
 @emitter.on(EventType.send_message)
@@ -214,3 +138,79 @@ async def send_message(
 
     except Exception as err:
         logger.exception(err)
+
+
+def generate_group_app_link(
+    reciever: CrmUser,
+    group: Group,
+) -> str:
+
+    resource_link = get_config().crm.group_chat_url.format(name=group.slug)
+    resource_link = urllib.parse.quote_plus(resource_link)
+    reciever_user = reciever
+    login = urllib.parse.quote_plus(reciever_user.login)
+    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
+    return get_config().crm.redirect_url.format(login=login, password=password, redirect=resource_link)
+
+
+def generate_private_app_link(
+    sender: CrmUser,
+    reciever: CrmUser
+) -> str:
+
+    resource_link = get_config().crm.private_chat_url.format(username=sender.username)
+    resource_link = urllib.parse.quote_plus(resource_link)
+    reciever_user = reciever
+    login = urllib.parse.quote_plus(reciever_user.login)
+    password = urllib.parse.quote_plus(reciever_user.not_hashed_password)
+    return get_config().crm.redirect_url.format(login=login, password=password, redirect=resource_link)
+
+
+async def generate_keyboard(
+    reciever_tuser: User,
+    sender: CrmUser,
+    reciever: CrmUser,
+    group: Group
+):
+
+    if group:
+        app_redirect_link = generate_group_app_link(reciever=reciever, group=group)
+
+    else:
+        app_redirect_link = generate_private_app_link(sender=sender, reciever=reciever)
+
+    tuser = reciever_tuser
+
+    keyboard = InlineKeyboardBuilder()
+
+    if reciever.id in TEMP_DATA:
+        entity = TEMP_DATA.pop(reciever.id)
+
+        if isinstance(entity, CrmUser):
+            app_redirect_link = generate_private_app_link(sender=entity, reciever=sender)
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=i18n.gettext("in_app_bt", locale=tuser.language),
+                    web_app=WebAppInfo(url=app_redirect_link)
+                )
+            )
+
+        elif isinstance(entity, Group):
+            app_redirect_link = generate_group_app_link(group=entity, reciever=sender)
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=i18n.gettext("in_app_bt", locale=tuser.language),
+                    web_app=WebAppInfo(url=app_redirect_link)
+                )
+            )
+
+    else:
+        keyboard.row(
+            InlineKeyboardButton(
+                text=i18n.gettext("in_app_bt", locale=tuser.language),
+                web_app=WebAppInfo(url=app_redirect_link)
+            )
+        )
+
+    return keyboard
+
