@@ -111,49 +111,49 @@ async def new_message(
     documents: list[str] = []
 ):
 
-    if not reciever.user_id:
-        return logger.warning(f"No user authed -> {reciever.id}:{reciever.login}")
-
-    reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
-    if not reciever_tuser:
-        return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
-
-    dest = "group" if group else "chat"
-    message_type = ""
-    if audio:
-        message_type = "audio"
-    elif photos:
-        message_type = "photo"
-    elif documents:
-        message_type = "document"
-
-    message_text = i18n.gettext(
-        '_'.join(filter(
-            lambda x: x,
-            [
-                "new",
-                dest,
-                message_type,
-                "message"
-            ]
-        )),
-        locale=reciever_tuser.language
-    ).format(
-        sender=" ".join((sender.first_name, sender.last_name)),
-        reciever=" ".join((reciever.first_name, reciever.last_name)),
-        text=text,
-        caption=text,
-        group=group.title if group else None
-    )
-
-    keyboard = await generate_keyboard(
-        reciever_tuser=reciever_tuser,
-        sender=sender,
-        reciever=reciever,
-        group=group
-    )
-
     try:
+        if not reciever.user_id:
+            return logger.warning(f"No user authed -> {reciever.id}:{reciever.login}")
+
+        reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
+        if not reciever_tuser:
+            return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
+
+        dest = "group" if group else "chat"
+        message_type = ""
+        if audio:
+            message_type = "audio"
+        elif photos:
+            message_type = "photo"
+        elif documents:
+            message_type = "document"
+
+        message_text = i18n.gettext(
+            '_'.join(filter(
+                lambda x: x,
+                [
+                    "new",
+                    dest,
+                    message_type,
+                    "message"
+                ]
+            )),
+            locale=reciever_tuser.language
+        ).format(
+            sender=" ".join((sender.first_name, sender.last_name)),
+            reciever=" ".join((reciever.first_name, reciever.last_name)),
+            text=text,
+            caption=text,
+            group=group.title if group else None
+        )
+
+        keyboard = await generate_keyboard(
+            reciever_tuser=reciever_tuser,
+            sender=sender,
+            reciever=reciever,
+            group=group
+        )
+
         time_now = datetime.now(pytz.timezone("Europe/Kiev"))
         notificate = True
         if time_now.hour >= reciever_tuser.time[-1] or time_now.hour < reciever_tuser.time[0]:
