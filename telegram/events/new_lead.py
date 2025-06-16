@@ -1,5 +1,6 @@
 
 from emitter import emitter, EventType
+from loguru import logger
 
 from datetime import datetime
 from telegram import bot, i18n
@@ -16,6 +17,8 @@ db = Db()
 
 @emitter.on(EventType.new_lead)
 async def new_lead(lead: Lead):
+    logger.debug(f"New lead -> {lead.to_dict()}")
+
     language = get_config().telegram.languages[0]
     nothing = i18n.gettext("nothing", locale=get_config().telegram.languages[0])
 
