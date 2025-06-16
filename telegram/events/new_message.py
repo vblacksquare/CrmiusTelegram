@@ -81,7 +81,7 @@ def prepare_photo(message: ChatMessage | GroupMessage) -> list[str]:
 def prepare_screenshot(message: ChatMessage | GroupMessage) -> str:
     backslashes = "\\"
 
-    return [message.attachments["screenshot"].replace(backslashes, '')]
+    return [f"https://innova.crmius.com/chat/{message.attachments['screenshot'].replace(backslashes, '')}"]
 
 
 def prepare_document(message: ChatMessage | GroupMessage) -> list[list[str, str]]:
