@@ -1,13 +1,12 @@
 
 import bs4
 from loguru import logger
-from torch.distributed import group
 
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.group import Group
 from dtypes.message import ChatMessage, GroupMessage, MessageType
-from dtypes.user import User, CrmUser
+from dtypes.user import CrmUser
 
 from emitter import emitter, EventType
 
