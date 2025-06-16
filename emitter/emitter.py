@@ -1,4 +1,4 @@
 
-from pyee import AsyncIOEventEmitter
+from pyee._asyncio import AsyncIOEventEmitter
 
 emitter = AsyncIOEventEmitter()
