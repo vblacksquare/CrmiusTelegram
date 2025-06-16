@@ -15,7 +15,7 @@ async def load_private_messages():
     old_last_message_id = settings.last_chat_message_id
     new_last_message_id = 0
 
-    messages = await crm.get_chat_messages(from_id=old_last_message_id-1)
+    messages = await crm.get_chat_messages(from_id=old_last_message_id)
 
     for message in messages:
         message_id = message.id
@@ -34,7 +34,7 @@ async def load_group_messages():
     old_last_message_id = settings.last_group_message_id
     new_last_message_id = 0
 
-    messages = await crm.get_group_messages(from_id=old_last_message_id-1)
+    messages = await crm.get_group_messages(from_id=old_last_message_id)
 
     for message in messages:
         message_id = message.id
