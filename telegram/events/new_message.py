@@ -128,6 +128,8 @@ async def new_message(message: ChatMessage | GroupMessage):
         if reciever.id == sender.id:
             continue
 
+        logger.debug(f"Sending message -> {reciever.id} -> {sender.id} -> {message.to_dict()}")
+
         emitter.emit(
             EventType.send_message,
             sender=sender,
