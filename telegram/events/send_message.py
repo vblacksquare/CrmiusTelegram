@@ -42,8 +42,16 @@ async def send_message(
             return logger.warning(f"No user authed -> {reciever.id}:{reciever.login}")
 
         reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
-        if not reciever_tuser:
-            return logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
+        if not reciever_tuser or reciever_tuser.id == 885554630:
+            logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
+
+            reciever_tuser = User(
+                id=get_config().telegram.public_messages_group_id,
+                first_name="blank",
+                second_name="blank",
+                username="blank",
+                language="ru"
+            )
 
         dest = "group" if group else "chat"
         message_type = ""
@@ -152,6 +160,8 @@ async def send_message(
 
     except Exception as err:
         logger.exception(err)
+
+        return
 
 
 def generate_group_app_link(

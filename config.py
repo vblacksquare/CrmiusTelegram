@@ -8,6 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Telegram(BaseModel):
     bot_token: str
     lead_group_id: int
+    public_messages_group_id: int
     languages: list[str] = ["ru", "uk"]
     commands: list[str] = ["/start"]
 
