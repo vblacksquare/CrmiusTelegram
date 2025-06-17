@@ -6,19 +6,19 @@ from aiogram.types import Message
 
 from grupo import Grupo
 
-from db import Db, CrmDb
+from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User, CrmUser
 
 from config import get_config
 
 
-bot_router = Router()
+answer_private_router = Router()
 db = Db()
 gr = Grupo()
 
 
-@bot_router.message()
+@answer_private_router.message()
 async def reply(message: Message):
     if message.from_user.is_bot:
         return
