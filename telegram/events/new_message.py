@@ -1,5 +1,6 @@
 
 import bs4
+import asyncio
 from loguru import logger
 
 from db import Db
@@ -8,9 +9,19 @@ from dtypes.group import Group
 from dtypes.message import ChatMessage, GroupMessage, MessageType
 from dtypes.user import CrmUser
 
+from agent import taras_agent, danila_agent, vasiliy_agent
+
 from emitter import emitter, EventType
+from config import get_config
+
 
 db = Db()
+
+AGENTS = {
+    get_config().grupo.chat_robot: taras_agent,
+    get_config().grupo.translator_robot: danila_agent,
+    get_config().grupo.writer_robot: vasiliy_agent
+}
 
 
 @emitter.on(EventType.new_message)
@@ -70,6 +81,24 @@ async def new_message(message: ChatMessage | GroupMessage):
             EventType.send_message,
             **kwargs
         )
+
+        if isinstance(message, ChatMessage):
+            agent_receiver = AGENTS.get(reciever.login)
+            if not agent_receiver:
+                continue
+
+            elif reciever.login in [
+                get_config().grupo.chat_robot, get_config().grupo.writer_robot
+            ] and sender.login == get_config().grupo.translator_robot:
+                return
+
+            asyncio.create_task(to_agent(agent_receiver, sender, reciever, message))
+
+
+async def to_agent(self, agent_receiver, sender_user, reciever_user, message):
+    resp = await agent_receiver.send(str(sender_user.id), message.text, context=sender_user.to_dict())
+    resp = self.prepare_text(resp.content)
+    await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
 
 def prepare_text(message: ChatMessage | GroupMessage | str) -> ChatMessage | GroupMessage:
