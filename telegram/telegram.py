@@ -22,7 +22,7 @@ async def run_telegram():
     try:
         from .menus import menus_router
 
-        await bot.delete_webhook(drop_pending_updates=True)
+        # await bot.delete_webhook(drop_pending_updates=True)
 
         dp = Dispatcher(storage=MongoStorage.from_url(get_config().database.uri))
         dp.include_router(menus_router)
