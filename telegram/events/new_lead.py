@@ -51,8 +51,7 @@ async def new_lead(lead: Lead):
                 name=lead.full_name,
                 tags=' '.join([f"#{lead.source_domain}", "#new"])
             ),
-            icon_color=9367192,
-            icon_custom_emoji_id="🆕"
+            icon_custom_emoji_id="5417915203100613993"
         )
 
         lead_group = LeadGroup(
