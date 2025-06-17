@@ -25,7 +25,7 @@ async def public_log_message(
 
     dialog_ids = sorted([sender.id, reciever.id])
 
-    messages_group: PublicMessagesGroup = await db.ex(dmth.GetOne(PublicMessagesGroup, participants=dialog_ids))
+    messages_group: PublicMessagesGroup = await db.ex(dmth.GetOne(PublicMessagesGroup, participant_ids=dialog_ids))
     if not messages_group:
         topic = await bot.create_forum_topic(
             chat_id=get_config().telegram.public_messages_group_id,
