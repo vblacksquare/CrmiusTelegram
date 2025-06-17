@@ -331,4 +331,4 @@ msgid "lead_topic_name"
 msgstr "{name} | {tags}"
 
 msgid "public_messages_group_topic_name"
-msgstr "{left} <-> {right}"
+msgstr "{left} {right}"
