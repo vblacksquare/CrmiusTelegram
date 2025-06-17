@@ -21,9 +21,6 @@ gr = Grupo()
 
 @answer_private_router.message(F.chat.type == ChatType.PRIVATE)
 async def answer_private(message: Message):
-    if message.from_user.is_bot:
-        return
-
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
     try:
