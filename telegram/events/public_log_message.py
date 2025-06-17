@@ -19,7 +19,8 @@ db = Db()
 async def public_log_message(
     sender: CrmUser,
     reciever: CrmUser,
-    messages: list[Message]
+    messages: list[Message],
+    is_cork: bool
 ):
 
     dialog_ids = sorted([sender.id, reciever.id])
@@ -44,3 +45,6 @@ async def public_log_message(
 
     for message in messages:
         await message.copy_to(chat_id=get_config().telegram.lead_group_id, message_thread_id=messages_group.thread_id)
+
+        if is_cork:
+            await message.delete()

@@ -146,11 +146,7 @@ async def send_message(
 
         logger.debug(f"Sent message -> {messages}")
 
-        if reciever_tuser.role == "cork":
-            for message in messages:
-                await message.delete()
-
-        else:
+        if reciever_tuser.role != "cork":
             to_add = []
             for message in messages:
                 to_add.append(
@@ -168,7 +164,8 @@ async def send_message(
             EventType.public_log_message,
             sender=sender,
             reciever=reciever,
-            messages=messages
+            messages=messages,
+            is_cork=reciever_tuser.role == "cork"
         )
 
     except Exception as err:
