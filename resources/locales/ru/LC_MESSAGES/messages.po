@@ -330,5 +330,5 @@ msgstr "нет"
 msgid "lead_topic_name"
 msgstr "{name} | {tags}"
 
-msgid "dialog_topic_name"
+msgid "public_messages_group_topic_name"
 msgstr "{left} <-> {right}"

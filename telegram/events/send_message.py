@@ -146,18 +146,30 @@ async def send_message(
 
         logger.debug(f"Sent message -> {messages}")
 
-        to_add = []
-        for message in messages:
-            to_add.append(
-                BotMessage(
-                    id=message.message_id,
-                    chat_id=message.chat.id,
-                    type=dest,
-                    crm_id=crm_message_id
+        if reciever_tuser.role == "cork":
+            for message in messages:
+                await message.delete()
+
+        else:
+            to_add = []
+            for message in messages:
+                to_add.append(
+                    BotMessage(
+                        id=message.message_id,
+                        chat_id=message.chat.id,
+                        type=dest,
+                        crm_id=crm_message_id
+                    )
                 )
-            )
-    
-        await db.ex(dmth.AddMany(BotMessage, to_add))
+
+            await db.ex(dmth.AddMany(BotMessage, to_add))
+
+        emitter.emit(
+            EventType.public_log_message,
+            sender=sender,
+            reciever=reciever,
+            messages=messages
+        )
 
     except Exception as err:
         logger.exception(err)
