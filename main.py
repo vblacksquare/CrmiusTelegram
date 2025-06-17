@@ -27,11 +27,7 @@ async def main():
         await db.ex(dmth.AddOne(Settings, settings))
 
     await run_cheduler()
-
-    while True:
-        await asyncio.sleep(1)
-
-    #await run_telegram()
+    await run_telegram()
 
 
 if __name__ == '__main__':
