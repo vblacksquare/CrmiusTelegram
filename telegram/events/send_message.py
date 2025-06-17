@@ -50,7 +50,8 @@ async def send_message(
                 first_name="blank",
                 second_name="blank",
                 username="blank",
-                language="ru"
+                language="ru",
+                role="cork"
             )
 
         dest = "group" if group else "chat"
@@ -196,6 +197,9 @@ async def generate_keyboard(
     reciever: CrmUser,
     group: Group
 ):
+
+    if reciever_tuser.role == "cork":
+        return None
 
     if group:
         app_redirect_link = generate_group_app_link(reciever=reciever, group=group)
