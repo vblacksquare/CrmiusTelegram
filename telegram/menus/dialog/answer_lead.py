@@ -9,18 +9,19 @@ from grupo import Grupo
 
 from db import Db
 from dtypes.db import method as dmth
-from dtypes.user import User, CrmUser
+from dtypes.user import User
+from dtypes.lead import Lead, LeadGroup
 
 from config import get_config
 
 
-answer_private_router = Router()
+answer_lead_router = Router()
 db = Db()
 gr = Grupo()
 
 
-@answer_private_router.message(~F.reply_to_message & F.chat.type == ChatType.PRIVATE)
-async def answer_private(message: Message):
+@answer_lead_router.message(F.chat.id == get_config().telegram.lead_group_id)
+async def answer_lead(message: Message):
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
     try:
@@ -30,14 +31,8 @@ async def answer_private(message: Message):
         if not message.text:
             raise ValueError
 
-        sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=user.crm_id))
-        reciever: CrmUser = await db.ex(dmth.GetOne(CrmUser, login=get_config().grupo.chat_robot))
-
-        await gr.send_chat_message(
-            sender=sender,
-            reciever=reciever,
-            message_text=message.text
-        )
+        lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, thread_id=message.message_thread_id))
+        print(lead_group)
 
         await message.bot.set_message_reaction(
             message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]
