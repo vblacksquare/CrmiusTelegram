@@ -359,14 +359,5 @@ msgstr "<b>Кліент написав</b>"
 msgid "nothing"
 msgstr "немає"
 
-msgid "lead_new_name"
-msgstr "🆕 {name} | {tags}"
-
-msgid "lead_work_name"
-msgstr "🛠 {name} | {tags}"
-
-msgid "lead_completed_name"
-msgstr "✅ {name} | {tags}"
-
-msgid "lead_cancelled_name"
-msgstr "🚫 {name} | {tags}"
+msgid "lead_topic_name"
+msgstr "{name} | {tags}"
