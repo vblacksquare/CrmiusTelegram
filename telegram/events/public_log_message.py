@@ -44,7 +44,7 @@ async def public_log_message(
         await db.ex(dmth.AddOne(PublicMessagesGroup, messages_group))
 
     for message in messages:
-        await message.copy_to(chat_id=get_config().telegram.lead_group_id, message_thread_id=messages_group.thread_id)
+        await message.copy_to(chat_id=get_config().telegram.public_messages_group_id, message_thread_id=messages_group.thread_id)
 
         if is_cork:
             await message.delete()
