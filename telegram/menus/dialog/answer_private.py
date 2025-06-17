@@ -19,7 +19,7 @@ db = Db()
 gr = Grupo()
 
 
-@answer_private_router.message(F.reply_to_message == None and F.chat.type == ChatType.PRIVATE)
+@answer_private_router.message(~F.reply_to_message and F.chat.type == ChatType.PRIVATE)
 async def answer_private(message: Message):
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
