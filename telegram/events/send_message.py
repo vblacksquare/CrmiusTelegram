@@ -164,6 +164,7 @@ async def send_message(
             EventType.public_log_message,
             sender=sender,
             reciever=reciever,
+            group=group,
             messages=messages,
             is_cork=reciever_tuser.role == "cork"
         )
