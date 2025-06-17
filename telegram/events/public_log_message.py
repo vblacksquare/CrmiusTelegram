@@ -56,15 +56,6 @@ async def public_log_message(
             for message in messages:
                 await message.copy_to(chat_id=get_config().telegram.public_messages_group_id, message_thread_id=messages_group.thread_id)
 
-                if not is_cork:
-                    continue
-
-                try:
-                    await message.delete()
-
-                except Exception as err:
-                    logger.exception(err)
-
             break
 
         except Exception as err:
@@ -73,6 +64,16 @@ async def public_log_message(
                 await db.ex(dmth.UpdateOne(PublicMessagesGroup, messages_group, to_update=["thread_id"]))
                 break
 
+            logger.exception(err)
+
+    if not is_cork:
+        return
+
+    for message in messages:
+        try:
+            await message.delete()
+
+        except Exception as err:
             logger.exception(err)
 
 
