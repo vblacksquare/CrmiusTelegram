@@ -17,6 +17,10 @@ db = Db()
 
 @emitter.on(EventType.new_lead)
 async def new_lead(lead: Lead):
+    if lead.source_domain in [None, "", " "]:
+        logger.warning(f"Lead skipped -> {lead.to_dict()}")
+        return
+
     logger.debug(f"New lead -> {lead.to_dict()}")
 
     language = get_config().telegram.languages[0]
