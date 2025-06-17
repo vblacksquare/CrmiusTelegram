@@ -15,6 +15,7 @@ from config import get_config
 
 
 db = Db()
+TEMP_DATA = {}
 
 
 @emitter.on(EventType.public_log_message)
@@ -29,13 +30,13 @@ async def public_log_message(
     chat_id = get_config().telegram.public_messages_group_id
 
     if group:
-        dialog_ids = sorted([group.id])
+        dialog_ids = sorted([str(group.id)])
         left_name = group.title
         right_name = ""
         icon = "5350513667144163474"
 
     else:
-        dialog_ids = sorted([sender.id, reciever.id])
+        dialog_ids = sorted(list(map(str, [sender.id, reciever.id])))
         left_name = sender.fullname
         right_name = reciever.fullname
         icon = "5417915203100613993"
@@ -45,7 +46,7 @@ async def public_log_message(
         thread_id = await create_topic(chat_id, left_name, right_name, icon)
 
         messages_group = PublicMessagesGroup(
-            id="-".join(map(str, dialog_ids)),
+            id="-".join(dialog_ids),
             participant_ids=dialog_ids,
             thread_id=thread_id
         )

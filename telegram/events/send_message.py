@@ -23,6 +23,7 @@ from config import get_config
 
 
 db = Db()
+SENT_MESSAGES = []
 
 
 @emitter.on(EventType.send_message)
@@ -160,6 +161,10 @@ async def send_message(
 
             await db.ex(dmth.AddMany(BotMessage, to_add))
 
+        if crm_message_id in SENT_MESSAGES:
+            return
+
+        SENT_MESSAGES.append(crm_message_id)
         emitter.emit(
             EventType.public_log_message,
             sender=sender,
