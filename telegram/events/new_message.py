@@ -95,7 +95,7 @@ async def new_message(message: ChatMessage | GroupMessage):
             asyncio.create_task(to_agent(agent_receiver, sender, reciever, message))
 
 
-async def to_agent(self, agent_receiver, sender_user, reciever_user, message):
+async def to_agent(agent_receiver, sender_user, reciever_user, message):
     resp = await agent_receiver.send(str(sender_user.id), message.text, context=sender_user.to_dict())
     resp = self.prepare_text(resp.content)
     await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
