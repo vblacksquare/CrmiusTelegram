@@ -27,7 +27,7 @@ async def public_log_message(
     messages_group: PublicMessagesGroup = await db.ex(dmth.GetOne(PublicMessagesGroup, participants=dialog_ids))
     if not messages_group:
         topic = await bot.create_forum_topic(
-            chat_id=get_config().telegram.lead_group_id,
+            chat_id=get_config().telegram.public_messages_group_id,
             name=i18n.gettext("public_messages_group_topic_name", locale="ru").format(
                 left=sender.fullname,
                 right=reciever.fullname
