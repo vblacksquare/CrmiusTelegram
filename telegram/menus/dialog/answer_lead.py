@@ -65,14 +65,14 @@ async def send(from_email: Email, to_email: str, text: str, subject: str = None,
     # message["Subject"] = subject
     message.set_content(text)
 
-    await aiosmtplib.send(
-        message,
+    client = aiosmtplib.SMTP(hostname=from_email.smpt_host, port=from_email.smpt_port, start_tls=True)
+    await client.connect()
+    await client.login(from_email.login, from_email.password)
+
+    await client.send_message(
+        message=message,
         sender=from_email.login,
         recipients=[to_email],
-        hostname=from_email.smpt_host,
-        port=from_email.smpt_port,
-        username=from_email.login,
-        password=from_email.password,
-        use_tls=False,
-        timeout=5
     )
+
+    client.close()
