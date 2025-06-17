@@ -72,5 +72,7 @@ async def send(from_email: Email, to_email: str, text: str, subject: str = None,
         hostname=from_email.smpt_host,
         port=from_email.smpt_port,
         username=from_email.login,
-        password=from_email.password
+        password=from_email.password,
+        use_tls=False,
+        timeout=5
     )
