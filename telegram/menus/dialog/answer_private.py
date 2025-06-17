@@ -1,8 +1,9 @@
 
 from loguru import logger
 
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.types import Message
+from aiogram.enums import ChatType
 
 from grupo import Grupo
 
@@ -18,8 +19,8 @@ db = Db()
 gr = Grupo()
 
 
-@answer_private_router.message()
-async def reply(message: Message):
+@answer_private_router.message(F.chat.type == ChatType.PRIVATE)
+async def answer_private(message: Message):
     if message.from_user.is_bot:
         return
 
