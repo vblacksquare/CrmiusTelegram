@@ -29,16 +29,16 @@ async def answer_lead(message: Message):
 
     try:
         if not user.is_verified:
-            raise ValueError
+            raise ValueError("User is not verified")
 
         if not message.text:
-            raise ValueError
+            raise ValueError("Missing text")
 
         lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, thread_id=message.message_thread_id))
 
         email: Email = await db.ex(dmth.GetOne(Email, domain=lead_group.source_domain))
         if not email:
-            raise ValueError
+            raise Exception(f"No email for domain -> {lead_group.source_domain}")
 
         await send(
             from_email=email,
