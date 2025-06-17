@@ -42,7 +42,7 @@ async def send_message(
             return logger.warning(f"No user authed -> {reciever.id}:{reciever.login}")
 
         reciever_tuser: User = await db.ex(dmth.GetOne(User, id=reciever.user_id))
-        if not reciever_tuser or reciever_tuser.id == 885554630:
+        if not reciever_tuser:
             logger.warning(f"No such user_id -> {reciever.user_id} -> {reciever.id}:{reciever.login}")
 
             reciever_tuser = User(
