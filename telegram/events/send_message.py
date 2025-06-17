@@ -15,6 +15,7 @@ from db import Db
 from dtypes.db import method as dmth
 from dtypes.group import Group
 from dtypes.user import User, CrmUser
+from dtypes.message import BotMessage
 
 from emitter import emitter, EventType
 
@@ -26,6 +27,7 @@ db = Db()
 
 @emitter.on(EventType.send_message)
 async def send_message(
+    crm_message_id: int,
     sender: CrmUser,
     reciever: CrmUser,
     text: str,
@@ -84,14 +86,14 @@ async def send_message(
             notificate = False
 
         if audio:
-            message = await bot.send_voice(
+            messages = [await bot.send_voice(
                 voice=FSInputFile(path=audio, filename="audio.ogg"),
                 caption=message_text,
                 parse_mode="html",
                 chat_id=reciever_tuser.id,
                 disable_notification=not notificate,
                 reply_markup=keyboard.as_markup()
-            )
+            )]
 
         elif photos:
             album = []
@@ -102,7 +104,7 @@ async def send_message(
                     parse_mode="html"
                 ))
 
-            message = await bot.send_media_group(
+            messages = await bot.send_media_group(
                 media=album,
                 chat_id=reciever_tuser.id,
                 disable_notification=not notificate
@@ -117,24 +119,36 @@ async def send_message(
                     parse_mode="html"
                 ))
 
-            message = await bot.send_media_group(
+            messages = await bot.send_media_group(
                 media=album,
                 chat_id=reciever_tuser.id,
                 disable_notification=not notificate
             )
 
         else:
-            message = await bot.send_message(
+            messages = [await bot.send_message(
                 text=message_text,
                 parse_mode="html",
                 chat_id=reciever_tuser.id,
                 link_preview_options=LinkPreviewOptions(is_disabled=False),
                 disable_notification=not notificate,
                 reply_markup=keyboard.as_markup()
-            )
+            )]
 
-        logger.debug(f"Sent message -> {message}")
-        return message
+        logger.debug(f"Sent message -> {messages}")
+
+        to_add = []
+        for message in messages:
+            to_add.append(
+                BotMessage(
+                    id=message.message_id,
+                    chat_id=message.chat.id,
+                    type=dest,
+                    crm_id=crm_message_id
+                )
+            )
+    
+        await db.ex(dmth.AddMany(BotMessage, to_add))
 
     except Exception as err:
         logger.exception(err)

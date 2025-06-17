@@ -69,6 +69,7 @@ async def new_message(message: ChatMessage | GroupMessage):
             continue
 
         kwargs = {
+            "crm_message_id": message.id,
             "sender": sender,
             "reciever": reciever,
             "text": message.text,
