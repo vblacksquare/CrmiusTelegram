@@ -1,8 +1,10 @@
 
+
 from loguru import logger
 
 from aiogram import Router, F
 from aiogram.types import Message
+from aiogram.enums import ChatType
 
 from grupo import Grupo
 
@@ -12,13 +14,13 @@ from dtypes.user import User
 from dtypes.message import GroupMessage, ChatMessage, BotMessage
 
 
-reply_router = Router()
+reply_private_router = Router()
 db = Db()
 gr = Grupo()
 
 
-@reply_router.message(F.reply_to_message and F.bot)
-async def reply(message: Message):
+@reply_private_router.message(F.reply_to_message and F.chat.type == ChatType.PRIVATE)
+async def reply_private(message: Message):
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
     if not user or not user.crm_id or not user.is_verified:
