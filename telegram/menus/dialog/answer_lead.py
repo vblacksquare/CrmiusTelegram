@@ -54,7 +54,7 @@ async def answer_lead(message: Message):
         logger.exception(err)
 
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚫"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "😡"}]
         )
 
 

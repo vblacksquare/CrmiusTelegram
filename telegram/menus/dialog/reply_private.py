@@ -26,14 +26,14 @@ async def reply_private(message: Message):
 
     if not user or not user.crm_id or not user.is_verified:
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚫"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "😡"}]
         )
         return
 
     bot_message: BotMessage = await db.ex(dmth.GetOne(BotMessage, id=message.reply_to_message.message_id, chat_id=message.chat.id))
     if not bot_message:
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚫"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "😡"}]
         )
         return
 
@@ -45,13 +45,13 @@ async def reply_private(message: Message):
 
     else:
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚫"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "😡"}]
         )
         return
 
     if not crm_message:
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚫"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "😡"}]
         )
         return
 
@@ -70,5 +70,5 @@ async def reply_private(message: Message):
         logger.exception(err)
 
         await message.bot.set_message_reaction(
-            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚫"}]
+            message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "😡"}]
         )
