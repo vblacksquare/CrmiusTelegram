@@ -62,7 +62,7 @@ async def public_log_message(
             if "message thread not found" in str(err):
                 messages_group.thread_id = await create_topic(chat_id, left_name, right_name, icon)
                 await db.ex(dmth.UpdateOne(PublicMessagesGroup, messages_group, to_update=["thread_id"]))
-                break
+                continue
 
             logger.exception(err)
 
