@@ -1,4 +1,5 @@
 
+
 import urllib.parse
 import pytz
 from datetime import datetime
@@ -9,12 +10,14 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from aiogram.types import LinkPreviewOptions, WebAppInfo
 
 from ..telegram import bot, i18n
+from emitter import emitter, EventType
 
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User, CrmUser
 from dtypes.message import TaskMessage
 from dtypes.task import Task
+from dtypes.notification import Notification
 
 from config import get_config
 
@@ -56,7 +59,18 @@ async def generate_keyboard(
     return keyboard
 
 
-async def __new_task_notification(sender: CrmUser, reciever: CrmUser, task: Task, notification_type: str, message: TaskMessage = None):
+"""
+sender: CrmUser,
+reciever: CrmUser,
+task: Task,
+notification_type: str,
+message: TaskMessage = None
+"""
+
+
+@emitter.on(EventType.new_task)
+async def new_task(notification: Notification):
+
     if not reciever.user_id:
         return logger.warning(f"No user authed -> {reciever.id}:{reciever.login}")
 
