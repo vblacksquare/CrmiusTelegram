@@ -55,12 +55,7 @@ async def reply(message: Message):
     try:
         await gr.reply_to_message(crm_message, message)
 
-        if bot_message.type == "chat":
-            await message.bot.set_message_reaction(
-                message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]
-            )
-
-        elif bot_message.type == "group":
+        if bot_message.type in ["chat", "group"]:
             await message.bot.set_message_reaction(
                 message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]
             )
