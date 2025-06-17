@@ -4,6 +4,9 @@ from loguru import logger
 from aiogram import Router, F
 from aiogram.types import Message
 
+import aiosmtplib
+from email.message import EmailMessage
+
 from grupo import Grupo
 
 from db import Db
@@ -37,6 +40,12 @@ async def answer_lead(message: Message):
         if not email:
             raise ValueError
 
+        await send(
+            from_email=email,
+            to_email=lead_group.email[-1],
+            text=message.text
+        )
+
         await message.bot.set_message_reaction(
             message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]
         )
@@ -47,3 +56,21 @@ async def answer_lead(message: Message):
         await message.bot.set_message_reaction(
             message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "🚫"}]
         )
+
+
+async def send(from_email: Email, to_email: str, text: str, subject: str = None, files: list[str] = []):
+    message = EmailMessage()
+    message["From"] = from_email.login
+    message["To"] = to_email
+    # message["Subject"] = subject
+    message.set_content(text)
+
+    await aiosmtplib.send(
+        message,
+        sender=from_email.login,
+        recipients=[to_email],
+        hostname=from_email.smpt_host,
+        port=from_email.smpt_port,
+        username=from_email.login,
+        password=from_email.password
+    )
