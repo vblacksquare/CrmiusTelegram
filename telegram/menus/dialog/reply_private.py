@@ -21,6 +21,7 @@ gr = Grupo()
 
 @reply_private_router.message(F.reply_to_message and F.chat.type == ChatType.PRIVATE)
 async def reply_private(message: Message):
+    print(message.reply_to_message, message.chat.type)
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
     if not user or not user.crm_id or not user.is_verified:
