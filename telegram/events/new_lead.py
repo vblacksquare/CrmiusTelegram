@@ -37,16 +37,17 @@ async def new_lead(lead: Lead):
         "status": "new"
     }
 
-    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, {"$or": [{"email": lead.email}, {"phone": lead.phone}], "source_domain": lead.source_domain}))
+    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, {"$or": [{"email": lead.email}], "source_domain": lead.source_domain}))
 
     if lead_group:
-        if lead.email and lead.email not in lead_group.email:
-            lead_group.email.append(lead.email)
+        #if lead.email and lead.email not in lead_group.email:
+        #    lead_group.email.append(lead.email)
 
-        if lead.phone and lead.phone not in lead_group.phone:
-            lead_group.phone.append(lead.phone)
+        #if lead.phone and lead.phone not in lead_group.phone:
+        #    lead_group.phone.append(lead.phone)
 
-        await db.ex(dmth.UpdateOne(LeadGroup, lead_group, to_update=["email", "phone"]))
+        #await db.ex(dmth.UpdateOne(LeadGroup, lead_group, to_update=["email", "phone"]))
+        pass
 
     else:
         topic = await bot.create_forum_topic(
