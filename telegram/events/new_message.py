@@ -3,6 +3,8 @@ import bs4
 import asyncio
 from loguru import logger
 
+from grupo import Grupo
+
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.group import Group
@@ -16,6 +18,7 @@ from config import get_config
 
 
 db = Db()
+gr = Grupo()
 
 AGENTS = {
     get_config().grupo.chat_robot: taras_agent,
@@ -97,8 +100,8 @@ async def new_message(message: ChatMessage | GroupMessage):
 
 async def to_agent(agent_receiver, sender_user, reciever_user, message):
     resp = await agent_receiver.send(str(sender_user.id), message.text, context=sender_user.to_dict())
-    resp = self.prepare_text(resp.content)
-    await self.gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
+    resp = prepare_text(resp.content)
+    await gr.send_chat_message(sender=reciever_user, reciever=sender_user, message_text=resp)
 
 
 def prepare_text(message: ChatMessage | GroupMessage | str) -> ChatMessage | GroupMessage:
