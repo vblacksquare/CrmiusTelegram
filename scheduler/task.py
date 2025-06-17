@@ -4,13 +4,14 @@ from emitter import emitter, EventType
 from db import Db, CrmDb
 from dtypes.db import method as dmth
 from dtypes.settings import Settings
+from dtypes.task import Task
 
 
 db = Db()
 crm = CrmDb()
 
 
-async def load_tasks():
+async def load_task_notifications():
     settings: Settings = await db.ex(dmth.GetOne(Settings, id="main"))
     old_last_task_notification_id = settings.last_task_notification_id
     new_last_task_notification_id = 0
@@ -26,3 +27,22 @@ async def load_tasks():
     if new_last_task_notification_id > old_last_task_notification_id:
         settings.last_task_notification_id = new_last_task_notification_id
         await db.ex(dmth.UpdateOne(Settings, settings, to_update=["last_task_notification_id"]))
+
+
+async def update_tasks():
+    new_tasks = await crm.get_tasks()
+
+    old_tasks: list[Task] = await db.ex(dmth.GetMany(Task))
+    old_tasks_ids: list[str] = list(map(lambda x: x.id, old_tasks))
+
+    to_add = []
+
+    for new_task in new_tasks:
+        if new_task.id in old_tasks_ids:
+            await db.ex(dmth.UpdateOne(Task, new_task))
+
+        else:
+            to_add.append(new_task)
+
+    if len(to_add):
+        await db.ex(dmth.AddMany(Task, to_add))
