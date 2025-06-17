@@ -17,7 +17,7 @@ db = Db()
 gr = Grupo()
 
 
-@reply_router.message(F.reply_to_message)
+@reply_router.message(F.reply_to_message and F.bot)
 async def reply(message: Message):
     user: User = await db.ex(dmth.GetOne(User, id=message.from_user.id))
 
