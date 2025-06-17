@@ -36,7 +36,8 @@ async def main():
             imap_host="imap.gmail.com",
             imap_port=993,
             smpt_host="smtp.gmail.com",
-            smpt_port=587
+            smpt_port=587,
+            domain="example.com"
         )
         await db.ex(dmth.AddOne(Email, example))
 
