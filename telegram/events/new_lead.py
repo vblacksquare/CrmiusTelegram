@@ -17,7 +17,7 @@ db = Db()
 
 @emitter.on(EventType.new_lead)
 async def new_lead(lead: Lead):
-    if lead.source_domain in [None, "", " "]:
+    if lead.source_domain in [None, "", " "] or lead.email in [None, "", " "]:
         logger.warning(f"Lead skipped -> {lead.to_dict()}")
         return
 
