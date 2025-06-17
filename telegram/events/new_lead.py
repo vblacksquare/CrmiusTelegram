@@ -50,7 +50,9 @@ async def new_lead(lead: Lead):
             name=i18n.gettext("lead_new_name", locale=language).format(
                 name=lead.full_name,
                 tags=' '.join([f"#{lead.source_domain}", "#new"])
-            )
+            ),
+            icon_color=9367192,
+            icon_custom_emoji_id="🆕"
         )
 
         lead_group = LeadGroup(
