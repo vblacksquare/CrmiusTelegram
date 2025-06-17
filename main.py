@@ -7,6 +7,7 @@ from scheduler import run_cheduler
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.settings import Settings
+from dtypes.email import Email
 
 from utils.logger import setup_logger
 
@@ -25,6 +26,19 @@ async def main():
     if not settings:
         settings = Settings()
         await db.ex(dmth.AddOne(Settings, settings))
+
+    email: Email = await db.ex(dmth.GetOne(Email))
+    if not email:
+        example = Email(
+            id="example",
+            login="example@gmail.com",
+            password="1234 jasdk qwpo fkeo",
+            imap_host="imap.gmail.com",
+            imap_port=993,
+            smpt_host="smtp.gmail.com",
+            smpt_port=587
+        )
+        await db.ex(dmth.AddOne(Email, example))
 
     await run_cheduler()
     await run_telegram()

@@ -3,7 +3,6 @@ from loguru import logger
 
 from aiogram import Router, F
 from aiogram.types import Message
-from aiogram.enums import ChatType
 
 from grupo import Grupo
 
@@ -11,6 +10,7 @@ from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User
 from dtypes.lead import Lead, LeadGroup
+from dtypes.email import Email
 
 from config import get_config
 
@@ -32,7 +32,10 @@ async def answer_lead(message: Message):
             raise ValueError
 
         lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, thread_id=message.message_thread_id))
-        print(lead_group)
+
+        email: Email = await db.ex(dmth.GetOne(Email, domain=lead_group.source_domain))
+        if not email:
+            raise ValueError
 
         await message.bot.set_message_reaction(
             message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]

@@ -8,3 +8,4 @@ from .settings import Settings
 from .plan import Plan
 from .task import Task
 from .lead import Lead, LeadGroup
+from .email import Email
