@@ -199,7 +199,7 @@ async def generate_keyboard(
 ):
 
     if reciever_tuser.role == "cork":
-        return None
+        return InlineKeyboardBuilder()
 
     if group:
         app_redirect_link = generate_group_app_link(reciever=reciever, group=group)
