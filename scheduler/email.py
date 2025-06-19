@@ -86,7 +86,7 @@ async def update_email_jobs(scheduler: AsyncIOScheduler):
         scheduler.remove_job(email_id)
 
 
-async def get_message_data(self, message):
+async def get_message_data(message):
     text_html = None
     files = []
 
