@@ -14,7 +14,7 @@ db = Db()
 
 
 @emitter.on(EventType.new_lead_message)
-async def new_lead(lead_message: LeadMessage):
+async def new_lead_message(lead_message: LeadMessage):
     language = "ru"
 
     lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, id=lead_message.lead_group_id))
