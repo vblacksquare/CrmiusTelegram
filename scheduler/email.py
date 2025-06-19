@@ -23,30 +23,21 @@ added_email_ids = {}
 
 
 async def email_job(_email: Email):
-    client = aioimaplib.IMAP4_SSL(host=_email.imap_host, port=_email.imap_port)
-    await client.wait_hello_from_server()
-    response = await client.login(_email.login, _email.password)
-    logger.debug(f"Login {_email}-> {response}")
+    client = added_email_ids[_email.id]
 
-    try:
-        await client.select('INBOX')
-        status, data = await client.search("UNSEEN")
+    await client.select('INBOX')
+    status, data = await client.search("UNSEEN")
 
-        if status != "OK":
-            logger.warning(f"Got search response from imap: {status = }, {data = }")
-            data = [b""]
+    if status != "OK":
+        logger.warning(f"Got search response from imap: {status = }, {data = }")
+        data = [b""]
 
-        message_ids = data[0].split()
-        for message_id in message_ids:
-            message_id = message_id.decode()
+    message_ids = data[0].split()
+    for message_id in message_ids:
+        message_id = message_id.decode()
 
-            message_bytes = (await client.fetch(message_id, "(RFC822)")).lines[1]
-            await process_message(message_bytes)
-
-    except Exception as err:
-        logger.exception(err)
-
-    await client.close()
+        message_bytes = (await client.fetch(message_id, "(RFC822)")).lines[1]
+        await process_message(message_bytes)
 
 
 async def update_email_jobs(scheduler: AsyncIOScheduler):
@@ -57,7 +48,12 @@ async def update_email_jobs(scheduler: AsyncIOScheduler):
         if email.id in added_email_ids:
             continue
 
-        added_email_ids.update({email.id: email})
+        client = aioimaplib.IMAP4_SSL(host=email.imap_host, port=email.imap_port)
+        await client.wait_hello_from_server()
+        response = await client.login(email.login, email.password)
+        logger.debug(f"Login {email}-> {response}")
+
+        added_email_ids.update({email.id: client})
         scheduler.add_job(
             id=email.id,
             func=email_job,
