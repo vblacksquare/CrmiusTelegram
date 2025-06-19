@@ -11,11 +11,12 @@ from email.header import Header
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
+from emitter import emitter, EventType
+
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.email import Email
-from dtypes.lead import Lead, LeadGroup
-
+from dtypes.lead import Lead, LeadGroup, LeadMessage
 
 db = Db()
 added_email_ids = {}
@@ -41,6 +42,23 @@ async def email_job(_email: Email):
         message_bytes = (await client.fetch(message_id, "(RFC822)")).lines[1]
         message = email.message_from_bytes(message_bytes)
         html, files, subject, sender = await get_message_data(message)
+
+        lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, email=sender))
+        if not lead_group:
+            logger.warning(f"Message from unknown lead -> {sender}")
+            continue
+
+        lead_message = LeadMessage(
+            id=uuid.uuid4().hex,
+            lead_group_id=lead_group.id,
+            text=html,
+            from_client=True
+        )
+
+        emitter.emit(
+            EventType.new_lead_message,
+            lead_message=lead_message
+        )
 
 
 async def update_email_jobs(scheduler: AsyncIOScheduler):

@@ -12,3 +12,4 @@ class EventType(enum.Enum):
     send_task = "send_task"
 
     new_lead = "new_lead"
+    new_lead_message = "new_lead_message"
