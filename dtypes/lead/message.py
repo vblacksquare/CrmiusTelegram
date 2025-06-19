@@ -7,11 +7,11 @@ class LeadMessage(DatabaseItem):
     def __init__(
         self,
         id: str,
-        email_id: str,
         lead_group_id: str,
         text: str,
         from_client: bool,
         sent_at: int = None,
+        email_id: str = None,
         raw_text: str = None
     ):
 

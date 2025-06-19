@@ -128,14 +128,3 @@ class BotMessage(DatabaseItem):
         self.crm_id = crm_id
 
         self.fields = ["id", "chat_id", "type", "crm_id"]
-
-
-class EmailMessage(DatabaseItem):
-    def __init__(
-        self,
-        id: str,
-    ):
-
-        self.id = id
-
-        self.fields = ["id"]
