@@ -1,6 +1,7 @@
 
 import bs4
 import uuid
+import json
 from loguru import logger
 
 import aioimaplib
@@ -8,6 +9,8 @@ import email
 import email.utils
 import email.policy
 from email.header import Header
+
+from agent import parser_agent
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -80,13 +83,22 @@ async def process_message(message_bytes):
             logger.warning(f"Message from unknown lead -> {sender}")
             return
 
-        soup = bs4.BeautifulSoup(html, "html.parser")
-        text = soup.get_text(strip=True)
+        answer = await parser_agent.send(
+            chat_id="q",
+            context={
+                "fields": {
+                    "text": "the text of email (just the text without html tags, sign and other meta data)"
+                },
+                "page_link": None
+            },
+            text=html
+        )
+        data = json.loads(answer.content)
 
         lead_message = LeadMessage(
             id=uuid.uuid4().hex,
             lead_group_id=lead_group.id,
-            text=text,
+            text=data["text"],
             from_client=True
         )
 
