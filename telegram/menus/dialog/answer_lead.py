@@ -127,7 +127,7 @@ async def prepare_message(
     history.append(LeadMessage(
         id=1,
         lead_group_id=1,
-        text="<br><br>".join(parts),
+        text=''.join(["<br><br>".join(parts), "<br>"]),
         from_client=True,
         sent_at=lead.added_time
     ))
