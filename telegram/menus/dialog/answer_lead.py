@@ -36,7 +36,6 @@ async def answer_lead(message: Message):
             raise ValueError("Missing text")
 
         lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, thread_id=message.message_thread_id))
-        last_message: LeadMessage = await db.ex(dmth.GetOne(LeadMessage, lead_group_id=lead_group.id, from_client=True))
 
         email: Email = await db.ex(dmth.GetOne(Email, domain=lead_group.source_domain))
         if not email:
@@ -45,8 +44,7 @@ async def answer_lead(message: Message):
         await send(
             from_email=email,
             to_email=lead_group.email[-1],
-            text=message.text,
-            reply_to=last_message.email_id if last_message else None
+            text=message.text
         )
 
         await db.ex(dmth.AddOne(LeadMessage, LeadMessage(
@@ -73,16 +71,12 @@ async def send(
     to_email: str,
     text: str,
     subject: str = None,
-    files: list[str] = [],
-    reply_to: str = None
+    files: list[str] = []
 ):
 
     message = EmailMessage()
     message["From"] = from_email.login
     message["To"] = to_email
-    # message["Subject"] = subject
-    message["In-Reply-To"] = "<CAD-y5ZYbUUF76rdD5jGrZf2tFGdNzbeUTYvPA79tust5Y9mZoQ@mail.gmail.com>"
-    message["References"] = "<CAD-y5ZYbUUF76rdD5jGrZf2tFGdNzbeUTYvPA79tust5Y9mZoQ@mail.gmail.com>"
     message.set_content(text)
 
     client = aiosmtplib.SMTP(hostname=from_email.smpt_host, port=from_email.smpt_port, use_tls=True)

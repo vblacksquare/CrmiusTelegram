@@ -13,6 +13,7 @@ class Email(DatabaseItem):
         smpt_port: int,
         smpt_host: str,
         domain: str,
+        sign: str = None
     ):
 
         self.id = id
@@ -23,11 +24,12 @@ class Email(DatabaseItem):
         self.smpt_port = smpt_port
         self.smpt_host = smpt_host
         self.domain = domain
+        self.sign = sign
 
         self.fields = [
             "id",
             "login", "password",
             "imap_port", "imap_host",
             "smpt_port", "smpt_host",
-            "domain"
+            "domain", "sign"
         ]
