@@ -81,8 +81,8 @@ async def send(
     message["From"] = from_email.login
     message["To"] = to_email
     # message["Subject"] = subject
-    message["In-Reply-To"] = reply_to
-    message["References"] = reply_to
+    message["In-Reply-To"] = "1953"
+    message["References"] = "1953"
     message.set_content(text)
 
     client = aiosmtplib.SMTP(hostname=from_email.smpt_host, port=from_email.smpt_port, use_tls=True)
