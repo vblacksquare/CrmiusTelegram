@@ -74,5 +74,5 @@ async def send(from_email: Email, to_email: str, text: str, subject: str = None,
         sender=from_email.login,
         recipients=[to_email],
     )
-
+    
     client.close()

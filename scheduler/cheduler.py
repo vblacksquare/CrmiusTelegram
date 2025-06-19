@@ -9,6 +9,8 @@ from .task import load_task_notifications, update_tasks
 from .user import update_users
 from .group import update_groups
 
+from .email import update_email_jobs
+
 
 scheduler = AsyncIOScheduler()
 scheduler.add_job(
@@ -47,4 +49,8 @@ scheduler.add_job(
     func=update_tasks,
     trigger=IntervalTrigger(seconds=5)
 )
-
+scheduler.add_job(
+    id="update_email_jobs",
+    func=update_email_jobs,
+    trigger=IntervalTrigger(seconds=5)
+)
