@@ -69,25 +69,29 @@ async def update_email_jobs(scheduler: AsyncIOScheduler):
 
 
 async def process_message(message_bytes):
-    message = email.message_from_bytes(message_bytes)
-    html, files, subject, sender = await get_message_data(message)
+    try:
+        message = email.message_from_bytes(message_bytes)
+        html, files, subject, sender = await get_message_data(message)
 
-    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, email=sender))
-    if not lead_group:
-        logger.warning(f"Message from unknown lead -> {sender}")
-        return
+        lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, email=sender))
+        if not lead_group:
+            logger.warning(f"Message from unknown lead -> {sender}")
+            return
 
-    lead_message = LeadMessage(
-        id=uuid.uuid4().hex,
-        lead_group_id=lead_group.id,
-        text=html,
-        from_client=True
-    )
+        lead_message = LeadMessage(
+            id=uuid.uuid4().hex,
+            lead_group_id=lead_group.id,
+            text=html,
+            from_client=True
+        )
 
-    emitter.emit(
-        EventType.new_lead_message,
-        lead_message=lead_message
-    )
+        emitter.emit(
+            EventType.new_lead_message,
+            lead_message=lead_message
+        )
+
+    except Exception as err:
+        logger.exception(err)
 
 
 async def get_message_data(message):
