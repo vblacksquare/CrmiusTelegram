@@ -131,7 +131,7 @@ async def prepare_message(
 
     last_message = ""
     for message in history[::-1]:
-        if message.from_client:
+        if message.from_client or not manager_email.sign:
             sender = lead_group.email[0]
 
             content = "<br><br>".join([
@@ -160,10 +160,17 @@ async def prepare_message(
             "</blockquote>"
         ])
 
-    message = "<br><br>".join([
-        new_message.text,
-        manager_email.sign,
-        last_message
-    ])
+    if manager_email.sign:
+        message = "<br><br>".join([
+            new_message.text,
+            manager_email.sign,
+            last_message
+        ])
+
+    else:
+        message = "<br><br>".join([
+            new_message.text,
+            last_message
+        ])
 
     return message
