@@ -81,8 +81,8 @@ async def send(
     message["From"] = from_email.login
     message["To"] = to_email
     # message["Subject"] = subject
-    message["In-Reply-To"] = reply_to
-    message["References"] = reply_to
+    message["In-Reply-To"] = "<CAD-y5ZYbUUF76rdD5jGrZf2tFGdNzbeUTYvPA79tust5Y9mZoQ@mail.gmail.com>"
+    message["References"] = "<CAD-y5ZYbUUF76rdD5jGrZf2tFGdNzbeUTYvPA79tust5Y9mZoQ@mail.gmail.com>"
     message.set_content(text)
 
     client = aiosmtplib.SMTP(hostname=from_email.smpt_host, port=from_email.smpt_port, use_tls=True)
