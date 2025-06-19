@@ -28,19 +28,23 @@ async def email_job(_email: Email):
     response = await client.login(_email.login, _email.password)
     logger.debug(f"Login {_email}-> {response}")
 
-    await client.select('INBOX')
-    status, data = await client.search("UNSEEN")
+    try:
+        await client.select('INBOX')
+        status, data = await client.search("UNSEEN")
 
-    if status != "OK":
-        logger.warning(f"Got search response from imap: {status = }, {data = }")
-        data = [b""]
+        if status != "OK":
+            logger.warning(f"Got search response from imap: {status = }, {data = }")
+            data = [b""]
 
-    message_ids = data[0].split()
-    for message_id in message_ids:
-        message_id = message_id.decode()
+        message_ids = data[0].split()
+        for message_id in message_ids:
+            message_id = message_id.decode()
 
-        message_bytes = (await client.fetch(message_id, "(RFC822)")).lines[1]
-        await process_message(message_bytes)
+            message_bytes = (await client.fetch(message_id, "(RFC822)")).lines[1]
+            await process_message(message_bytes)
+
+    except Exception as err:
+        logger.exception(err)
 
     await client.close()
 
