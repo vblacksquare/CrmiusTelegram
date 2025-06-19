@@ -18,6 +18,8 @@ db = Db()
 async def new_lead_message(lead_message: LeadMessage):
     language = "ru"
 
+    await db.ex(dmth.AddOne(LeadMessage, lead_message))
+
     soup = bs4.BeautifulSoup(lead_message.text, "html.parser")
     text = soup.get_text(strip=True)
 
@@ -30,5 +32,3 @@ async def new_lead_message(lead_message: LeadMessage):
         ),
         parse_mode="HTML"
     )
-
-    await db.ex(dmth.AddOne(LeadMessage, lead_message))
