@@ -52,5 +52,6 @@ scheduler.add_job(
 scheduler.add_job(
     id="update_email_jobs",
     func=update_email_jobs,
-    trigger=IntervalTrigger(seconds=5)
+    trigger=IntervalTrigger(seconds=5),
+    kwargs={"scheduler": scheduler}
 )
