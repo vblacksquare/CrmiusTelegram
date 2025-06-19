@@ -1,5 +1,6 @@
 
 import uuid
+from datetime import datetime
 from loguru import logger
 
 from aiogram import Router, F
@@ -41,18 +42,29 @@ async def answer_lead(message: Message):
         if not email:
             raise Exception(f"No email for domain -> {lead_group.source_domain}")
 
-        await send(
-            from_email=email,
-            to_email=lead_group.email[-1],
-            text=message.text
-        )
+        lead: Lead = await db.ex(dmth.GetOne(Lead, id=lead_group.id))
+        messages: list[LeadMessage] = await db.ex(dmth.GetMany(LeadMessage, lead_group_id=lead_group.id))
 
-        await db.ex(dmth.AddOne(LeadMessage, LeadMessage(
+        new_message = LeadMessage(
             id=uuid.uuid4().hex,
             lead_group_id=lead_group.id,
             text=message.text,
             from_client=False
-        )))
+        )
+
+        await send(
+            from_email=email,
+            to_email=lead_group.email[-1],
+            text=await prepare_message(
+                new_message=new_message,
+                history=messages,
+                manager_email=email,
+                lead=lead,
+                lead_group=lead_group
+            )
+        )
+
+        await db.ex(dmth.AddOne(LeadMessage, new_message))
 
         await message.bot.set_message_reaction(
             message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]
@@ -90,3 +102,68 @@ async def send(
     )
 
     client.close()
+
+
+async def prepare_message(
+    new_message: LeadMessage,
+    history: list[LeadMessage],
+    manager_email: Email,
+    lead: Lead,
+    lead_group: LeadGroup
+):
+
+    history = history[:]
+
+    parts = [
+        f"Вы заполнили форму <b>{lead.source_page_name}</b> на сайте <a href='{lead.source_page}'>{lead.source_page}</a>"
+    ]
+
+    if lead.message:
+        parts.append(lead.message)
+
+    history.append(LeadMessage(
+        id=1,
+        lead_group_id=1,
+        text="<br><br>".join(parts),
+        from_client=True,
+        sent_at=lead.added_time
+    ))
+
+    last_message = ""
+    for message in history[::-1]:
+        if message.from_client:
+            sender = lead_group.email[0]
+
+            content = "<br><br>".join([
+                message.text,
+                last_message
+            ])
+
+        else:
+            sender = manager_email.login
+
+            content = "<br><br>".join([
+                message.text,
+                manager_email.sign,
+                last_message
+            ])
+
+        content_meta = ', '.join([
+            datetime.fromtimestamp(message.sent_at).strftime(f"%y.%m.%d %H:%M"),
+            f"<<a href='mailto:{sender}'>{sender}</a>>:"
+        ])
+
+        last_message = "\n".join([
+            content_meta,
+            '<blockquote style="margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:solid;border-left-color:rgb(204,204,204);padding-left:1ex">',
+            content,
+            "</blockquote>"
+        ])
+
+    message = "<br><br>".join([
+        new_message.text,
+        manager_email.sign,
+        last_message
+    ])
+
+    return message
