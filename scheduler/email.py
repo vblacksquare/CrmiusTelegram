@@ -41,7 +41,7 @@ async def email_job(_email: Email):
         message_bytes = (await client.fetch(message_id, "(RFC822)")).lines[1]
         await process_message(message_bytes)
 
-    client.close()
+    await client.close()
 
 
 async def update_email_jobs(scheduler: AsyncIOScheduler):
