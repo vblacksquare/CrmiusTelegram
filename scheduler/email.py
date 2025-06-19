@@ -1,4 +1,5 @@
 
+import bs4
 import uuid
 from loguru import logger
 
@@ -79,10 +80,13 @@ async def process_message(message_bytes):
             logger.warning(f"Message from unknown lead -> {sender}")
             return
 
+        soup = bs4.BeautifulSoup(html, "html.parser")
+        text = soup.get_text(strip=True)
+
         lead_message = LeadMessage(
             id=uuid.uuid4().hex,
             lead_group_id=lead_group.id,
-            text=html,
+            text=text,
             from_client=True
         )
 
