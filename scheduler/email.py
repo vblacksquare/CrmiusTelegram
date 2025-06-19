@@ -39,25 +39,7 @@ async def email_job(_email: Email):
         message_id = message_id.decode()
 
         message_bytes = (await client.fetch(message_id, "(RFC822)")).lines[1]
-        message = email.message_from_bytes(message_bytes)
-        html, files, subject, sender = await get_message_data(message)
-
-        lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, email=sender))
-        if not lead_group:
-            logger.warning(f"Message from unknown lead -> {sender}")
-            continue
-
-        lead_message = LeadMessage(
-            id=uuid.uuid4().hex,
-            lead_group_id=lead_group.id,
-            text=html,
-            from_client=True
-        )
-
-        emitter.emit(
-            EventType.new_lead_message,
-            lead_message=lead_message
-        )
+        await process_message(message_bytes)
 
     client.close()
 
@@ -84,6 +66,28 @@ async def update_email_jobs(scheduler: AsyncIOScheduler):
 
         del added_email_ids[email_id]
         scheduler.remove_job(email_id)
+
+
+async def process_message(message_bytes):
+    message = email.message_from_bytes(message_bytes)
+    html, files, subject, sender = await get_message_data(message)
+
+    lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, email=sender))
+    if not lead_group:
+        logger.warning(f"Message from unknown lead -> {sender}")
+        return
+
+    lead_message = LeadMessage(
+        id=uuid.uuid4().hex,
+        lead_group_id=lead_group.id,
+        text=html,
+        from_client=True
+    )
+
+    emitter.emit(
+        EventType.new_lead_message,
+        lead_message=lead_message
+    )
 
 
 async def get_message_data(message):
