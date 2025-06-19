@@ -70,7 +70,7 @@ async def send(from_email: Email, to_email: str, text: str, subject: str = None,
     await client.login(from_email.login, from_email.password)
 
     await client.send_message(
-        message=message,
+        message,
         sender=from_email.login,
         recipients=[to_email],
     )
