@@ -1,4 +1,5 @@
 
+import uuid
 from loguru import logger
 
 from aiogram import Router, F
@@ -12,7 +13,7 @@ from grupo import Grupo
 from db import Db
 from dtypes.db import method as dmth
 from dtypes.user import User
-from dtypes.lead import Lead, LeadGroup
+from dtypes.lead import Lead, LeadGroup, LeadMessage
 from dtypes.email import Email
 
 from config import get_config
@@ -46,6 +47,13 @@ async def answer_lead(message: Message):
             text=message.text
         )
 
+        await db.ex(dmth.AddOne(LeadMessage, LeadMessage(
+            id=uuid.uuid4().hex,
+            lead_group_id=lead_group.id,
+            text=message.text,
+            from_client=False
+        )))
+
         await message.bot.set_message_reaction(
             message.chat.id, message.message_id, reaction=[{"type": "emoji", "emoji": "👍"}]
         )
@@ -74,5 +82,5 @@ async def send(from_email: Email, to_email: str, text: str, subject: str = None,
         sender=from_email.login,
         recipients=[to_email],
     )
-    
+
     client.close()

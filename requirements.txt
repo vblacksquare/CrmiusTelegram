@@ -18,4 +18,5 @@ pydantic-settings
 apscheduler
 pyee
 aiosmtplib
+aioimaplib
 pymongo
