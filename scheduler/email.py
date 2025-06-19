@@ -41,7 +41,7 @@ async def email_job(_email: Email):
         message_id = message_id.decode()
 
         message_bytes = (await client.fetch(message_id, "(RFC822)")).lines[1]
-        await process_message(message_id, message_bytes)
+        await process_message(message_bytes)
 
 
 async def update_email_jobs(scheduler: AsyncIOScheduler):
@@ -73,10 +73,10 @@ async def update_email_jobs(scheduler: AsyncIOScheduler):
         scheduler.remove_job(email_id)
 
 
-async def process_message(message_id, message_bytes):
+async def process_message(message_bytes):
     try:
         message = email.message_from_bytes(message_bytes)
-        html, files, subject, sender = await get_message_data(message)
+        message_id, html, files, subject, sender = await get_message_data(message)
 
         lead_group: LeadGroup = await db.ex(dmth.GetOne(LeadGroup, email=sender))
         if not lead_group:
@@ -116,6 +116,8 @@ async def process_message(message_id, message_bytes):
 async def get_message_data(message):
     text_html = None
     files = []
+
+    message_id = message.get("Message-ID")
 
     sender = email.utils.parseaddr(message.get('From'))[1]
 
@@ -159,5 +161,5 @@ async def get_message_data(message):
             await self.db.ex(dmth.AddOne(File, file))
             files.append(file.id)"""
 
-    return text_html, files, subject, sender
+    return message_id, text_html, files, subject, sender
 
