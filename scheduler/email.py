@@ -74,7 +74,7 @@ async def update_email_jobs(scheduler: AsyncIOScheduler):
             id=email.id,
             func=email_job,
             trigger=IntervalTrigger(seconds=1),
-            kwargs={'email': email}
+            kwargs={'_email': email}
         )
 
     for email_id in list(added_email_ids):
