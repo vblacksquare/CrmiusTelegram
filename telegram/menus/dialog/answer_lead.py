@@ -7,7 +7,8 @@ from aiogram import Router, F
 from aiogram.types import Message
 
 import aiosmtplib
-from email.message import EmailMessage
+from email.mime.text import MIMEText
+from email.header import Header
 
 from grupo import Grupo
 
@@ -86,10 +87,12 @@ async def send(
     files: list[str] = []
 ):
 
-    message = EmailMessage()
-    message["From"] = from_email.login
-    message["To"] = to_email
-    message.set_content(text)
+    message = MIMEText(text, 'html', 'utf-8')
+    message['From'] = from_email.login
+    message['To'] = to_email
+
+    if subject:
+        message['Subject'] = Header(subject, 'utf-8')
 
     client = aiosmtplib.SMTP(hostname=from_email.smpt_host, port=from_email.smpt_port, use_tls=True)
     await client.connect()
