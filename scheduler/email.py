@@ -25,7 +25,8 @@ added_email_ids = {}
 async def email_job(_email: Email):
     client = aioimaplib.IMAP4_SSL(host=_email.imap_host, port=_email.imap_port)
     await client.wait_hello_from_server()
-    await client.login(_email.login, _email.password)
+    response = await client.login(_email.login, _email.password)
+    logger.debug(f"Login {email}-> {response}")
 
     await client.select('INBOX')
     status, data = await client.search("UNSEEN")
