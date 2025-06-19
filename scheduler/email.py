@@ -87,7 +87,7 @@ async def process_message(message_bytes):
             chat_id="q",
             context={
                 "fields": {
-                    "text": "the text of html (just the text without html tags, signs and other meta data)"
+                    "text": "the first message in html from email message"
                 },
                 "page_link": None
             },
