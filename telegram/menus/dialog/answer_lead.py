@@ -137,19 +137,29 @@ async def prepare_message(
         if message.from_client or not manager_email.sign:
             sender = lead_group.email[0]
 
-            content = "<br><br>".join([
-                message.text,
-                last_message
-            ])
+            content = "<br><br>".join(
+                filter(
+                    lambda x: x,
+                    [
+                        message.text,
+                        last_message
+                    ]
+                )
+            )
 
         else:
             sender = manager_email.login
 
-            content = "<br><br>".join([
-                message.text,
-                manager_email.sign,
-                last_message
-            ])
+            content = "<br><br>".join(
+                filter(
+                    lambda x: x,
+                    [
+                        message.text,
+                        manager_email.sign,
+                        last_message
+                    ]
+                )
+            )
 
         content_meta = ', '.join([
             datetime.fromtimestamp(message.sent_at).strftime(f"%y.%m.%d %H:%M"),
