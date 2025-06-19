@@ -31,11 +31,13 @@ async def load_task_notifications():
 
 async def update_tasks():
     new_tasks = await crm.get_tasks()
+    new_tasks_ids = list(map(lambda x: x.id, new_tasks))
 
     old_tasks: list[Task] = await db.ex(dmth.GetMany(Task))
     old_tasks_ids: list[str] = list(map(lambda x: x.id, old_tasks))
 
     to_add = []
+    to_remove = []
 
     for new_task in new_tasks:
         if new_task.id in old_tasks_ids:
@@ -44,5 +46,14 @@ async def update_tasks():
         else:
             to_add.append(new_task)
 
+    for old_task in old_tasks:
+        if old_task.id in new_tasks_ids:
+            continue
+
+        to_remove.append(old_task.id)
+
     if len(to_add):
         await db.ex(dmth.AddMany(Task, to_add))
+
+    if len(to_remove):
+        await db.db[Task.__name__].delete_many({"id": {"$in": to_remove}})
