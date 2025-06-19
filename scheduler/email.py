@@ -8,7 +8,7 @@ from dtypes.email import Email
 
 
 db = Db()
-added_email_ids = []
+added_email_ids = {}
 
 
 async def email_job(email: Email):
@@ -23,7 +23,7 @@ async def update_email_jobs(scheduler: AsyncIOScheduler):
         if email.id in added_email_ids:
             continue
 
-        added_email_ids.append(email.id)
+        added_email_ids.update({email.id: email})
         scheduler.add_job(
             id=email.id,
             func=email_job,
@@ -31,8 +31,9 @@ async def update_email_jobs(scheduler: AsyncIOScheduler):
             kwargs={'email': email}
         )
 
-    for email_id in added_email_ids:
+    for email_id in list(added_email_ids):
         if email_id in new_email_ids:
             continue
 
+        del added_email_ids[email_id]
         scheduler.remove_job(email_id)
