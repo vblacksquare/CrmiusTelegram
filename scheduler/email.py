@@ -32,8 +32,7 @@ async def email_job(_email: Email):
 
     if status != "OK":
         logger.warning(f"Got search response from imap: {status = }, {data = }")
-        client.close()
-        return
+        data = [b""]
 
     message_ids = data[0].split()
     for message_id in message_ids:
@@ -59,6 +58,8 @@ async def email_job(_email: Email):
             EventType.new_lead_message,
             lead_message=lead_message
         )
+
+    client.close()
 
 
 async def update_email_jobs(scheduler: AsyncIOScheduler):
