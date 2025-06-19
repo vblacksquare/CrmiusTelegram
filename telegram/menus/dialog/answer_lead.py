@@ -99,9 +99,9 @@ async def send(
     await client.login(from_email.login, from_email.password)
 
     await client.sendmail(
-        sender=from_email.login,
-        recipients=[to_email],
-        message=message.as_string()
+        from_email.login,
+        [to_email],
+        message.as_string()
     )
 
     client.close()
