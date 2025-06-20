@@ -63,7 +63,7 @@ async def answer_lead(message: Message):
 
         subject = lead.subject
         if not subject:
-            subject = i18n.gettext("default_subject", locale=language)
+            subject = i18n.gettext("lead_default_subject", locale=language)
 
         await send(
             from_email=email,
