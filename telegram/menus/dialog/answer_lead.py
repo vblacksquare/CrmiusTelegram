@@ -6,6 +6,8 @@ from loguru import logger
 from aiogram import Router, F
 from aiogram.types import Message
 
+from telegram import i18n
+
 import aiosmtplib
 from email.mime.text import MIMEText
 from email.header import Header
@@ -24,6 +26,8 @@ from config import get_config
 answer_lead_router = Router()
 db = Db()
 gr = Grupo()
+
+SUPPORTED_LANGUAGES = ["en", "ru", "uk"]
 
 
 @answer_lead_router.message(F.chat.id == get_config().telegram.lead_group_id)
@@ -116,22 +120,39 @@ async def prepare_message(
     lead_group: LeadGroup
 ):
 
+    language = lead.language if lead.language in SUPPORTED_LANGUAGES else SUPPORTED_LANGUAGES[0]
+
     history = history[:]
 
-    parts = [
-        f"Вы заполнили форму <b>{lead.source_page_name}</b> на сайте <a href='{lead.source_page}'>{lead.source_page}</a>"
-    ]
+    parts = []
+
+    if lead.source_page_name and lead.source_page:
+        parts.append(i18n.gettext("lead_form_sent_full", locale=language).format(
+            name=lead.source_page_name,
+            source=lead.source_page
+        ))
+
+    elif lead.source_page_name:
+        parts.append(i18n.gettext("lead_form_sent_name", locale=language).format(
+            name=lead.source_page_name
+        ))
+
+    elif lead.source_page:
+        parts.append(i18n.gettext("lead_form_sent_source", locale=language).format(
+            source=lead.source_page
+        ))
 
     if lead.message:
         parts.append(lead.message)
 
-    history.append(LeadMessage(
-        id=1,
-        lead_group_id=1,
-        text=''.join(["<br><br>".join(parts), "<br>"]),
-        from_client=True,
-        sent_at=lead.added_time
-    ))
+    if len(parts):
+        history.append(LeadMessage(
+            id=1,
+            lead_group_id=1,
+            text=''.join(["<br><br>".join(parts), "<br>"]),
+            from_client=True,
+            sent_at=lead.added_time
+        ))
 
     last_message = ""
     for message in history[::-1]:

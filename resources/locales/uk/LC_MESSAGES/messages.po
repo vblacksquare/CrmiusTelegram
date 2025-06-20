@@ -332,3 +332,12 @@ msgstr "{name} | {tags}"
 
 msgid "public_messages_group_topic_name"
 msgstr "{left} {right}"
+
+msgid "lead_form_sent_full"
+msgstr "Ви заповнили форму <b>{name}</b> на сайті <a href='{source}'>{source}</a>"
+
+msgid "lead_form_sent_name"
+msgstr "Ви заповнили форму <b>{name}</b>"
+
+msgid "lead_form_sent_source"
+msgstr "Ви заповнили форму на сайті <a href='{source}'>{source}</a>"

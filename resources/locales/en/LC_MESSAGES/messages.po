@@ -1,0 +1,12 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "lead_form_sent_full"
+msgstr "You have filled out the <b>{name}</b> form on the website <a href='{source}'>{source}</a>"
+
+msgid "lead_form_sent_name"
+msgstr "You have filled out the <b>{name}</b> form"
+
+msgid "lead_form_sent_source"
+msgstr "You have filled out a form on the website <a href='{source}'>{source}</a>"
