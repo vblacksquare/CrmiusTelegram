@@ -97,8 +97,7 @@ async def send(
     from_email: Email,
     to_email: str,
     text: str,
-    subject: str = None,
-    files: list[str] = []
+    subject: str = None
 ):
 
     message = MIMEText(text, 'html', 'utf-8')
