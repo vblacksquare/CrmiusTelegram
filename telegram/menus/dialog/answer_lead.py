@@ -47,7 +47,7 @@ async def answer_lead(message: Message):
         if not email:
             raise Exception(f"No email for domain -> {lead_group.source_domain}")
 
-        lead: Lead = await db.db[Lead.__name__].find_one({"id": lead_group.id}, sort=[("added_time", -1)])
+        lead: Lead = await db.db[Lead.__name__].find_one({"group_id": lead_group.id}, sort=[("added_time", -1)])
         messages: list[LeadMessage] = await db.ex(dmth.GetMany(LeadMessage, lead_group_id=lead_group.id))
 
         new_message = LeadMessage(
