@@ -52,12 +52,18 @@ async def answer_lead(message: Message):
         )
         messages: list[LeadMessage] = await db.ex(dmth.GetMany(LeadMessage, lead_group_id=lead_group.id))
 
+        language = lead.language if lead.language in SUPPORTED_LANGUAGES else SUPPORTED_LANGUAGES[0]
+
         new_message = LeadMessage(
             id=uuid.uuid4().hex,
             lead_group_id=lead_group.id,
             text=message.text,
             from_client=False
         )
+
+        subject = lead.subject
+        if not subject:
+            subject = i18n.gettext("default_subject", locale=language)
 
         await send(
             from_email=email,
@@ -67,9 +73,10 @@ async def answer_lead(message: Message):
                 history=messages,
                 manager_email=email,
                 lead=lead,
-                lead_group=lead_group
+                lead_group=lead_group,
+                language=language
             ),
-            subject=lead.subject
+            subject=subject
         )
 
         await db.ex(dmth.AddOne(LeadMessage, new_message))
@@ -97,9 +104,7 @@ async def send(
     message = MIMEText(text, 'html', 'utf-8')
     message['From'] = from_email.login
     message['To'] = to_email
-
-    if subject:
-        message['Subject'] = Header(subject, 'utf-8')
+    message['Subject'] = Header(subject, 'utf-8')
 
     client = aiosmtplib.SMTP(hostname=from_email.smpt_host, port=from_email.smpt_port, use_tls=True)
     await client.connect()
@@ -119,10 +124,9 @@ async def prepare_message(
     history: list[LeadMessage],
     manager_email: Email,
     lead: Lead,
-    lead_group: LeadGroup
+    lead_group: LeadGroup,
+    language: str
 ):
-
-    language = lead.language if lead.language in SUPPORTED_LANGUAGES else SUPPORTED_LANGUAGES[0]
 
     history = history[:]
 

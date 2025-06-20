@@ -341,3 +341,6 @@ msgstr "Ви заповнили форму <b>{name}</b>"
 
 msgid "lead_form_sent_source"
 msgstr "Ви заповнили форму на сайті <a href='{source}'>{source}</a>"
+
+msgid "lead_default_subject"
+msgstr "Замовлення послуги"
