@@ -47,18 +47,14 @@ async def answer_lead(message: Message):
         if not email:
             raise Exception(f"No email for domain -> {lead_group.source_domain}")
 
-        lead = Lead(
-            **(await db.db[Lead.__name__].find_one({"group_id": lead_group.id}, sort=[("added_time", -1)]))
+        raw_lead = await db.db[Lead.__name__].find_one({"group_id": lead_group.id}, sort=[("added_time", -1)])
+        lead = Lead(**raw_lead)
+
+        raw_messages = await db.db[LeadMessage.__name__].find(
+            {"lead_group_id": lead_group.id},
+            sort=[("sent_at", 1)]
         )
-        messages: list[LeadMessage] = list(map(
-            lambda x: LeadMessage(**x),
-            await db.db[LeadMessage.__name__].find(
-                {
-                    "lead_group_id": lead_group.id,
-                },
-                sort=[("sent_at", 1)]
-            )
-        ))
+        messages: list[LeadMessage] = list(map(lambda x: LeadMessage(**x), raw_messages))
 
         language = lead.language if lead.language in SUPPORTED_LANGUAGES else SUPPORTED_LANGUAGES[0]
 
