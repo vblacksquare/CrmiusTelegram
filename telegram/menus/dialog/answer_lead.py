@@ -47,11 +47,16 @@ async def answer_lead(message: Message):
         if not email:
             raise Exception(f"No email for domain -> {lead_group.source_domain}")
 
-        raw_lead = await db.db[Lead.__name__].find_one({"group_id": lead_group.id}, sort=[("added_time", -1)])
+        raw_lead = await db.db[Lead.__name__].find_one(
+            {"group_id": lead_group.id},
+            {"_id": 0},
+            sort=[("added_time", -1)]
+        )
         lead = Lead(**raw_lead)
 
         raw_messages = db.db[LeadMessage.__name__].find(
             {"lead_group_id": lead_group.id},
+            {"_id": 0},
             sort=[("sent_at", 1)]
         )
         messages = []
