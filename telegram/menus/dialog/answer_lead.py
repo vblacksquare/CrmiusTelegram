@@ -204,8 +204,8 @@ async def prepare_message(
             )
 
         content_meta = ', '.join([
-            datetime.fromtimestamp(message.sent_at, tz=GMT3).strftime(f"%y.%m.%d %H:%M"),
-            f"(gmt+3) <<a href='mailto:{sender}'>{sender}</a>>:"
+            ''.join([datetime.fromtimestamp(message.sent_at, tz=GMT3).strftime(f"%y.%m.%d %H:%M"), "(gmt+3)"]),
+            f"<<a href='mailto:{sender}'>{sender}</a>>:"
         ])
 
         last_message = "\n".join([
