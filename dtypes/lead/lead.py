@@ -30,12 +30,14 @@ class Lead(DatabaseItem):
         added_time: int = None,
 
         language: str = None,
+        group_id: str = None,
 
         **kwargs
     ):
 
         self.id = id
         self.crm_id = crm_id
+        self.group_id = group_id
 
         self.subject = subject
         self.first_name = first_name
@@ -56,7 +58,7 @@ class Lead(DatabaseItem):
         self.language = language
 
         self.fields = [
-            "id", "crm_id",
+            "id", "crm_id", "group_id",
             "subject", "first_name", "last_name",
             "sur_name", "phone", "email",
             "message", "service_name", "source_page_name",

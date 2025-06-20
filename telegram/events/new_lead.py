@@ -61,6 +61,9 @@ async def new_lead(lead: Lead):
         )
         await db.ex(dmth.AddOne(LeadGroup, lead_group))
 
+    lead.group_id = lead_group.id
+    await db.ex(dmth.UpdateOne(Lead, lead, to_update=["group_id"]))
+
     message = None
     for i in range(3):
         try:
