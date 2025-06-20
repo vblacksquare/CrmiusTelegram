@@ -50,7 +50,15 @@ async def answer_lead(message: Message):
         lead = Lead(
             **(await db.db[Lead.__name__].find_one({"group_id": lead_group.id}, sort=[("added_time", -1)]))
         )
-        messages: list[LeadMessage] = await db.ex(dmth.GetMany(LeadMessage, lead_group_id=lead_group.id))
+        messages: list[LeadMessage] = list(map(
+            lambda x: LeadMessage(**x),
+            await db.db[LeadMessage.__name__].find(
+                {
+                    "lead_group_id": lead_group.id,
+                },
+                sort=[("sent_at", 1)]
+            )
+        ))
 
         language = lead.language if lead.language in SUPPORTED_LANGUAGES else SUPPORTED_LANGUAGES[0]
 
@@ -160,7 +168,7 @@ async def prepare_message(
         ))
 
     last_message = ""
-    for message in history[::-1]:
+    for message in history:
         if message.from_client or not manager_email.sign:
             sender = lead_group.email[0]
 
