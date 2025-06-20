@@ -1,6 +1,6 @@
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from loguru import logger
 
 from aiogram import Router, F
@@ -27,6 +27,7 @@ answer_lead_router = Router()
 db = Db()
 gr = Grupo()
 
+GMT3 = timezone(timedelta(hours=3))
 SUPPORTED_LANGUAGES = ["en", "ru", "uk"]
 
 
@@ -203,7 +204,7 @@ async def prepare_message(
             )
 
         content_meta = ', '.join([
-            datetime.fromtimestamp(message.sent_at).strftime(f"%y.%m.%d %H:%M"),
+            datetime.fromtimestamp(message.sent_at, tz=GMT3).strftime(f"%y.%m.%d %H:%M"),
             f"<<a href='mailto:{sender}'>{sender}</a>>:"
         ])
 
