@@ -163,13 +163,15 @@ async def prepare_message(
         parts.append(lead.message)
 
     if len(parts):
-        history.append(LeadMessage(
-            id=1,
-            lead_group_id=1,
-            text=''.join(["<br><br>".join(parts), "<br>"]),
-            from_client=True,
-            sent_at=lead.added_time
-        ))
+        history = [
+            LeadMessage(
+                id=1,
+                lead_group_id=1,
+                text=''.join(["<br><br>".join(parts), "<br>"]),
+                from_client=True,
+                sent_at=lead.added_time
+            )
+        ] + history
 
     last_message = ""
     for message in history:
