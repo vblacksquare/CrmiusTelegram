@@ -29,6 +29,8 @@ class Lead(DatabaseItem):
         sender: str = None,
         added_time: int = None,
 
+        language: str = None,
+
         **kwargs
     ):
 
@@ -51,6 +53,7 @@ class Lead(DatabaseItem):
         self.additional_info = additional_info
         self.sender = sender
         self.added_time = added_time
+        self.language = language
 
         self.fields = [
             "id", "crm_id",
@@ -58,8 +61,7 @@ class Lead(DatabaseItem):
             "sur_name", "phone", "email",
             "message", "service_name", "source_page_name",
             "source_page", "source_domain", "source", "ip",
-            "additional_info",
-            "sender", "added_time"
+            "additional_info", "sender", "added_time", "language"
         ]
 
     @property

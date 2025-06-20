@@ -62,7 +62,8 @@ async def answer_lead(message: Message):
                 manager_email=email,
                 lead=lead,
                 lead_group=lead_group
-            )
+            ),
+            subject=lead.subject
         )
 
         await db.ex(dmth.AddOne(LeadMessage, new_message))
