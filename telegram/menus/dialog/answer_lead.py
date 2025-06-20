@@ -56,7 +56,7 @@ async def answer_lead(message: Message):
         )
         messages = []
 
-        for raw_message in raw_messages:
+        async for raw_message in raw_messages:
             messages.append(LeadMessage(**raw_message))
 
         language = lead.language if lead.language in SUPPORTED_LANGUAGES else SUPPORTED_LANGUAGES[0]
