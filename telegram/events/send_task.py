@@ -50,8 +50,8 @@ async def send_task(
 
         keyboard = await generate_keyboard(
             task_id=task_id,
-            sender=sender,
-            reciever=reciever
+            reciever_tuser=reciever_tuser,
+            reciever=reciever,
         )
 
         time_now = datetime.now(pytz.timezone("Europe/Kiev"))
@@ -77,8 +77,8 @@ async def send_task(
 
 
 async def generate_app_link(
-    reciever: CrmUser,
-    task_id: int
+    task_id: int,
+    reciever: CrmUser
 ) -> str:
 
     resource_link = get_config().crm.task_url.format(task_id=task_id)

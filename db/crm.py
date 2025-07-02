@@ -6,7 +6,6 @@ import asyncio
 from loguru import logger
 from datetime import datetime
 
-from utils.convert import string_to_uuid
 from .db import Db
 from dtypes.db import method as dmth
 from dtypes.user import CrmUser
