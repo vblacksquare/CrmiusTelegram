@@ -1,10 +1,8 @@
 from datetime import datetime
 import pytz
 
-from aiogram.types import WebAppInfo, LinkPreviewOptions, FSInputFile, InputMediaPhoto, URLInputFile, InputMediaDocument
+from aiogram.types import WebAppInfo, LinkPreviewOptions
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-
-from agent.taras import TEMP_DATA
 
 from telegram import bot, i18n
 from loguru import logger
@@ -12,10 +10,7 @@ import urllib.parse
 
 from db import Db
 from dtypes.db import method as dmth
-from dtypes.group import Group
 from dtypes.user import User, CrmUser
-from dtypes.message import BotMessage
-from dtypes.task import Task
 
 from emitter import emitter, EventType
 

@@ -1,20 +1,11 @@
 
-
-import urllib.parse
-import pytz
-from datetime import datetime
-
 from loguru import logger
 
-from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-from aiogram.types import LinkPreviewOptions, WebAppInfo
-
-from ..telegram import bot, i18n
 from emitter import emitter, EventType
 
 from db import Db
 from dtypes.db import method as dmth
-from dtypes.user import User, CrmUser
+from dtypes.user import CrmUser
 from dtypes.task import Task
 from dtypes.notification import Notification
 from dtypes.message import TaskMessage
