@@ -29,7 +29,7 @@ scheduler.add_job(
     trigger=IntervalTrigger(seconds=1)
 )
 scheduler.add_job(
-    id="load_tasks",
+    id="load_task_notifications",
     func=load_task_notifications,
     trigger=IntervalTrigger(seconds=1)
 )
