@@ -57,10 +57,13 @@ async def send_message(
 
         dest = "group" if group else "chat"
         message_type = ""
+
         if audio:
             message_type = "audio"
+
         elif photos:
             message_type = "photo"
+
         elif documents:
             message_type = "document"
 
