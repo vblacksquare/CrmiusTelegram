@@ -24,7 +24,6 @@ async def load_task_notifications():
         if task_notification.id > new_last_task_notification_id:
             new_last_task_notification_id = task_notification.id
 
-        logger.debug(task_notification)
         emitter.emit(EventType.new_task, task_notification)
 
     if new_last_task_notification_id > old_last_task_notification_id:
