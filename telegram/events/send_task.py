@@ -43,7 +43,10 @@ async def send_task(
             locale=reciever_tuser.language
         ).format(
             sender=" ".join((sender.first_name, sender.last_name)),
-            notification_type=type,
+            notification_type=i18n.gettext(
+                type,
+                locale=reciever_tuser.language
+            ),
             task_name=title,
             attachment=text if text else ""
         )

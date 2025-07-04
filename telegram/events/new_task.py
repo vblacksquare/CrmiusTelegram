@@ -16,8 +16,6 @@ db = Db()
 
 @emitter.on(EventType.new_task)
 async def new_task(notification: Notification):
-    print(notification)
-
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=notification.sender_id))
     reciever: CrmUser = await db.ex(dmth.GetOne(CrmUser, id=notification.reciever_id))
     task: Task = await db.ex(dmth.GetOne(Task, id=notification.task_id))
