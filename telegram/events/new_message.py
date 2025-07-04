@@ -29,8 +29,6 @@ AGENTS = {
 
 @emitter.on(EventType.new_message)
 async def new_message(message: ChatMessage | GroupMessage):
-    logger.debug(f"New message -> {message.to_dict()}")
-
     sender: CrmUser = await db.ex(dmth.GetOne(CrmUser, chat_id=message.sender_id))
     recievers: list[CrmUser] = []
 

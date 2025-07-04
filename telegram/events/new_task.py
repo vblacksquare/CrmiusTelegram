@@ -3,7 +3,7 @@ from loguru import logger
 
 from emitter import emitter, EventType
 
-from db import Db
+from db import Db, CrmDb
 from dtypes.db import method as dmth
 from dtypes.user import CrmUser
 from dtypes.task import Task
@@ -12,6 +12,7 @@ from dtypes.message import TaskMessage
 
 
 db = Db()
+crm = CrmDb()
 
 
 @emitter.on(EventType.new_task)
@@ -22,7 +23,7 @@ async def new_task(notification: Notification):
 
     message = None
     if notification.message_id:
-        message: TaskMessage = await db.ex(dmth.GetOne(TaskMessage, id=notification.message_id))
+        message = await crm.get_task_message_by_id(notification.message_id)
 
     kwargs = {
         "task_id": task.id,
